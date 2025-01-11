@@ -1,0 +1,1 @@
+export const defineZoru = () => null;
