@@ -3,6 +3,9 @@
   "name": "root",
   "license": "MIT",
   "type": "module",
+  "workspaces": [
+    "./zoru/"
+  ],
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
     "@types/bun": "latest"
