@@ -1,9 +1,9 @@
 import type { CSSProperties } from 'react'
 
-import type { Exact } from './types/toolbelt'
 import type { Tokens, TokenConfig, TokenSystem } from './types'
 
 export function defineToken<
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const Values extends readonly any[],
 	Result extends CSSProperties,
 >(config: TokenConfig<Values, Result>) {
@@ -18,6 +18,7 @@ export function defineUnit<T extends typeof Number | typeof String>(
 }
 
 export function defineSystem<
+	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const S extends Record<string, TokenConfig<any, any>>,
 >(system: S): TokenSystem<S> {
 	return (config: { tokens: Tokens }) =>

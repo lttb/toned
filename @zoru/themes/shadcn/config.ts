@@ -112,10 +112,10 @@ const tokens = {
 
 	// Border Radius
 	radius_none: '0px',
-	radius_small: '0.25rem', // 4px
-	radius_medium: '0.5rem', // 8px
-	radius_large: '0.75rem', // 12px
-	radius_xlarge: '1rem', // 16px
+	radius_small: '4px', // 4px
+	radius_medium: '8px', // 8px
+	radius_large: '12px', // 12px
+	radius_xlarge: '16px', // 16px
 	radius_full: '9999px',
 
 	// Border Widths

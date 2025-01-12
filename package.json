@@ -6,7 +6,7 @@
   "workspaces": [
     "./zoru/",
     "./@zoru/*",
-    "./@examples/*"
+    "./@examples/vite"
   ],
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

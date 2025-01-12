@@ -1,5 +1,3 @@
-import type { CSSProperties } from 'react'
-
 export type Tokens = Record<string, string>
 
 export type TokenConfig<Values extends readonly any[], Result> = {
@@ -17,4 +15,4 @@ export type TokenSystem<S extends Record<string, TokenConfig<any, any>>> = <
 	}>,
 >(
 	value: V,
-) => { style: CSSProperties }
+) => { style: any }

@@ -1,4 +1,4 @@
-import {defineToken, defineUnit, defineSystem} from 'zoru'
+import { defineToken, defineUnit, defineSystem } from 'zoru'
 
 const bgColor = defineToken({
 	values: [
@@ -138,11 +138,14 @@ const outlineColor = defineToken({
 	}),
 })
 
-const radius = defineToken({
+const borderRadius = defineToken({
 	values: ['none', 'small', 'medium', 'large', 'xlarge', 'full'],
-	resolve: (value, tokens) => ({
-		borderRadius: tokens[`radius_${value}`],
-	}),
+	resolve: (value, tokens) => (
+		console.log(tokens[`radius_${value}`]),
+		{
+			borderRadius: tokens[`radius_${value}`],
+		}
+	),
 })
 
 const borderWith = defineToken({
@@ -226,7 +229,9 @@ const layout = defineToken({
 //})
 
 const SpaceUnit = defineUnit(Number, (value, tokens) =>
-	tokens.base.startsWith('var') ? `calc(${tokens.base} * ${Number(value)})` : Number(value) * Number(tokens.base),
+	String(tokens.base).startsWith('var')
+		? `calc(${tokens.base} * ${Number(value)})`
+		: Number(value) * Number.parseInt(tokens.base, 10),
 )
 
 const paddingX = defineToken({
@@ -271,7 +276,7 @@ export const system = defineSystem({
 	borderColor,
 	outlineColor,
 	svgFill,
-	radius,
+	borderRadius,
 	borderWith,
 	shadow,
 	typo,
