@@ -1,6 +1,12 @@
 import type { CSSProperties } from 'react'
 
-import type { Tokens, TokenConfig, TokenSystem } from './types'
+import type {
+	Tokens,
+	TokenConfig,
+	TokenSystem,
+	TokenStyle,
+	TokenStyleDeclaration,
+} from './types'
 
 export function defineToken<
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -21,15 +27,12 @@ export function defineSystem<
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const S extends Record<string, TokenConfig<any, any>>,
 >(system: S): TokenSystem<S> {
-	return (config: { tokens: Tokens }) =>
-		<
-			T extends Partial<{
-				[key in keyof S]: S[key]['values'][number]
-			}>,
-		>(
-			tokens: T,
-		) => {
-			return Object.entries(tokens).reduce<{ style: CSSProperties }>(
+	const ref: TokenSystem<S> = {
+		system,
+		t: (value) => Object.assign(value, { ref }),
+		stylesheet: (value) => Object.assign(value, { ref }),
+		exec: (config, tokenStyle) => {
+			return Object.entries(tokenStyle).reduce<{ style: any }>(
 				(acc, [k, v]) => {
 					if (!v) return acc
 
@@ -39,5 +42,28 @@ export function defineSystem<
 				},
 				{ style: {} },
 			)
-		}
+		},
+	}
+
+	return ref
+
+	//return (config: { tokens: Tokens }) =>
+	//	<
+	//		T extends Partial<{
+	//			[key in keyof S]: S[key]['values'][number]
+	//		}>,
+	//	>(
+	//		tokens: T,
+	//	) => {
+	//		return Object.entries(tokens).reduce<{ style: CSSProperties }>(
+	//			(acc, [k, v]) => {
+	//				if (!v) return acc
+	//
+	//				Object.assign(acc.style, system[k].resolve(v, config.tokens))
+	//
+	//				return acc
+	//			},
+	//			{ style: {} },
+	//		)
+	//	}
 }

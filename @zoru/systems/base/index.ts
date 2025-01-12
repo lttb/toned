@@ -268,7 +268,7 @@ const padding = defineToken({
 	},
 })
 
-export const system = defineSystem({
+export const { system, stylesheet, t } = defineSystem({
 	bgColor,
 	textColor,
 	borderColor,

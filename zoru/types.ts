@@ -5,14 +5,20 @@ export type TokenConfig<Values extends readonly any[], Result> = {
 	resolve: (value: Values[number], tokens: Tokens) => Result
 }
 
-export type TokenSystem<S extends Record<string, TokenConfig<any, any>>> = <
-	C extends { tokens: Tokens },
->(
-	config: C,
-) => <
-	V extends Partial<{
-		[key in keyof S]: S[key]['values'][number]
-	}>,
->(
-	value: V,
-) => { style: any }
+export type TokenStyleDeclaration = Record<string, TokenConfig<any, any>>
+
+export type TokenStyle<S extends TokenStyleDeclaration> = Partial<{
+	[key in keyof S]: S[key]['values'][number]
+}>
+
+export type TokenSystem<S extends TokenStyleDeclaration> = {
+	system: S
+	stylesheet: <const T extends Record<string, TokenStyle<S>>>(
+		style: T,
+	) => T & { ref: TokenSystem<S> }
+	t: <D extends TokenStyle<S>>(value: D) => D & { ref: TokenSystem<S> }
+	exec: (
+		config: { tokens: Tokens },
+		tokenStyle: TokenStyle<S>,
+	) => { style: any }
+}
