@@ -140,12 +140,9 @@ const outlineColor = defineToken({
 
 const borderRadius = defineToken({
 	values: ['none', 'small', 'medium', 'large', 'xlarge', 'full'],
-	resolve: (value, tokens) => (
-		console.log(tokens[`radius_${value}`]),
-		{
-			borderRadius: tokens[`radius_${value}`],
-		}
-	),
+	resolve: (value, tokens) => ({
+		borderRadius: tokens[`radius_${value}`],
+	}),
 })
 
 const borderWith = defineToken({
@@ -228,6 +225,7 @@ const layout = defineToken({
 //  resolve: (value, tokens) => tokens[`space_${value}`],
 //})
 
+// TODO: move to configuration level
 const SpaceUnit = defineUnit(Number, (value, tokens) =>
 	String(tokens.base).startsWith('var')
 		? `calc(${tokens.base} * ${Number(value)})`

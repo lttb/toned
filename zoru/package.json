@@ -1,6 +1,6 @@
 {
-  "name": "zoru",
-  "license": "MIT",
-  "type": "module",
-  "main": "index.ts"
+	"name": "zoru",
+	"license": "MIT",
+	"type": "module",
+	"main": "index.ts"
 }
