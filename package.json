@@ -5,6 +5,7 @@
   "type": "module",
   "workspaces": [
     "./zoru/",
+    "./@zoru/*",
     "./@examples/*"
   ],
   "devDependencies": {

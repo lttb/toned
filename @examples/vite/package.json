@@ -11,6 +11,8 @@
     "preview": "cross-env NODE_ENV=production bun server"
   },
   "dependencies": {
+    "@zoru/systems": "workspace:*",
+    "@zoru/themes": "workspace:*",
     "compression": "^1.7.5",
     "express": "^5.0.1",
     "react": "^19.0.0",

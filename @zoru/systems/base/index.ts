@@ -1,4 +1,4 @@
-import { defineToken, defineUnit, defineSystem } from 'zoru'
+import {defineToken, defineUnit, defineSystem} from 'zoru'
 
 const bgColor = defineToken({
 	values: [
@@ -226,9 +226,7 @@ const layout = defineToken({
 //})
 
 const SpaceUnit = defineUnit(Number, (value, tokens) =>
-	tokens.base.startsWith('var')
-		? `calc(${tokens.base} * ${Number(value)})`
-		: Number(value) * Number(tokens.base),
+	tokens.base.startsWith('var') ? `calc(${tokens.base} * ${Number(value)})` : Number(value) * Number(tokens.base),
 )
 
 const paddingX = defineToken({

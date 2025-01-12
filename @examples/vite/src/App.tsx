@@ -1,6 +1,6 @@
 import { Suspense, lazy } from 'react'
 
-import '../zoru.css'
+import '@zoru/themes/shadcn/config.css'
 
 //import { TokensContext } from 'zoru/react'
 //import shadcnTokens from '../zoru.shadcn'
