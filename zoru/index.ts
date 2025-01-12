@@ -1,13 +1,7 @@
 import type { CSSProperties } from 'react'
 
-import type { Exact } from './types'
-
-type Tokens = Record<string, string>
-
-type TokenConfig<Values extends readonly any[], Result> = {
-	values: Values
-	resolve: (value: Values[number], tokens: Tokens) => Result
-}
+import type { Exact } from './types/toolbelt'
+import type { Tokens, TokenConfig, TokenSystem } from './types'
 
 export function defineToken<
 	const Values extends readonly any[],
@@ -25,24 +19,24 @@ export function defineUnit<T extends typeof Number | typeof String>(
 
 export function defineSystem<
 	const S extends Record<string, TokenConfig<any, any>>,
->(system: S) {
-	return <T>(
-		tokens: Exact<
-			T,
-			Partial<{
+>(system: S): TokenSystem<S> {
+	return (config: { tokens: Tokens }) =>
+		<
+			T extends Partial<{
 				[key in keyof S]: S[key]['values'][number]
-			}>
-		>,
-	) => {
-		return Object.entries(tokens).reduce<{ style: CSSProperties }>(
-			(acc, [k, v]) => {
-				if (!v) return acc
+			}>,
+		>(
+			tokens: T,
+		) => {
+			return Object.entries(tokens).reduce<{ style: CSSProperties }>(
+				(acc, [k, v]) => {
+					if (!v) return acc
 
-				Object.assign(acc.style, system[k].resolve(v, {}))
+					Object.assign(acc.style, system[k].resolve(v, config.tokens))
 
-				return acc
-			},
-			{ style: {} },
-		)
-	}
+					return acc
+				},
+				{ style: {} },
+			)
+		}
 }

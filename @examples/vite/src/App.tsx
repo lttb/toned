@@ -1,5 +1,10 @@
 import { Suspense, lazy } from 'react'
 
+import '../zoru.css'
+
+//import { TokensContext } from 'zoru/react'
+//import shadcnTokens from '../zoru.shadcn'
+
 // Works also with SSR as expected
 const Card = lazy(() => import('./Card'))
 
