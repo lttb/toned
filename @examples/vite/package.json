@@ -1,11 +1,8 @@
 {
-  "name": "vite",
+  "name": "@examples/vite",
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "workspaces": [
-    "../../zoru/"
-  ],
   "scripts": {
     "dev": "bun --bun ./server.ts",
     "build": "bun run build:client && bun run build:server",

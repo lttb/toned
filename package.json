@@ -4,7 +4,8 @@
   "license": "MIT",
   "type": "module",
   "workspaces": [
-    "./zoru/"
+    "./zoru/",
+    "./@examples/*"
   ],
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",
