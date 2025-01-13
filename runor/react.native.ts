@@ -1,11 +1,11 @@
 import { createContext } from 'react'
 
 import type { Tokens } from './types'
-import { createAttach } from './react.common'
+import { create } from './react.common'
 
 export const TokensContext = createContext<Tokens>({})
 
-export const attachSystem = createAttach(TokensContext, (ctx, prop) => {
+export const { useStyles } = create(TokensContext, (ctx, prop) => {
 	const value = ctx[prop]
 
 	if (typeof value !== 'string') {
