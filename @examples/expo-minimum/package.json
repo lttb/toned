@@ -9,9 +9,9 @@
 		"web": "expo start --web"
 	},
 	"dependencies": {
-		"zoru": "../../zoru/",
-		"@zoru/themes": "../../@zoru/themes",
-		"@zoru/systems": "../../@zoru/systems",
+		"runor": "../../runor/",
+		"@runor/themes": "../../@runor/themes",
+		"@runor/systems": "../../@runor/systems",
 		"expo": "~52.0.25",
 		"expo-status-bar": "~2.0.1",
 		"react": "18.3.1",

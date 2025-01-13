@@ -1,11 +1,11 @@
-import { TokensContext } from 'zoru/react'
-import shadcn from '@zoru/themes/shadcn/config'
+import { TokensContext } from 'runor/react'
+import shadcn from '@runor/themes/shadcn/config'
 
 import { StatusBar } from 'expo-status-bar'
 import React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-import { t } from './zoru'
+import { t } from './runor'
 
 const Content = () => {
 	return (

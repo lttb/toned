@@ -1,4 +1,4 @@
-import { defineToken, defineUnit, defineSystem } from 'zoru'
+import { defineToken, defineUnit, defineSystem } from 'runor'
 
 const bgColor = defineToken({
 	values: [

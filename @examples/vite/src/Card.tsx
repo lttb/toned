@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-import { stylesheet } from '@zoru/systems/base'
-import { useStyles } from 'zoru/react'
+import { stylesheet } from '@runor/systems/base'
+import { useStyles } from 'runor/react'
 
 const styles = stylesheet({
 	container: { bgColor: 'default' },

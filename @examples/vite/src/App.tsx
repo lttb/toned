@@ -1,9 +1,9 @@
 import { Suspense, lazy } from 'react'
 
-import '@zoru/themes/shadcn/config.css'
+import '@runor/themes/shadcn/config.css'
 
-//import { TokensContext } from 'zoru/react'
-//import shadcnTokens from '../zoru.shadcn'
+//import { TokensContext } from 'runor/react'
+//import shadcnTokens from '../runor.shadcn'
 
 // Works also with SSR as expected
 const Card = lazy(() => import('./Card'))

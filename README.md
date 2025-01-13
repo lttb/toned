@@ -1,4 +1,4 @@
-# zoru
+# runor
 
 To install dependencies:
 
