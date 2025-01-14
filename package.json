@@ -6,7 +6,8 @@
   "workspaces": [
     "./runor/",
     "./@runor/*",
-    "./@examples/vite"
+    "./@examples/vite",
+    "./@examples/vite-second/"
   ],
   "devDependencies": {
     "@biomejs/biome": "^1.9.4",

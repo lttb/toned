@@ -1,7 +1,5 @@
 import { Suspense, lazy } from 'react'
 
-import '@runor/themes/shadcn/config.css'
-
 //import { TokensContext } from 'runor/react'
 //import shadcnTokens from '../runor.shadcn'
 
