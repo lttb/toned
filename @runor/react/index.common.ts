@@ -1,12 +1,12 @@
 import { useContext, useMemo, type Context } from 'react'
 
-import type {
-	Tokens,
-	TokenConfig,
-	TokenSystem,
-	TokenStyle,
-	TokenStyleDeclaration,
-} from './types'
+import {
+	type Tokens,
+	type TokenSystem,
+	type TokenStyle,
+	type TokenStyleDeclaration,
+	SYMBOL_REF,
+} from '@runor/core/types'
 
 export const create = (
 	TokensContext: Context<Tokens>,
@@ -17,12 +17,11 @@ export const create = (
 		S extends TokenStyleDeclaration,
 		Styles extends ReturnType<TokenSystem<S>['stylesheet']>,
 	>(
-		styles: Styles,
+		tokenStyles: Styles,
 	) => {
 		const ctx = useContext(TokensContext)
 		const s = useMemo(() => {
-			// TODO: move ref to symbols
-			const { ref, ...tokenStyles } = styles
+			const ref = tokenStyles[SYMBOL_REF]
 
 			const tokens = new Proxy(ctx as Tokens, {
 				get(_target, prop: string) {
@@ -47,7 +46,7 @@ export const create = (
 			})
 
 			return result
-		}, [ctx, get, styles])
+		}, [ctx, get, tokenStyles])
 
 		return s
 	}

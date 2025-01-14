@@ -1,7 +1,7 @@
 import { useState } from 'react'
 
-import { stylesheet } from '@runor/systems/base'
-import { useStyles } from 'runor/react'
+import { stylesheet, t } from '@runor/systems/base'
+import { useStyles } from '@runor/react'
 
 const styles = stylesheet({
 	container: { bgColor: 'default' },
@@ -13,7 +13,7 @@ const styles = stylesheet({
 		borderRadius: 'medium',
 		borderWith: 'none',
 	},
-	code: { textColor: 'destructive' },
+	code: t({ textColor: 'destructive' }),
 })
 
 function Card() {

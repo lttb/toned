@@ -3,12 +3,7 @@
 	"private": true,
 	"license": "MIT",
 	"type": "module",
-	"workspaces": [
-		"./runor/",
-		"./@runor/*",
-		"./@examples/vite",
-		"./@examples/vite-second/"
-	],
+	"workspaces": ["./runor/", "./@runor/*", "./@examples/vite"],
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
 		"@types/bun": "latest"

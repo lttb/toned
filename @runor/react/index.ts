@@ -1,7 +1,7 @@
 import { createContext } from 'react'
 
-import type { Tokens } from './types'
-import { create } from './react.common'
+import type { Tokens } from '@runor/core/types'
+import { create } from './index.common'
 
 export const TokensContext = createContext<Tokens>(
 	new Proxy({} as Tokens, {
