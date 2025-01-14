@@ -1,19 +1,19 @@
 {
-  "name": "root",
-  "private": true,
-  "license": "MIT",
-  "type": "module",
-  "workspaces": [
-    "./runor/",
-    "./@runor/*",
-    "./@examples/vite",
-    "./@examples/vite-second/"
-  ],
-  "devDependencies": {
-    "@biomejs/biome": "^1.9.4",
-    "@types/bun": "latest"
-  },
-  "peerDependencies": {
-    "typescript": "^5.0.0"
-  }
+	"name": "root",
+	"private": true,
+	"license": "MIT",
+	"type": "module",
+	"workspaces": [
+		"./runor/",
+		"./@runor/*",
+		"./@examples/vite",
+		"./@examples/vite-second/"
+	],
+	"devDependencies": {
+		"@biomejs/biome": "^1.9.4",
+		"@types/bun": "latest"
+	},
+	"peerDependencies": {
+		"typescript": "^5.0.0"
+	}
 }
