@@ -16,8 +16,13 @@ const styles = stylesheet({
 	code: t({ textColor: 'destructive' }),
 })
 
+const test = {
+	p: t({ textColor: 'status_info' }),
+}
+
 function Card() {
 	const s = useStyles(styles)
+	const s2 = useStyles(test)
 	const [count, setCount] = useState(0)
 
 	return (
@@ -30,7 +35,7 @@ function Card() {
 				count is {count}
 			</button>
 
-			<p {...s.t({ textColor: 'action' })}>
+			<p {...s2.p}>
 				Edit <code {...s.code}>src/App.tsx</code> and save to test HMR
 			</p>
 		</div>

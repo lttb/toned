@@ -21,7 +21,7 @@ export const create = (
 	) => {
 		const ctx = useContext(TokensContext)
 		const s = useMemo(() => {
-			const ref = tokenStyles[SYMBOL_REF]
+			const baseRef = tokenStyles[SYMBOL_REF]
 
 			const tokens = new Proxy(ctx as Tokens, {
 				get(_target, prop: string) {
@@ -30,14 +30,18 @@ export const create = (
 			})
 
 			const result = {
-				t: <V extends TokenStyle<S>>(value: V) => {
-					return ref.exec({ tokens }, value)
-				},
+				//t: <V extends TokenStyle<S>>(value: V) => {
+				//	return ref.exec({ tokens }, value)
+				//},
 				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-				...({} as { [key in keyof Styles]: { style: any } }),
+				...({} as {
+					[key in Exclude<keyof Styles, typeof SYMBOL_REF>]: { style: any }
+				}),
 			}
 
 			Object.entries(tokenStyles).forEach(([key, value]) => {
+				const ref = value?.[SYMBOL_REF] ?? baseRef
+
 				Object.defineProperty(result, key, {
 					get() {
 						return ref.exec({ tokens }, value)
