@@ -1,6 +1,6 @@
 import fs from 'node:fs/promises'
 import express from 'express'
-import {Transform} from 'node:stream'
+import { Transform } from 'node:stream'
 
 // Constants
 const isProduction = process.env.NODE_ENV === 'production'
@@ -9,7 +9,9 @@ const base = process.env.BASE || '/'
 const ABORT_DELAY = 10000
 
 // Cached production assets
-const templateHtml = isProduction ? await fs.readFile('./dist/client/index.html', 'utf-8') : ''
+const templateHtml = isProduction
+	? await fs.readFile('./dist/client/index.html', 'utf-8')
+	: ''
 
 // Create http server
 const app = express()
@@ -18,9 +20,9 @@ const app = express()
 /** @type {import('vite').ViteDevServer | undefined} */
 let vite
 if (!isProduction) {
-	const {createServer} = await import('vite')
+	const { createServer } = await import('vite')
 	vite = await createServer({
-		server: {middlewareMode: true},
+		server: { middlewareMode: true },
 		appType: 'custom',
 		base,
 	})
@@ -29,7 +31,7 @@ if (!isProduction) {
 	const compression = (await import('compression')).default
 	const sirv = (await import('sirv')).default
 	app.use(compression())
-	app.use(base, sirv('./dist/client', {extensions: []}))
+	app.use(base, sirv('./dist/client', { extensions: [] }))
 }
 
 // Serve HTML
@@ -53,15 +55,15 @@ app.use('*all', async (req, res) => {
 
 		let didError = false
 
-		const {pipe, abort} = render(url, {
+		const { pipe, abort } = render(url, {
 			onShellError() {
 				res.status(500)
-				res.set({'Content-Type': 'text/html'})
+				res.set({ 'Content-Type': 'text/html' })
 				res.send('<h1>Something went wrong</h1>')
 			},
 			onShellReady() {
 				res.status(didError ? 500 : 200)
-				res.set({'Content-Type': 'text/html'})
+				res.set({ 'Content-Type': 'text/html' })
 
 				const transformStream = new Transform({
 					transform(chunk, encoding, callback) {
