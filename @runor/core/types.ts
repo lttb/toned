@@ -15,9 +15,14 @@ export type TokenStyle<S extends TokenStyleDeclaration> = Partial<{
 	[key in keyof S]: S[key]['values'][number]
 }>
 
-type TFun<S extends TokenStyleDeclaration> = <D extends TokenStyle<S>>(
-	value: D,
-) => D & { [SYMBOL_REF]: TokenSystem<S> }
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+type Merge<D extends any[]> = D extends [infer First, ...infer Rest]
+	? First & Merge<Rest>
+	: []
+
+type TFun<S extends TokenStyleDeclaration> = <D extends TokenStyle<S>[]>(
+	...values: [...D]
+) => Merge<D> & { [SYMBOL_REF]: TokenSystem<S> }
 
 export type TokenSystem<S extends TokenStyleDeclaration> = {
 	system: S

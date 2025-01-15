@@ -29,8 +29,8 @@ export function defineUnit<T extends typeof Number | typeof String>(
 	return resolver
 }
 
-const SYMBOL_STYLE: unique symbol = Symbol()
-const SYMBOL_ACCESS: unique symbol = Symbol()
+const SYMBOL_STYLE = Symbol()
+const SYMBOL_ACCESS = Symbol()
 
 export function defineSystem<
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -38,7 +38,12 @@ export function defineSystem<
 >(system: S): TokenSystem<S> {
 	const ref: TokenSystem<S> = {
 		system,
-		t: (value) => {
+		t: (...values) => {
+			const value = values.reduce(
+				(acc, v) => Object.assign(acc, SYMBOL_STYLE in v ? v[SYMBOL_STYLE] : v),
+				{},
+			)
+
 			if (SYMBOL_REF in value) {
 				return value
 			}
