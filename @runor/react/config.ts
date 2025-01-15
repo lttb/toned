@@ -1,8 +1,10 @@
+// @ts-expect-error
+import * as ReactAll from 'react'
 import { setConfig } from '@runor/core'
 
 import { TokensContext } from './ctx'
 
-const React = require('react') as typeof import('react18')
+const React = ReactAll as typeof import('react18')
 
 setConfig({
 	getTokens() {
