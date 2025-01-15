@@ -1,5 +1,3 @@
-import * as React from 'react'
-
 import type { CSSProperties } from 'react'
 
 import {
@@ -8,6 +6,14 @@ import {
 	type TokenSystem,
 	SYMBOL_REF,
 } from './types'
+
+const config = {
+	getTokens: (): Tokens => ({}),
+}
+
+export function setConfig(newConfig: Partial<typeof config>) {
+	Object.assign(config, newConfig)
+}
 
 export function defineToken<
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
@@ -27,8 +33,6 @@ export function defineUnit<T extends typeof Number | typeof String>(
 const SYMBOL_STYLE: unique symbol = Symbol()
 const SYMBOL_ACCESS: unique symbol = Symbol()
 
-import { TokensContext } from './ctx'
-
 export function defineSystem<
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const S extends Record<string, TokenConfig<any, any>>,
@@ -43,13 +47,11 @@ export function defineSystem<
 				style: {},
 			}
 
+			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 			return new Proxy(result as any, {
 				get(target, prop) {
 					if (prop === 'style') {
-						const tokens =
-							React.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED.ReactCurrentDispatcher.current?.readContext(
-								TokensContext,
-							)
+						const tokens = config.getTokens()
 
 						return ref.exec({ tokens }, value)
 					}
@@ -60,15 +62,15 @@ export function defineSystem<
 		},
 		stylesheet: (value) =>
 			Object.assign(
-				{},
+				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+				{} as any,
 				Object.fromEntries(
 					Object.entries(value).map(([k, v]) => [k, ref.t(v)]),
 				),
 				{ [SYMBOL_REF]: ref },
 			),
 		exec: (config, tokenStyle) => {
-			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-			return Object.entries(tokenStyle).reduce<{}>((acc, [k, v]) => {
+			return Object.entries(tokenStyle).reduce<object>((acc, [k, v]) => {
 				if (!v) return acc
 
 				Object.assign(acc, system[k].resolve(v, config.tokens))

@@ -33,8 +33,8 @@ export const create = (
 				//t: <V extends TokenStyle<S>>(value: V) => {
 				//	return ref.exec({ tokens }, value)
 				//},
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 				...({} as {
+					// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 					[key in Exclude<keyof Styles, typeof SYMBOL_REF>]: { style: any }
 				}),
 			}

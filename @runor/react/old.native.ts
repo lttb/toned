@@ -1,7 +1,7 @@
 import { createContext } from 'react'
 
 import type { Tokens } from '@runor/core/types'
-import { create } from './index.common'
+import { create } from './old.common'
 
 export const TokensContext = createContext<Tokens>({})
 

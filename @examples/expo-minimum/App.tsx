@@ -1,4 +1,5 @@
-import { TokensContext, defineContext } from '@runor/core/ctx'
+import '@runor/react/config'
+import { TokensContext, defineContext } from '@runor/react/ctx'
 import shadcn from '@runor/themes/shadcn/config'
 
 import { StatusBar } from 'expo-status-bar'

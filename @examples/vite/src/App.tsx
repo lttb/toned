@@ -1,3 +1,4 @@
+import '@runor/react/config'
 import '@runor/themes/shadcn/config.css'
 import './index.css'
 

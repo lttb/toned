@@ -15,21 +15,22 @@ export type TokenStyle<S extends TokenStyleDeclaration> = Partial<{
 	[key in keyof S]: S[key]['values'][number]
 }>
 
+type TFun<S extends TokenStyleDeclaration> = <D extends TokenStyle<S>>(
+	value: D,
+) => D & { [SYMBOL_REF]: TokenSystem<S> }
+
 export type TokenSystem<S extends TokenStyleDeclaration> = {
 	system: S
 	stylesheet: <const T extends Record<string, TokenStyle<S>>>(
 		style: T,
 	) => {
-		[key in keyof T]: T[key] & {
-			[SYMBOL_REF]?: TokenSystem<S>
-		}
+		[key in keyof T]: ReturnType<TFun<S>>
 	} & { [SYMBOL_REF]: TokenSystem<S> }
-	t: <D extends TokenStyle<S>>(value: D) => D & { [SYMBOL_REF]: TokenSystem<S> }
+	t: TFun<S>
 	exec: (
 		config: {
 			tokens: Tokens
 		},
 		tokenStyle: TokenStyle<S>,
-		// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-	) => { style: any }
+	) => object
 }
