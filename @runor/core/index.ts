@@ -1,5 +1,3 @@
-import type { CSSProperties } from 'react'
-
 import {
 	type Tokens,
 	type TokenConfig,
@@ -18,7 +16,8 @@ export function setConfig(newConfig: Partial<typeof config>) {
 export function defineToken<
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const Values extends readonly any[],
-	Result extends CSSProperties,
+	// TODO: think about the result type (like, CSSProperties)
+	Result extends {},
 >(config: TokenConfig<Values, Result>) {
 	return config
 }
@@ -44,21 +43,15 @@ export function defineSystem<
 				[SYMBOL_REF]: ref,
 				[SYMBOL_STYLE]: value,
 				[SYMBOL_ACCESS]: { ref, value },
-				style: {},
+				get style() {
+					const tokens = config.getTokens()
+
+					return ref.exec({ tokens }, value)
+				},
 			}
 
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-			return new Proxy(result as any, {
-				get(target, prop) {
-					if (prop === 'style') {
-						const tokens = config.getTokens()
-
-						return ref.exec({ tokens }, value)
-					}
-
-					return undefined
-				},
-			})
+			return result as any
 		},
 		stylesheet: (value) =>
 			Object.assign(

@@ -1,7 +1,8 @@
-import * as React from 'react'
 import { setConfig } from '@runor/core'
 
 import { TokensContext } from './ctx'
+
+const React = require('react') as typeof import('react18')
 
 setConfig({
 	getTokens() {
