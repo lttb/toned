@@ -39,6 +39,10 @@ export function defineSystem<
 	const ref: TokenSystem<S> = {
 		system,
 		t: (value) => {
+			if (SYMBOL_REF in value) {
+				return value
+			}
+
 			const result = {
 				[SYMBOL_REF]: ref,
 				[SYMBOL_STYLE]: value,

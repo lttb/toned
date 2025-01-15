@@ -4,14 +4,14 @@ import { stylesheet, t } from '@runor/systems/base'
 
 const s = stylesheet({
 	container: { bgColor: 'default' },
-	button: {
+	button: t({
 		bgColor: 'action',
 		textColor: 'on_action',
 		paddingX: 4,
 		paddingY: 2,
 		borderRadius: 'medium',
 		borderWith: 'none',
-	},
+	}),
 	code: { textColor: 'destructive' },
 })
 
