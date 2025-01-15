@@ -1,3 +1,5 @@
+import * as React from 'react'
+import { Pressable, View, Text } from 'react-native'
 import { useState } from 'react'
 
 import { stylesheet, t } from '@runor/systems/base'
@@ -19,19 +21,15 @@ function Card() {
 	const [count, setCount] = useState(0)
 
 	return (
-		<div {...s.container}>
-			<button
-				{...s.button}
-				type="button"
-				onClick={() => setCount((count) => count + 1)}
-			>
-				count is {count}
-			</button>
+		<View {...s.container}>
+			<Pressable {...s.button} onPress={() => setCount((count) => count + 1)}>
+				<Text {...t({ textColor: 'on_action' })}>count is {count}</Text>
+			</Pressable>
 
-			<p {...t({ textColor: 'status_info' })}>
-				Edit <code {...s.code}>src/App.tsx</code> and save to test HMR
-			</p>
-		</div>
+			<Text {...t({ textColor: 'status_info' })}>
+				Edit <Text {...s.code}>src/App.tsx</Text> and save to test HMR
+			</Text>
+		</View>
 	)
 }
 

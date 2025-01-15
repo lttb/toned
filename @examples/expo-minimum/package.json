@@ -9,7 +9,7 @@
 		"web": "expo start --web"
 	},
 	"dependencies": {
-		"runor": "../../runor/",
+		"@runor/react": "../../@runor/react",
 		"@runor/themes": "../../@runor/themes",
 		"@runor/systems": "../../@runor/systems",
 		"expo": "~52.0.25",
