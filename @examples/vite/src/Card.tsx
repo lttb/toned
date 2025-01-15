@@ -11,6 +11,7 @@ const s = stylesheet({
 		paddingY: 2,
 		borderRadius: 'medium',
 		borderWith: 'none',
+		typo: 'label_medium',
 	}),
 	code: { textColor: 'destructive' },
 })

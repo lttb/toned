@@ -19,8 +19,7 @@ const tokens = {
 	colors_bg_subtle: 'var(--colors_base_100)',
 	colors_bg_muted: 'var(--colors_base_200)',
 	colors_bg_emphasized: 'var(--colors_base_300)',
-	colors_bg_overlay:
-		'color-mix(in srgb, var(--colors_base_950) 50%, transparent)',
+	colors_bg_overlay: 'color-mix(in srgb, var(--colors_base_950) 50%, transparent)',
 	colors_bg_elevated: 'var(--colors_base_50)',
 
 	colors_bg_interactive: 'var(--colors_base_100)',
@@ -128,89 +127,87 @@ const tokens = {
 	// Shadows
 	shadow_none: 'none',
 	shadow_small: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-	shadow_medium:
-		'0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-	shadow_large:
-		'0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-	shadow_xlarge:
-		'0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-	shadow_focus:
-		'0 0 0 2px var(--colors_outline_focus_center), 0 0 0 4px var(--colors_outline_focus_edge)',
+	shadow_medium: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+	shadow_large: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+	shadow_xlarge: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+	shadow_focus: '0 0 0 2px var(--colors_outline_focus_center), 0 0 0 4px var(--colors_outline_focus_edge)',
 
 	// Typography
-	typo_display_large_family: 'var(--font-sans)',
+	typo_font_sans:
+		'ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji"',
+	typo_display_large_family: 'var(--typo_font_sans)',
 	typo_display_large_size: '3.75rem',
 	typo_display_large_weight: '700',
 	typo_display_large_height: '1.2',
 	typo_display_large_spacing: '-0.02em',
 
-	typo_display_medium_family: 'var(--font-sans)',
+	typo_display_medium_family: 'var(--typo_font_sans)',
 	typo_display_medium_size: '3rem',
 	typo_display_medium_weight: '700',
 	typo_display_medium_height: '1.2',
 	typo_display_medium_spacing: '-0.02em',
 
-	typo_display_small_family: 'var(--font-sans)',
+	typo_display_small_family: 'var(--typo_font_sans)',
 	typo_display_small_size: '2.25rem',
 	typo_display_small_weight: '700',
 	typo_display_small_height: '1.2',
 	typo_display_small_spacing: '-0.02em',
 
-	typo_heading_1_family: 'var(--font-sans)',
+	typo_heading_1_family: 'var(--typo_font_sans)',
 	typo_heading_1_size: '2rem',
 	typo_heading_1_weight: '700',
 	typo_heading_1_height: '1.2',
 	typo_heading_1_spacing: '-0.02em',
 
-	typo_heading_2_family: 'var(--font-sans)',
+	typo_heading_2_family: 'var(--typo_font_sans)',
 	typo_heading_2_size: '1.5rem',
 	typo_heading_2_weight: '700',
 	typo_heading_2_height: '1.3',
 	typo_heading_2_spacing: '-0.01em',
 
-	typo_heading_3_family: 'var(--font-sans)',
+	typo_heading_3_family: 'var(--typo_font_sans)',
 	typo_heading_3_size: '1.25rem',
 	typo_heading_3_weight: '600',
 	typo_heading_3_height: '1.4',
 	typo_heading_3_spacing: '-0.01em',
 
-	typo_heading_4_family: 'var(--font-sans)',
+	typo_heading_4_family: 'var(--typo_font_sans)',
 	typo_heading_4_size: '1rem',
 	typo_heading_4_weight: '600',
 	typo_heading_4_height: '1.4',
 	typo_heading_4_spacing: '0',
 
-	typo_body_large_family: 'var(--font-sans)',
+	typo_body_large_family: 'var(--typo_font_sans)',
 	typo_body_large_size: '1.125rem',
 	typo_body_large_weight: '400',
 	typo_body_large_height: '1.5',
 	typo_body_large_spacing: '0',
 
-	typo_body_medium_family: 'var(--font-sans)',
+	typo_body_medium_family: 'var(--typo_font_sans)',
 	typo_body_medium_size: '1rem',
 	typo_body_medium_weight: '400',
 	typo_body_medium_height: '1.5',
 	typo_body_medium_spacing: '0',
 
-	typo_body_small_family: 'var(--font-sans)',
+	typo_body_small_family: 'var(--typo_font_sans)',
 	typo_body_small_size: '0.875rem',
 	typo_body_small_weight: '400',
 	typo_body_small_height: '1.5',
 	typo_body_small_spacing: '0',
 
-	typo_label_large_family: 'var(--font-sans)',
+	typo_label_large_family: 'var(--typo_font_sans)',
 	typo_label_large_size: '1.125rem',
 	typo_label_large_weight: '500',
 	typo_label_large_height: '1.4',
 	typo_label_large_spacing: '0',
 
-	typo_label_medium_family: 'var(--font-sans)',
+	typo_label_medium_family: 'var(--typo_font_sans)',
 	typo_label_medium_size: '1rem',
 	typo_label_medium_weight: '500',
 	typo_label_medium_height: '1.4',
 	typo_label_medium_spacing: '0',
 
-	typo_label_small_family: 'var(--font-sans)',
+	typo_label_small_family: 'var(--typo_font_sans)',
 	typo_label_small_size: '0.875rem',
 	typo_label_small_weight: '500',
 	typo_label_small_height: '1.4',
@@ -228,7 +225,7 @@ const tokens = {
 	typo_quote_height: '1.6',
 	typo_quote_spacing: '-0.01em',
 
-	typo_caption_family: 'var(--font-sans)',
+	typo_caption_family: 'var(--typo_font_sans)',
 	typo_caption_size: '0.75rem',
 	typo_caption_weight: '400',
 	typo_caption_height: '1.5',
