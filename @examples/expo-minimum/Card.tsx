@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Pressable, View, Text } from 'react-native'
 import { useState } from 'react'
 
-import { stylesheet, t } from '@runor/systems/base'
+import { stylesheet, t } from '@toned/systems/base'
 
 const s = stylesheet({
 	container: { bgColor: 'default' },

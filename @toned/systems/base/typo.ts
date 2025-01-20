@@ -1,4 +1,4 @@
-import { defineToken } from '@runor/core'
+import { defineToken } from '@toned/core'
 
 export const typo = defineToken({
 	values: [

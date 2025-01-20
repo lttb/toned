@@ -1,6 +1,6 @@
 // @ts-expect-error
 import * as ReactAll from 'react'
-import { setConfig } from '@runor/core'
+import { setConfig } from '@toned/core'
 
 import { TokensContext } from './ctx'
 

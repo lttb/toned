@@ -1,4 +1,4 @@
-import { defineToken, defineUnit, defineSystem } from '@runor/core'
+import { defineToken, defineUnit, defineSystem } from '@toned/core'
 
 export const bgColor = defineToken({
 	values: [

@@ -1,4 +1,4 @@
-import { defineToken } from '@runor/core'
+import { defineToken } from '@toned/core'
 
 export const borderRadius = defineToken({
 	values: ['none', 'small', 'medium', 'large', 'xlarge', 'full'],

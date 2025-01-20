@@ -1,6 +1,6 @@
 import { createContext } from 'react'
 
-import type { Tokens } from '@runor/core/types'
+import type { Tokens } from '@toned/core/types'
 
 export const defineContext = (tokens: Tokens) =>
 	new Proxy(tokens, {

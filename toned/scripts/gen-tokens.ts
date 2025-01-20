@@ -4,7 +4,7 @@ import { parseArgs } from 'node:util'
 import * as path from 'node:path'
 import assert from 'node:assert'
 
-import type { Tokens } from '@runor/core/types'
+import type { Tokens } from '@toned/core/types'
 
 const { values, positionals } = parseArgs({
 	strict: true,

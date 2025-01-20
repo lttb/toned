@@ -1,9 +1,9 @@
-import '@runor/react/config'
-import '@runor/themes/shadcn/config.css'
+import '@toned/react/config'
+import '@toned/themes/shadcn/config.css'
 import './index.css'
 
 import { Suspense, lazy } from 'react'
-import { t } from '@runor/systems/base'
+import { t } from '@toned/systems/base'
 
 // Works also with SSR as expected
 const Card = lazy(() => import('./Card'))

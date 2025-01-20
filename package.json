@@ -3,7 +3,7 @@
 	"private": true,
 	"license": "MIT",
 	"type": "module",
-	"workspaces": ["./runor/", "./@runor/*"],
+	"workspaces": ["./toned/", "./@toned/*"],
 	"devDependencies": {
 		"@biomejs/biome": "^1.9.4",
 		"@types/bun": "latest"

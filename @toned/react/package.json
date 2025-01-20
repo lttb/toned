@@ -1,5 +1,5 @@
 {
-	"name": "@runor/react",
+	"name": "@toned/react",
 	"peerDependencies": {
 		"react": "18-19"
 	},

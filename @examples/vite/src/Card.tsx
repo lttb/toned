@@ -1,6 +1,6 @@
 import { useState } from 'react'
 
-import { stylesheet, t } from '@runor/systems/base'
+import { stylesheet, t } from '@toned/systems/base'
 
 const s = stylesheet({
 	container: { bgColor: 'default' },

@@ -1,4 +1,4 @@
-import { defineSystem } from '@runor/core'
+import { defineSystem } from '@toned/core'
 
 import * as typo from './typo'
 import * as border from './border'

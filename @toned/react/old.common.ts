@@ -6,7 +6,7 @@ import {
 	type TokenStyle,
 	type TokenStyleDeclaration,
 	SYMBOL_REF,
-} from '@runor/core/types'
+} from '@toned/core/types'
 
 export const create = (
 	TokensContext: Context<Tokens>,
