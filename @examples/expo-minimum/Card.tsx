@@ -3,7 +3,7 @@ import { Pressable, View, Text } from 'react-native'
 import { useState } from 'react'
 
 import { stylesheet, t } from '@toned/systems/base'
-import {useStyles} from '@toned/react/index'
+import { useStyles } from '@toned/react/index'
 
 const styles = stylesheet({
 	container: { bgColor: 'default' },
@@ -14,31 +14,31 @@ const styles = stylesheet({
 		borderRadius: 'medium',
 		borderWith: 'none',
 
-    ':active': {
-      button: {
-        bgColor: 'destructive',
-      },
-      buttonLabel: {
-        textColor: 'on_destructive',
-      },
-    },
+		':active': {
+			button: {
+				bgColor: 'destructive',
+			},
+			buttonLabel: {
+				textColor: 'on_destructive',
+			},
+		},
 
-    ':hover': {
-      button: {
-        bgColor: 'action_secondary',
-        opacity: 0.4,
-      },
-      buttonLabel: {
-        textColor: 'on_action_secondary'
-      }
-    }
+		':hover': {
+			button: {
+				bgColor: 'action_secondary',
+				// opacity: 0.4,
+			},
+			buttonLabel: {
+				textColor: 'on_action_secondary',
+			},
+		},
 	},
-  buttonLabel: { textColor: 'on_action' },
+	buttonLabel: { textColor: 'on_action' },
 	code: { textColor: 'destructive' },
 })
 
 function Card() {
-  const s = useStyles(styles)
+	const s = useStyles(styles)
 	const [count, setCount] = useState(0)
 
 	return (

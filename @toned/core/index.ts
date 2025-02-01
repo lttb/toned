@@ -65,6 +65,9 @@ export function defineSystem<
 		stylesheet: (value) => {
 			function Base(_ref) {
 				this.ref = _ref
+
+				this.state = {}
+				this.cache = {}
 			}
 
 			const setStyles = (curr, style) => {
@@ -77,42 +80,92 @@ export function defineSystem<
 			}
 
 			Object.entries(value).map(([k, v]) => {
-				const setOn = (result, selfRef, pseudo, onIn, onOut) => {
+				const setOn = (result, self, pseudo, onIn, onOut) => {
 					if (!(pseudo in v)) return
 
 					result[onIn] = () => {
 						Object.entries(v[pseudo]).forEach(([_k, _v]) => {
-							const curr = selfRef.__refs__[_k]
+							const currentState = self.state[_k].current
+							if (currentState[pseudo]) return
 
-							setStyles(curr, {
-								// todo: it should be prev style, not original
-								...ref.exec({ tokens: selfRef.tokens }, value[_k]),
-								...ref.exec({ tokens: selfRef.tokens }, _v),
-							})
+							const prevCacheKey = JSON.stringify(currentState)
+
+							currentState[pseudo] = true
+
+							const cacheKey = JSON.stringify(currentState)
+
+							self.state[_k].cache[cacheKey] = {
+								...self.state[_k].cache[prevCacheKey],
+								...ref.exec({ tokens: self.ref.tokens }, _v),
+							}
+
+							// const currCache = self.cache[_k]
+							const currRef = self.ref.__refs__[_k]
+
+							// self.cache[_k] = {
+							// 	current: {
+							// 	},
+							// 	prev: currCache,
+							// }
+
+							setStyles(currRef, self.state[_k].cache[cacheKey])
 						})
 					}
 
 					result[onOut] = () => {
 						Object.entries(v[pseudo]).forEach(([_k, _v]) => {
-							const curr = selfRef.__refs__[_k]
+							const currentState = self.state[_k].current
+							if (!currentState[pseudo]) return
 
-							setStyles(curr, ref.exec({ tokens: selfRef.tokens }, value[_k]))
+							currentState[pseudo] = false
+							const cacheKey = JSON.stringify(currentState)
+
+							// self.cache[_k] = currCache.prev
+
+							const currRef = self.ref.__refs__[_k]
+							setStyles(currRef, self.state[_k].cache[cacheKey])
 						})
 					}
 				}
 
 				Object.defineProperty(Base.prototype, k, {
 					get() {
+						// if (!this.cache[k]) {
+						// 	this.cache[k] = {
+						// 		current: ref.exec({ tokens: this.ref.tokens }, v),
+						// 	}
+						//
+						// 	this.cache[k].prev = this.cache[k]
+						// }
+
+						if (!this.state[k]) {
+							this.state[k] = {
+								current: {
+									base: true,
+									':hover': false,
+									':focus': false,
+									':active': false,
+								},
+							}
+
+							this.state[k].cache = {
+								[JSON.stringify(this.state[k].current)]: ref.exec(
+									{ tokens: this.ref.tokens },
+									v,
+								),
+							}
+						}
+
 						const result = {
 							ref: (current) => {
 								this.ref.__refs__[k] = current
 							},
-							style: ref.exec({ tokens: this.ref.tokens }, v),
+							style: this.state[k].cache[JSON.stringify(this.state[k].current)],
 						}
 
-						setOn(result, this.ref, ':hover', 'onHoverIn', 'onHoverOut')
-						setOn(result, this.ref, ':active', 'onPressIn', 'onPressOut')
-						setOn(result, this.ref, ':focus', 'onBlur', 'onFocus')
+						setOn(result, this, ':hover', 'onHoverIn', 'onHoverOut')
+						setOn(result, this, ':active', 'onPressIn', 'onPressOut')
+						setOn(result, this, ':focus', 'onBlur', 'onFocus')
 
 						return result
 					},
