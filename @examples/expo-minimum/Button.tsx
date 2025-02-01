@@ -1,4 +1,3 @@
-import * as React from 'react'
 import { Pressable, Text } from 'react-native'
 
 import { stylesheet } from '@toned/systems/base'
@@ -41,6 +40,8 @@ const styles = stylesheet({
 
 export function Button({ label }: { label: string }) {
 	const s = useStyles(styles)
+
+	console.log(s.label)
 
 	return (
 		<Pressable role="button" {...s.container}>

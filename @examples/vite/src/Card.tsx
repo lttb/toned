@@ -4,7 +4,7 @@ import { stylesheet, t } from '@toned/systems/base'
 
 const s = stylesheet({
 	container: { bgColor: 'default' },
-	button: t({
+	button: {
 		bgColor: 'action',
 		textColor: 'on_action',
 		paddingX: 4,
@@ -12,7 +12,7 @@ const s = stylesheet({
 		borderRadius: 'medium',
 		borderWith: 'none',
 		typo: 'label_medium',
-	}),
+	},
 	code: { textColor: 'destructive' },
 })
 

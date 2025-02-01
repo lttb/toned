@@ -24,13 +24,6 @@ type TFun<S extends TokenStyleDeclaration> = <D extends TokenStyle<S>[]>(
 	...values: [...D]
 ) => Merge<D> & { [SYMBOL_REF]: TokenSystem<S> }
 
-type Pseudo<T, S extends TokenStyleDeclaration> = {
-	[key in ':hover' | ':active']?: {
-		// Using type parameter K to maintain the relationship with T
-		[K in keyof T & string]: K extends keyof T ? TokenStyle<S> : never
-	}
-}
-
 export type TokenSystem<S extends TokenStyleDeclaration> = {
 	system: S
 	stylesheet: <
@@ -42,9 +35,10 @@ export type TokenSystem<S extends TokenStyleDeclaration> = {
 				K,
 				TokenStyle<S> & {
 					// TODO: think about mix of states, like `:focus:active`
-					[key in ':hover' | ':active' | ':focus']?: Partial<
-						Record<keyof T, TokenStyle<S>>
-					>
+					[key in ':hover' | ':active' | ':focus']?: {
+						// TODO: enforce type safety (currently it's possible to use non K keys)
+						[key in K]?: TokenStyle<S>
+					}
 				}
 			>,
 	) => {

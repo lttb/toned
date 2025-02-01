@@ -1,5 +1,4 @@
-import * as React from 'react'
-import { Pressable, View, Text } from 'react-native'
+import { View, Text } from 'react-native'
 
 import { stylesheet, t } from '@toned/systems/base'
 import { useStyles } from '@toned/react/index'

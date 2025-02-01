@@ -32,6 +32,23 @@ export function defineUnit<T extends typeof Number | typeof String>(
 const SYMBOL_STYLE = Symbol()
 const SYMBOL_ACCESS = Symbol()
 
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+type AnyValue = any
+
+type Ref = AnyValue
+type RefStyle = AnyValue
+
+type PseudoState = ':hover' | ':focus' | ':active'
+
+const setStyles = (curr: Ref, style: RefStyle) => {
+	if (curr.setNativeProps) {
+		curr.setNativeProps({ style })
+	} else {
+		curr.removeAttribute('style')
+		Object.assign(curr.style, style)
+	}
+}
+
 export function defineSystem<
 	// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 	const S extends Record<string, TokenConfig<any, any>>,
@@ -63,110 +80,118 @@ export function defineSystem<
 			return result as any
 		},
 		stylesheet: (value) => {
-			function Base(_ref) {
-				this.ref = _ref
+			type State = Record<string, Record<PseudoState | 'base', boolean>>
 
-				this.state = {}
-				this.cache = {}
-			}
+			type ElementKey = string
 
-			const setStyles = (curr, style) => {
-				if (curr.setNativeProps) {
-					curr.setNativeProps({ style })
-				} else {
-					curr.removeAttribute('style')
-					Object.assign(curr.style, style)
+			type ElementStyle = AnyValue
+			type AppliedStyle = AnyValue
+
+			class Base {
+				tokens: Tokens
+				state: State
+				stateCache: Record<ElementKey, Map<number, AppliedStyle>>
+
+				refs: Record<ElementKey, Ref>
+
+				constructor({ tokens }: { tokens: Tokens }) {
+					this.tokens = tokens
+					this.state = {}
+					this.stateCache = {}
+					this.refs = {}
+				}
+
+				getStateKey(key: ElementKey) {
+					const {
+						base,
+						':hover': hover,
+						':focus': focus,
+						':active': active,
+					} = this.state[key]
+
+					return +base | (+hover << 1) | (+focus << 2) | (+active << 3)
+				}
+
+				getCurrentStyle(key: ElementKey) {
+					return this.stateCache[key].get(this.getStateKey(key))
+				}
+
+				applyTokens(value: ElementStyle): AppliedStyle {
+					return ref.exec({ tokens: this.tokens || config.getTokens() }, value)
+				}
+
+				setOn = (
+					v: ElementStyle,
+					pseudo: PseudoState,
+					onIn: string,
+					onOut: string,
+				) => {
+					if (!(pseudo in v)) return
+
+					return {
+						[onIn]: () => {
+							Object.entries(v[pseudo]).forEach(([elementKey, tokenStyle]) => {
+								if (this.state[elementKey][pseudo]) return
+
+								const currentStyle = this.getCurrentStyle(elementKey)
+
+								this.state[elementKey][pseudo] = true
+
+								const cacheKey = this.getStateKey(elementKey)
+
+								const updatedStyle = {
+									...currentStyle,
+									...this.applyTokens(tokenStyle),
+								}
+
+								this.stateCache[elementKey].set(cacheKey, updatedStyle)
+
+								setStyles(this.refs[elementKey], updatedStyle)
+							})
+						},
+
+						[onOut]: () => {
+							Object.entries(v[pseudo]).forEach(([elementKey]) => {
+								if (!this.state[elementKey][pseudo]) return
+
+								this.state[elementKey][pseudo] = false
+
+								const currentStyle = this.getCurrentStyle(elementKey)
+
+								setStyles(this.refs[elementKey], currentStyle)
+							})
+						},
+					}
 				}
 			}
 
 			Object.entries(value).map(([k, v]) => {
-				const setOn = (result, self, pseudo, onIn, onOut) => {
-					if (!(pseudo in v)) return
-
-					result[onIn] = () => {
-						Object.entries(v[pseudo]).forEach(([_k, _v]) => {
-							const currentState = self.state[_k].current
-							if (currentState[pseudo]) return
-
-							const prevCacheKey = JSON.stringify(currentState)
-
-							currentState[pseudo] = true
-
-							const cacheKey = JSON.stringify(currentState)
-
-							self.state[_k].cache[cacheKey] = {
-								...self.state[_k].cache[prevCacheKey],
-								...ref.exec({ tokens: self.ref.tokens }, _v),
-							}
-
-							// const currCache = self.cache[_k]
-							const currRef = self.ref.__refs__[_k]
-
-							// self.cache[_k] = {
-							// 	current: {
-							// 	},
-							// 	prev: currCache,
-							// }
-
-							setStyles(currRef, self.state[_k].cache[cacheKey])
-						})
-					}
-
-					result[onOut] = () => {
-						Object.entries(v[pseudo]).forEach(([_k, _v]) => {
-							const currentState = self.state[_k].current
-							if (!currentState[pseudo]) return
-
-							currentState[pseudo] = false
-							const cacheKey = JSON.stringify(currentState)
-
-							// self.cache[_k] = currCache.prev
-
-							const currRef = self.ref.__refs__[_k]
-							setStyles(currRef, self.state[_k].cache[cacheKey])
-						})
-					}
-				}
-
 				Object.defineProperty(Base.prototype, k, {
-					get() {
-						// if (!this.cache[k]) {
-						// 	this.cache[k] = {
-						// 		current: ref.exec({ tokens: this.ref.tokens }, v),
-						// 	}
-						//
-						// 	this.cache[k].prev = this.cache[k]
-						// }
-
+					get(this: Base) {
 						if (!this.state[k]) {
 							this.state[k] = {
-								current: {
-									base: true,
-									':hover': false,
-									':focus': false,
-									':active': false,
-								},
+								base: true,
+								':hover': false,
+								':focus': false,
+								':active': false,
 							}
 
-							this.state[k].cache = {
-								[JSON.stringify(this.state[k].current)]: ref.exec(
-									{ tokens: this.ref.tokens },
-									v,
-								),
-							}
+							this.stateCache[k] = new Map([
+								[this.getStateKey(k), this.applyTokens(v)],
+							])
 						}
 
 						const result = {
-							ref: (current) => {
-								this.ref.__refs__[k] = current
+							ref: (current: Ref) => {
+								this.refs[k] = current
 							},
-							style: this.state[k].cache[JSON.stringify(this.state[k].current)],
-						}
+							style: this.getCurrentStyle(k),
 
-						// TODO: support an option with a `style` function state
-						setOn(result, this, ':hover', 'onHoverIn', 'onHoverOut')
-						setOn(result, this, ':active', 'onPressIn', 'onPressOut')
-						setOn(result, this, ':focus', 'onBlur', 'onFocus')
+							// TODO: support an option with a `style` function state
+							...this.setOn(v, ':hover', 'onHoverIn', 'onHoverOut'),
+							...this.setOn(v, ':active', 'onPressIn', 'onPressOut'),
+							...this.setOn(v, ':focus', 'onBlur', 'onFocus'),
+						}
 
 						return result
 					},
@@ -181,14 +206,10 @@ export function defineSystem<
 				// ),
 				{
 					[SYMBOL_REF]: ref,
-					__value__: (_ref) => {
-						const tokens = config.getTokens()
+					__value__: (stylesheetRef: Ref) => {
+						stylesheetRef.current ??= new Base({ tokens: config.getTokens() })
 
-						_ref.current ??= { tokens, __refs__: {} }
-
-						_ref.current.base ??= new Base(_ref.current)
-
-						return _ref.current.base
+						return stylesheetRef.current
 					},
 				},
 			)
