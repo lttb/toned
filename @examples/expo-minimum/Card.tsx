@@ -16,20 +16,20 @@ const styles = stylesheet({
 
     ':active': {
       button: {
+        bgColor: 'destructive',
+      },
+      buttonLabel: {
+        textColor: 'on_destructive',
+      },
+    },
+
+    ':hover': {
+      button: {
         bgColor: 'action_secondary',
         opacity: 0.4,
       },
       buttonLabel: {
         textColor: 'on_action_secondary'
-      }
-    },
-
-    ':hover': {
-      button: {
-        bgColor: 'destructive',
-      },
-      buttonLabel: {
-        textColor: 'on_destructive'
       }
     }
 	},

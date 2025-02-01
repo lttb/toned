@@ -85,6 +85,7 @@ export function defineSystem<
 							const curr = selfRef.__refs__[_k]
 
 							setStyles(curr, {
+								// todo: it should be prev style, not original
 								...ref.exec({ tokens: selfRef.tokens }, value[_k]),
 								...ref.exec({ tokens: selfRef.tokens }, _v),
 							})
