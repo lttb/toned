@@ -3,27 +3,48 @@ import { Pressable, View, Text } from 'react-native'
 import { useState } from 'react'
 
 import { stylesheet, t } from '@toned/systems/base'
+import {useStyles} from '@toned/react/index'
 
-const s = stylesheet({
+const styles = stylesheet({
 	container: { bgColor: 'default' },
 	button: {
 		bgColor: 'action',
-		textColor: 'on_action',
 		paddingX: 4,
 		paddingY: 2,
 		borderRadius: 'medium',
 		borderWith: 'none',
+
+    ':active': {
+      button: {
+        bgColor: 'action_secondary',
+        opacity: 0.4,
+      },
+      buttonLabel: {
+        textColor: 'on_action_secondary'
+      }
+    },
+
+    ':hover': {
+      button: {
+        bgColor: 'destructive',
+      },
+      buttonLabel: {
+        textColor: 'on_destructive'
+      }
+    }
 	},
+  buttonLabel: { textColor: 'on_action' },
 	code: { textColor: 'destructive' },
 })
 
 function Card() {
+  const s = useStyles(styles)
 	const [count, setCount] = useState(0)
 
 	return (
 		<View {...s.container}>
 			<Pressable {...s.button} onPress={() => setCount((count) => count + 1)}>
-				<Text {...t({ textColor: 'on_action' })}>count is {count}</Text>
+				<Text {...s.buttonLabel}>count is {count}</Text>
 			</Pressable>
 
 			<Text {...t({ textColor: 'status_info' })}>

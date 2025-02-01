@@ -103,6 +103,15 @@ export const gap = defineToken({
 	},
 })
 
+export const opacity = defineToken({
+	values: [new Number()],
+	resolve: (value) => {
+		return {
+			opacity: value,
+		}
+	},
+})
+
 export const justifyContent = defineToken({
 	values: [
 		'normal',

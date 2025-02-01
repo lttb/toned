@@ -1,4 +1,6 @@
 import '@toned/react/config'
+import '@toned/themes/shadcn/config.css'
+
 import { TokensContext, defineContext } from '@toned/react/ctx'
 import shadcn from '@toned/themes/shadcn/config'
 

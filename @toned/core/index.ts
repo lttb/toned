@@ -62,18 +62,89 @@ export function defineSystem<
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 			return result as any
 		},
-		stylesheet: (value) =>
-			Object.assign(
+		stylesheet: (value) => {
+			function Base(_ref) {
+				this.ref = _ref
+			}
+
+			const setStyles = (curr, style) => {
+				if (curr.setNativeProps) {
+					curr.setNativeProps({ style })
+				} else {
+					curr.removeAttribute('style')
+					Object.assign(curr.style, style)
+				}
+			}
+
+			Object.entries(value).map(([k, v]) => {
+				const setOn = (result, selfRef, pseudo, onIn, onOut) => {
+					if (!(pseudo in v)) return
+
+					result[onIn] = () => {
+						Object.entries(v[pseudo]).forEach(([_k, _v]) => {
+							const curr = selfRef.__refs__[_k]
+
+							setStyles(curr, {
+								...ref.exec({ tokens: selfRef.tokens }, value[_k]),
+								...ref.exec({ tokens: selfRef.tokens }, _v),
+							})
+						})
+					}
+
+					result[onOut] = () => {
+						Object.entries(v[pseudo]).forEach(([_k, _v]) => {
+							const curr = selfRef.__refs__[_k]
+
+							setStyles(curr, ref.exec({ tokens: selfRef.tokens }, value[_k]))
+						})
+					}
+				}
+
+				Object.defineProperty(Base.prototype, k, {
+					get() {
+						const result = {
+							ref: (current) => {
+								this.ref.__refs__[k] = current
+							},
+							style: ref.exec({ tokens: this.ref.tokens }, v),
+						}
+
+						setOn(result, this.ref, ':hover', 'onHoverIn', 'onHoverOut')
+						setOn(result, this.ref, ':active', 'onPressIn', 'onPressOut')
+						setOn(result, this.ref, ':focus', 'onBlur', 'onFocus')
+
+						return result
+					},
+				})
+			})
+
+			return Object.assign(
 				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 				{} as any,
-				Object.fromEntries(
-					Object.entries(value).map(([k, v]) => [k, ref.t(v)]),
-				),
-				{ [SYMBOL_REF]: ref },
-			),
+				// Object.fromEntries(
+				// 	Object.entries(value).map(([k, v]) => [k, ref.t(v)]),
+				// ),
+				{
+					[SYMBOL_REF]: ref,
+					__value__: (_ref) => {
+						const tokens = config.getTokens()
+
+						_ref.current ??= { tokens, __refs__: {} }
+
+						_ref.current.base ??= new Base(_ref.current)
+
+						return _ref.current.base
+					},
+				},
+			)
+		},
 		exec: (config, tokenStyle) => {
 			return Object.entries(tokenStyle).reduce<object>((acc, [k, v]) => {
 				if (!v) return acc
+
+				if (k[0] === ':') {
+					return acc
+				}
 
 				Object.assign(acc, system[k].resolve(v, config.tokens))
 
@@ -84,3 +155,5 @@ export function defineSystem<
 
 	return ref
 }
+
+const weak = new WeakMap()

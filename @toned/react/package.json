@@ -1,5 +1,6 @@
 {
 	"name": "@toned/react",
+	"main": "index.ts",
 	"peerDependencies": {
 		"react": "18-19"
 	},
