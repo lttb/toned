@@ -41,8 +41,6 @@ const styles = stylesheet({
 export function Button({ label }: { label: string }) {
 	const s = useStyles(styles)
 
-	console.log(s.label)
-
 	return (
 		<Pressable role="button" {...s.container}>
 			<Text {...s.label}>{label}</Text>

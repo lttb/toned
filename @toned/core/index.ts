@@ -3,6 +3,7 @@ import {
 	type TokenConfig,
 	type TokenSystem,
 	SYMBOL_REF,
+	SYMBOL_INIT,
 } from './types'
 
 const config = {
@@ -206,7 +207,7 @@ export function defineSystem<
 				// ),
 				{
 					[SYMBOL_REF]: ref,
-					__value__: (stylesheetRef: Ref) => {
+					[SYMBOL_INIT]: (stylesheetRef: Ref) => {
 						stylesheetRef.current ??= new Base({ tokens: config.getTokens() })
 
 						return stylesheetRef.current
@@ -237,5 +238,3 @@ export function defineSystem<
 
 	return ref
 }
-
-const weak = new WeakMap()

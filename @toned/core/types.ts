@@ -1,4 +1,5 @@
 export const SYMBOL_REF: unique symbol = Symbol()
+export const SYMBOL_INIT: unique symbol = Symbol()
 
 export type Tokens = Record<string, string>
 
@@ -22,7 +23,25 @@ type Merge<D extends any[]> = D extends [infer First, ...infer Rest]
 
 type TFun<S extends TokenStyleDeclaration> = <D extends TokenStyle<S>[]>(
 	...values: [...D]
-) => Merge<D> & { [SYMBOL_REF]: TokenSystem<S> }
+) => Merge<D> & {
+	[SYMBOL_REF]: TokenSystem<S>
+}
+
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+type Ref = { current?: null | any }
+
+export type Stylesheet<
+	S extends TokenStyleDeclaration,
+	T extends Record<string, TokenStyle<S>>,
+> = {
+	[key in keyof T]: ReturnType<TFun<S>>
+} & {
+	// TODO: hide it from the public interface
+	[SYMBOL_REF]: TokenSystem<S>
+	[SYMBOL_INIT]: (ref: Ref) => {
+		[key in keyof T]: ReturnType<TFun<S>>
+	}
+}
 
 export type TokenSystem<S extends TokenStyleDeclaration> = {
 	system: S
@@ -41,12 +60,7 @@ export type TokenSystem<S extends TokenStyleDeclaration> = {
 					}
 				}
 			>,
-	) => {
-		[key in keyof T]: ReturnType<TFun<S>>
-	} & {
-		// TODO: hide it from the public interface
-		[SYMBOL_REF]: TokenSystem<S>
-	}
+	) => Stylesheet<S, T>
 	t: TFun<S>
 	exec: (
 		config: {
