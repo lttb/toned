@@ -40,7 +40,8 @@ export type TokenSystem<S extends TokenStyleDeclaration> = {
 		style: T &
 			Record<
 				K,
-				{
+				TokenStyle<S> & {
+					// TODO: think about mix of states, like `:focus:active`
 					[key in ':hover' | ':active' | ':focus']?: Partial<
 						Record<keyof T, TokenStyle<S>>
 					>
@@ -48,7 +49,10 @@ export type TokenSystem<S extends TokenStyleDeclaration> = {
 			>,
 	) => {
 		[key in keyof T]: ReturnType<TFun<S>>
-	} & { [SYMBOL_REF]: TokenSystem<S> }
+	} & {
+		// TODO: hide it from the public interface
+		[SYMBOL_REF]: TokenSystem<S>
+	}
 	t: TFun<S>
 	exec: (
 		config: {

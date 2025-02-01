@@ -163,6 +163,7 @@ export function defineSystem<
 							style: this.state[k].cache[JSON.stringify(this.state[k].current)],
 						}
 
+						// TODO: support an option with a `style` function state
 						setOn(result, this, ':hover', 'onHoverIn', 'onHoverOut')
 						setOn(result, this, ':active', 'onPressIn', 'onPressOut')
 						setOn(result, this, ':focus', 'onBlur', 'onFocus')

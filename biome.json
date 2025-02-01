@@ -24,6 +24,9 @@
 			"complexity": {
 				"noForEach": "off"
 			},
+			"a11y": {
+				"useSemanticElements": "off"
+			},
 			"style": {
 				"noUnusedTemplateLiteral": {
 					"fix": "safe",
