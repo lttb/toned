@@ -200,6 +200,12 @@ export function defineSystem<
 					return acc
 				}
 
+				if (k === 'style') {
+					Object.assign(acc, v)
+
+					return acc
+				}
+
 				Object.assign(acc, system[k].resolve(v, config.tokens))
 
 				return acc

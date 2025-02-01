@@ -33,18 +33,23 @@ const styles = stylesheet({
 			},
 		},
 	},
-	buttonLabel: { textColor: 'on_action' },
+	buttonLabel: {
+		textColor: 'on_action',
+		style: {
+			pointerEvents: 'none',
+			userSelect: 'none',
+		},
+	},
 	code: { textColor: 'destructive' },
 })
 
 function Card() {
 	const s = useStyles(styles)
-	const [count, setCount] = useState(0)
 
 	return (
 		<View {...s.container}>
-			<Pressable {...s.button} onPress={() => setCount((count) => count + 1)}>
-				<Text {...s.buttonLabel}>count is {count}</Text>
+			<Pressable {...s.button}>
+				<Text {...s.buttonLabel}>Render {Math.random()}</Text>
 			</Pressable>
 
 			<Text {...t({ textColor: 'status_info' })}>
