@@ -1,154 +1,209 @@
-type ModValueObject = { [value: string]: number }
-
 import { ModMatcher } from './ModMatcher'
+
+type ModValueObject = { [value: string]: number }
 
 interface TrieNode<Style> {
 	style?: Style
 	specificity?: number
-	children: Map<string, Map<string | number | boolean, TrieNode<Style>>>
+	conditions: Map<string, string | number | boolean>
+	children: TrieNode<Style>[]
+}
+
+type StyleObject = Record<string, unknown>
+type NestedStyle<Style> = Style & {
+	[key: string]: Style | NestedStyle<Style> | unknown
 }
 
 export class StyleMatcher<
 	Schema extends Record<string, ReadonlyArray<string | number | boolean>>,
-	Style extends Record<string, unknown>,
+	Style extends StyleObject,
 > {
-	private root: TrieNode<Style>
-	private modMatcher: ModMatcher<Schema>
-	private sortedKeys: (keyof Schema)[]
+	private patterns: Array<{
+		conditions: Map<string, string | number | boolean>
+		style: Style
+		specificity: number
+	}> = []
 
-	constructor(schema: Schema, styles: Record<string, Style>) {
-		this.modMatcher = new ModMatcher(schema)
-		this.root = { children: new Map() }
+	constructor(schema: Schema, styles: Record<string, NestedStyle<Style>>) {
+		const flattened = this.flattenStyles(styles)
+		this.patterns = flattened.map(({ path, style }) => ({
+			conditions: new Map(path),
+			style,
+			specificity: path.length,
+		}))
 
-		// Pre-sort keys by their bit position for optimal traversal
-		this.sortedKeys = Object.keys(schema) as (keyof Schema)[]
-		this.sortedKeys.sort((a, b) => {
-			const posA = this.modMatcher.keyOperations.find(
-				(op) => op.modName === a,
-			)!.position
+		// Sort by specificity for consistent matching
+		this.patterns.sort((a, b) => a.specificity - b.specificity)
 
-			const posB = this.modMatcher.keyOperations.find(
-				(op) => op.modName === b,
-			)!.position
-			return posA - posB
-		})
-
-		// Build the trie
-		this.buildTrie(styles)
+		console.log('Patterns:', this.patterns)
 	}
 
-	private buildTrie(styles: Record<string, Style>) {
-		for (const [pattern, style] of Object.entries(styles)) {
-			const conditions = new Map<string, string | number | boolean>()
+	private parsePattern(
+		pattern: string,
+	): Map<string, string | number | boolean> {
+		const conditions = new Map<string, string | number | boolean>()
+		const matches = pattern.match(/\[(.*?)=(.*?)\]/g)
+		if (matches) {
+			matches.forEach((match) => {
+				const [key, value] = match.slice(1, -1).split('=')
+				conditions.set(key, value)
+			})
+		}
+		return conditions
+	}
 
-			// Parse pattern like [size=m][alignment=icon-only]
-			const matches = pattern.match(/\[(.*?)=(.*?)\]/g)
-			if (matches) {
-				matches.forEach((match) => {
-					const [key, value] = match.slice(1, -1).split('=')
-					conditions.set(key, value)
-				})
-			}
+	private flattenStyles(
+		styles: Record<string, NestedStyle<Style>>,
+		parentPath: Array<[string, string | number | boolean]> = [],
+	): Array<{
+		path: Array<[string, string | number | boolean]>
+		style: Style
+	}> {
+		const result: Array<{
+			path: Array<[string, string | number | boolean]>
+			style: Style
+		}> = []
 
-			// Insert into trie
-			let current = this.root
-			const specificity = conditions.size
+		for (const [pattern, value] of Object.entries(styles)) {
+			if (pattern.startsWith('[')) {
+				const conditions = this.parsePattern(pattern)
+				const currentPath = [...parentPath]
 
-			for (const key of this.sortedKeys) {
-				const value = conditions.get(key as string)
-				if (value !== undefined) {
-					if (!current.children.has(key as string)) {
-						current.children.set(key as string, new Map())
-					}
-					const keyMap = current.children.get(key as string)!
-
-					if (!keyMap.has(value)) {
-						keyMap.set(value, { children: new Map() })
-					}
-					current = keyMap.get(value)!
+				for (const [key, val] of conditions) {
+					currentPath.push([key, val])
 				}
-			}
 
-			// Store style and specificity at leaf
+				const styleProps: Record<string, unknown> = {}
+				const nestedPatterns: Record<string, unknown> = {}
+
+				Object.entries(value as Record<string, unknown>).forEach(
+					([key, val]) => {
+						if (key.startsWith('[')) {
+							nestedPatterns[key] = val
+						} else {
+							styleProps[key] = val
+						}
+					},
+				)
+
+				if (Object.keys(styleProps).length > 0) {
+					result.push({
+						path: currentPath,
+						style: styleProps as Style,
+					})
+				}
+
+				result.push(...this.flattenStyles(nestedPatterns, currentPath))
+			} else {
+				const regularStyles: Record<string, unknown> = {}
+				const nestedPatterns: Record<string, unknown> = {}
+
+				Object.entries(value as Record<string, unknown>).forEach(
+					([key, val]) => {
+						if (key.startsWith('[')) {
+							nestedPatterns[key] = val
+						} else {
+							regularStyles[key] = val
+						}
+					},
+				)
+
+				if (Object.keys(regularStyles).length > 0) {
+					result.push({
+						path: parentPath,
+						style: regularStyles as Style,
+					})
+				}
+
+				result.push(...this.flattenStyles(nestedPatterns, parentPath))
+			}
+		}
+
+		return result
+	}
+
+	private deepMerge(
+		target: Record<string, unknown>,
+		source: Record<string, unknown>,
+	): Record<string, unknown> {
+		const result = { ...target }
+
+		for (const key in source) {
 			if (
-				!current.style ||
-				(current.specificity && current.specificity < specificity)
+				source[key] &&
+				typeof source[key] === 'object' &&
+				!Array.isArray(source[key])
 			) {
-				current.style = style
-				current.specificity = specificity
-			}
-		}
-	}
-
-	match(
-		mods: { [key in keyof Schema]: Schema[key][number] },
-	): Style | undefined {
-		let current = this.root
-		let bestMatch: Style | undefined
-		let bestSpecificity = -1
-
-		// Traverse trie based on sorted keys
-		for (const key of this.sortedKeys) {
-			const value = mods[key]
-			const keyMap = current.children.get(key as string)
-
-			// Try exact value match
-			if (keyMap?.has(value)) {
-				current = keyMap.get(value)!
 				if (
-					current.style &&
-					(!bestMatch || current.specificity! > bestSpecificity)
+					result[key] &&
+					typeof result[key] === 'object' &&
+					!Array.isArray(result[key])
 				) {
-					bestMatch = current.style
-					bestSpecificity = current.specificity!
+					result[key] = this.deepMerge(
+						result[key] as Record<string, unknown>,
+						source[key] as Record<string, unknown>,
+					)
+				} else {
+					result[key] = { ...source[key] }
 				}
-			} else if (!keyMap) {
-				// No match at this level, but we keep the best match found so far
-				continue
+			} else {
+				result[key] = source[key]
 			}
 		}
 
-		return bestMatch
+		return result
 	}
 
-	/**
-	 * Creates an optimized matching function
-	 */
-	createOptimizedMatchFn() {
-		const root = this.root
-		const sortedKeys = this.sortedKeys
-
-		return (
-			mods: { [key in keyof Schema]: Schema[key][number] },
-		): Style | undefined => {
-			let current = root
-			let bestMatch: Style | undefined
-			let bestSpecificity = -1
-
-			for (const key of sortedKeys) {
-				const value = mods[key]
-				const keyMap = current.children.get(key as string)
-
-				if (keyMap?.has(value)) {
-					current = keyMap.get(value)!
-					if (
-						current.style &&
-						(!bestMatch || current.specificity! > bestSpecificity)
-					) {
-						bestMatch = current.style
-						bestSpecificity = current.specificity!
-					}
-				} else if (!keyMap) {
-					continue
-				}
+	private patternMatches(
+		conditions: Map<string, string | number | boolean>,
+		mods: { [key in keyof Schema]: Schema[key][number] },
+	): boolean {
+		// We just need to check if each of our conditions matches the mods
+		// NOT if mods matches all our conditions
+		for (const [key, value] of conditions) {
+			if (String(mods[key]) !== String(value)) {
+				return false
 			}
+		}
+		return true
+	}
 
-			return bestMatch
+	match(mods: { [key in keyof Schema]: Schema[key][number] }): Style {
+		console.log('Matching mods:', mods)
+
+		const matches = this.patterns
+			.filter((pattern) => this.patternMatches(pattern.conditions, mods))
+			.sort((a, b) => a.specificity - b.specificity)
+
+		console.log('Found matches:', matches)
+
+		return matches.reduce(
+			(acc, { style }) => this.deepMerge(acc, style),
+			{} as Style,
+		) as Style
+	}
+
+	createOptimizedMatchFn() {
+		const patterns = this.patterns
+		const deepMerge = this.deepMerge.bind(this)
+		const patternMatches = this.patternMatches.bind(this)
+
+		return function (
+			mods: { [key in keyof Schema]: Schema[key][number] },
+		): Style {
+			const matches = patterns
+				.filter((pattern) => patternMatches(pattern.conditions, mods))
+				.sort((a, b) => a.specificity - b.specificity)
+
+			return matches.reduce(
+				(acc, { style }) => deepMerge(acc, style),
+				{} as Style,
+			) as Style
 		}
 	}
 }
 
-// Usage example:
+// Usage example
 const matcher = new StyleMatcher(
 	{
 		size: ['s', 'm', 'l'],
@@ -162,35 +217,36 @@ const matcher = new StyleMatcher(
 			container: {
 				paddingX: 30,
 				paddingY: 30,
+				background: 'blue',
 			},
-		},
-		'[size=m][alignment=icon-only]': {
-			container: {
-				paddingX: 50,
-				paddingY: 30,
+
+			'[alignment=icon-only]': {
+				container: {
+					paddingX: 50,
+					color: 'white',
+				},
+			},
+
+			'[disabled=true]': {
+				container: {
+					opacity: 0.5,
+				},
+				'[variant=secondary]': {
+					container: {
+						background: 'gray',
+					},
+				},
 			},
 		},
 	},
 )
 
-// Regular usage
 console.log(
+	'test',
 	matcher.match({
 		size: 'm',
-		variant: 'primary',
-		disabled: false,
-		theme: 'dark',
-		alignment: 'default',
-	}),
-)
-
-// Optimized usage
-const optimizedMatch = matcher.createOptimizedMatchFn()
-console.log(
-	optimizedMatch({
-		size: 'm',
-		variant: 'primary',
-		disabled: false,
+		variant: 'secondary',
+		disabled: true,
 		theme: 'dark',
 		alignment: 'icon-only',
 	}),
