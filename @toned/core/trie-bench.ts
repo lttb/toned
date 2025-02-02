@@ -100,7 +100,7 @@ console.log('Initializing benchmarks...')
 const configs = [
 	{ depth: 2, branching: 2, name: 'Small' },
 	{ depth: 3, branching: 3, name: 'Medium' },
-	{ depth: 15, branching: 4, name: 'Large' },
+	{ depth: 8, branching: 4, name: 'Large' },
 ]
 
 for (const { depth, branching, name } of configs) {

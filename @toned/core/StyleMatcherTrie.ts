@@ -141,12 +141,16 @@ export class StyleMatcher {
 	match(props: Props): StyleRules {
 		const resultsByLevel = new Map<number, StyleRules[]>()
 
+		let maxLevel = 0
+
 		const traverse = (node: TrieNode, level: number): void => {
 			// Apply rules by direct assignment - later matches override earlier ones
 			if (node.rules) {
 				if (!resultsByLevel.has(level)) {
 					resultsByLevel.set(level, [])
 				}
+
+				maxLevel = Math.max(maxLevel, level)
 				// biome-ignore lint/style/noNonNullAssertion: <explanation>
 				resultsByLevel.get(level)!.push(node.rules)
 			}
@@ -175,16 +179,16 @@ export class StyleMatcher {
 
 		const result: StyleRules = {}
 
-		this.modifierOrder.forEach((_, level) => {
-			const currStyles = resultsByLevel.get(level)
-			if (!currStyles) return
+		for (let l = 0; l <= maxLevel; l++) {
+			const currStyles = resultsByLevel.get(l)
+			if (!currStyles) continue
 			currStyles.forEach((styles) => {
 				for (const component in styles) {
 					result[component] ??= {}
 					Object.assign(result[component], styles[component])
 				}
 			})
-		})
+		}
 
 		return result
 	}
