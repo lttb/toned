@@ -1,5 +1,3 @@
-import { Pressable, Text } from 'react-native'
-
 import { stylesheet } from '@toned/systems/base'
 import { useStyles } from '@toned/react/index'
 
@@ -10,6 +8,10 @@ const styles = stylesheet({
 		paddingY: 2,
 		borderRadius: 'medium',
 		borderWith: 'none',
+
+		style: {
+			cursor: 'pointer',
+		},
 
 		':active': {
 			container: {
@@ -65,8 +67,8 @@ export function Button({ label }: { label: string }) {
 	})
 
 	return (
-		<Pressable role="button" {...s.container}>
-			<Text {...s.label}>{label}</Text>
-		</Pressable>
+		<button type="button" {...s.container}>
+			<span {...s.label}>{label}</span>
+		</button>
 	)
 }

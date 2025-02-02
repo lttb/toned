@@ -1,12 +1,14 @@
 import {
+	SYMBOL_REF,
+	SYMBOL_INIT,
 	type Tokens,
 	type TokenConfig,
 	type TokenSystem,
-	SYMBOL_REF,
-	SYMBOL_INIT,
+	type ModType,
+	type ModStyle,
+	type TokenStyle,
+	type StyleWithPseudo,
 } from './types'
-
-import { ModMatcher } from './ModMatcher'
 
 const config = {
 	getTokens: (): Tokens => ({}),
@@ -82,7 +84,9 @@ export function defineSystem<
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 			return result as any
 		},
-		stylesheet: (value) => {
+		stylesheet: <T extends Record<string, TokenStyle<S>>>(
+			value: StyleWithPseudo<S, T>,
+		) => {
 			type State = Record<string, Record<PseudoState | 'base', boolean>>
 
 			type ElementKey = string
@@ -184,16 +188,27 @@ export function defineSystem<
 							])
 						}
 
+						const isBrowser = typeof document !== 'undefined'
+
 						const result = {
 							ref: (current: Ref) => {
 								this.refs[k] = current
 							},
 							style: this.getCurrentStyle(k),
 
-							// TODO: support an option with a `style` function state
-							...this.setOn(v, ':hover', 'onHoverIn', 'onHoverOut'),
-							...this.setOn(v, ':active', 'onPressIn', 'onPressOut'),
-							...this.setOn(v, ':focus', 'onBlur', 'onFocus'),
+							// TODO: move it to config
+							...(isBrowser
+								? {
+										...this.setOn(v, ':hover', 'onMouseOver', 'onMouseOut'),
+										...this.setOn(v, ':active', 'onMouseDown', 'onMouseUp'),
+										...this.setOn(v, ':focus', 'onBlur', 'onFocus'),
+									}
+								: {
+										// TODO: support an option with a `style` function state
+										...this.setOn(v, ':hover', 'onHoverIn', 'onHoverOut'),
+										...this.setOn(v, ':active', 'onPressIn', 'onPressOut'),
+										...this.setOn(v, ':focus', 'onBlur', 'onFocus'),
+									}),
 						}
 
 						return result
@@ -201,27 +216,20 @@ export function defineSystem<
 				})
 			})
 
-			const result = Object.assign(
-				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
-				{} as any,
-				// Object.fromEntries(
-				// 	Object.entries(value).map(([k, v]) => [k, ref.t(v)]),
-				// ),
-				{
+			const withMods = <Mods extends ModType>(mods?: ModStyle<S, T, Mods>) => {
+				return Object.assign({
 					[SYMBOL_REF]: ref,
-					[SYMBOL_INIT]: (stylesheetRef: Ref) => {
-						stylesheetRef.current ??= new Base({ tokens: config.getTokens() })
-
-						return stylesheetRef.current
+					[SYMBOL_INIT]: () => {
+						return new Base({ tokens: config.getTokens() })
 					},
 
-					with() {
-						return result
+					with<Mods extends ModType>(mods: ModStyle<S, T, Mods>) {
+						return withMods(mods)
 					},
-				},
-			)
+				})
+			}
 
-			return result
+			return withMods()
 		},
 		exec: (config, tokenStyle) => {
 			return Object.entries(tokenStyle).reduce<object>((acc, [k, v]) => {

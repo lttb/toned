@@ -100,9 +100,8 @@ export class StyleMatcher<Schema extends NestedStyleRules> {
 	}
 
 	private parseSelector(selector: string): [string, string] {
-		const match = selector.match(/\[([^=]+)=([^\]]+)\]/)
-		if (!match) throw new Error(`Invalid selector: ${selector}`)
-		return [match[1], match[2]]
+		const [name, value] = selector.slice(1, -1).split('=')
+		return [name, value]
 	}
 
 	compile(config: Config) {
