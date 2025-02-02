@@ -161,9 +161,11 @@ export function defineSystem<
 				}
 
 				getCurrentStyle(key: ElementKey) {
-					// return this.stateCache[key].get(this.getStateKey(key))
-
 					return this.applyTokens(this.mergedStyle[key])
+				}
+
+				getBaseStyle(key: ElementKey) {
+					return this.stateCache[key].get(this.getStateKey(key))
 				}
 
 				getStateStyle(key: ElementKey) {
@@ -186,8 +188,10 @@ export function defineSystem<
 
 					const stateStyle = this.matcher.match(modsState)
 
+					this.mergedStyle = this.mergeStyles(value, stateStyle)
+
 					for (const elementKey in stateStyle) {
-						const currentStyle = this.getCurrentStyle(elementKey)
+						const currentStyle = this.getBaseStyle(elementKey)
 
 						const updatedStyle = {
 							...currentStyle,

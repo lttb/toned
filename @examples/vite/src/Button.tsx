@@ -1,5 +1,6 @@
 import { stylesheet } from '@toned/systems/base'
 import { useStyles } from '@toned/react/index'
+import { useState } from 'react'
 
 const styles = stylesheet({
 	container: {
@@ -54,6 +55,7 @@ const styles = stylesheet({
 		container: {
 			paddingX: 4,
 			paddingY: 2,
+			opacity: 0.5,
 		},
 
 		'[alignment=icon-only]': {
@@ -80,13 +82,15 @@ const styles = stylesheet({
 })
 
 export function Button({ label }: { label: string }) {
+	const [size, setSize] = useState<'m' | 's'>('m')
+
 	const s = useStyles(styles, {
-		size: 'm',
+		size: size,
 		variant: 'accent',
 	})
 
 	return (
-		<button type="button" {...s.container}>
+		<button type="button" {...s.container} onClick={() => setSize('s')}>
 			<span {...s.label}>{label}</span>
 		</button>
 	)
