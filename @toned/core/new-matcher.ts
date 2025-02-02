@@ -24,7 +24,7 @@ export class StyleMatcher {
 		this.ops = this.createOperations(attrs)
 		this.compileRules(config)
 
-		console.log('size', this.rules)
+		console.log('size', this.rules.length)
 	}
 
 	match(props: Record<string, any>): Record<string, any> {

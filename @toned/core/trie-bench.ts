@@ -1,6 +1,6 @@
-import { StyleMatcher as StyleMatcherTrie } from './StyleMatcherTrie'
+import {StyleMatcher as StyleMatcherTrie} from './StyleMatcher'
 
-import { StyleMatcher as StyleMatcherOriginal } from './new-matcher'
+import {StyleMatcher as StyleMatcherOriginal} from './new-matcher'
 
 // Trie implementation (previous code)...
 
@@ -59,12 +59,7 @@ function generateProps(count: number) {
 	return result
 }
 
-function runBenchmark(
-	name: string,
-	matcher: any,
-	props: Record<string, any>[],
-	iterations: number = 10,
-) {
+function runBenchmark(name: string, matcher: any, props: Record<string, any>[], iterations = 10) {
 	// Warm up
 	for (let i = 0; i < 100; i++) {
 		for (const prop of props) {
@@ -91,22 +86,20 @@ function runBenchmark(
 	console.log(`Total time: ${total.toFixed(2)}ms`)
 	console.log(`Time per match: ${perMatch.toFixed(3)}ms`)
 
-	return { total, perMatch }
+	return {total, perMatch}
 }
 
 // Run benchmarks with different configurations
 console.log('Initializing benchmarks...')
 
 const configs = [
-	{ depth: 2, branching: 2, name: 'Small' },
-	{ depth: 3, branching: 3, name: 'Medium' },
-	{ depth: 8, branching: 4, name: 'Large' },
+	{depth: 2, branching: 2, name: 'Small'},
+	{depth: 3, branching: 3, name: 'Medium'},
+	{depth: 8, branching: 4, name: 'Large'},
 ]
 
-for (const { depth, branching, name } of configs) {
-	console.log(
-		`\n=== ${name} Configuration (depth: ${depth}, branching: ${branching}) ===`,
-	)
+for (const {depth, branching, name} of configs) {
+	console.log(`\n=== ${name} Configuration (depth: ${depth}, branching: ${branching}) ===`)
 	const config = generateConfig(depth, branching)
 	const props = generateProps(10)
 
@@ -114,11 +107,7 @@ for (const { depth, branching, name } of configs) {
 	const trie = new StyleMatcherTrie(config)
 
 	const trieResults = runBenchmark('Trie Implementation', trie, props)
-	const originalResults = runBenchmark(
-		'Original Implementation',
-		original,
-		props,
-	)
+	const originalResults = runBenchmark('Original Implementation', original, props)
 
 	// const improvement =
 	// 	((originalResults.total - trieResults.total) / trieResults.total) * 100

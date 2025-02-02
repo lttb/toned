@@ -41,7 +41,13 @@ const matcher = new StyleMatcher({
 		container: {
 			paddingX: 30,
 			paddingY: 30,
-			background: 'red',
+			background: 'yellow',
+		},
+	},
+
+	'[theme=light]': {
+		container: {
+			color: 'black',
 		},
 	},
 })
@@ -63,6 +69,16 @@ console.log(
 		variant: 'secondary',
 		disabled: true,
 		theme: 'dark',
+		alignment: 'icon-only',
+	}),
+)
+
+console.log(
+	matcher.match({
+		size: 's',
+		variant: 'secondary',
+		disabled: true,
+		theme: 'light',
 		alignment: 'icon-only',
 	}),
 )
