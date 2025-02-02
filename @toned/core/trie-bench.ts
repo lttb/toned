@@ -63,7 +63,7 @@ function runBenchmark(
 	name: string,
 	matcher: any,
 	props: Record<string, any>[],
-	iterations: number = 1000,
+	iterations: number = 10,
 ) {
 	// Warm up
 	for (let i = 0; i < 100; i++) {
@@ -114,11 +114,11 @@ for (const { depth, branching, name } of configs) {
 	const trie = new StyleMatcherTrie(config)
 
 	const trieResults = runBenchmark('Trie Implementation', trie, props)
-	// const originalResults = runBenchmark(
-	// 	'Original Implementation',
-	// 	original,
-	// 	props,
-	// )
+	const originalResults = runBenchmark(
+		'Original Implementation',
+		original,
+		props,
+	)
 
 	// const improvement =
 	// 	((originalResults.total - trieResults.total) / trieResults.total) * 100

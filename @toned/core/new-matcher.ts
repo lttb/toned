@@ -23,6 +23,8 @@ export class StyleMatcher {
 		const attrs = this.extractSelectors(config)
 		this.ops = this.createOperations(attrs)
 		this.compileRules(config)
+
+		console.log('size', this.rules)
 	}
 
 	match(props: Record<string, any>): Record<string, any> {

@@ -4,8 +4,7 @@ type StyleRules = Record<string, StyleObject>
 
 interface NestedStyleRules {
 	[selector: string]: {
-		[component: string]: StyleObject
-		[nestedSelector: string]: any
+		[component: string]: StyleObject | any
 	}
 }
 
@@ -37,6 +36,8 @@ export class StyleMatcher {
 
 		// Then build trie with rules in correct order
 		this.buildTrie(flattenedRules)
+
+		// console.log('trie size', flattenedRules)
 
 		// console.log(JSON.stringify(this.root, null, 2))
 	}
