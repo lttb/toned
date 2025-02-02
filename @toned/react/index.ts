@@ -38,7 +38,11 @@ export function useStyles<
 	const ref = useRef()
 
 	if (ref.current?.stylesheet !== stylesheet) {
-		ref.current = { stylesheet, result: stylesheet[SYMBOL_INIT]() }
+		ref.current = { stylesheet, state, result: stylesheet[SYMBOL_INIT](state) }
+	}
+
+	if (ref.current.state !== state) {
+		ref.current.result.applyState(state)
 	}
 
 	return ref.current.result

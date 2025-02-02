@@ -152,9 +152,8 @@ export class StyleMatcher<Schema extends NestedStyleRules> {
 		return mask
 	}
 
-	match(props: Partial<Schema>) {
-		// Convert input props to bits
-		let inputBits = 0
+	getPropsBits(props: Partial<Schema>) {
+		let bits = 0
 
 		this.bits.forEach((x) => {
 			const prop = x[0]
@@ -162,14 +161,20 @@ export class StyleMatcher<Schema extends NestedStyleRules> {
 
 			if (!value) return
 
-			inputBits |= x[1][value]
+			bits |= x[1][value]
 		})
+
+		return bits
+	}
+
+	match(props: Partial<Schema>) {
+		const propsBits = this.getPropsBits(props)
 
 		// Match against compiled rules
 		const result: Record<string, any> = {}
 
 		for (const compiledRule of this.compiledRules) {
-			if ((inputBits & compiledRule.bitMask) !== compiledRule.bitValue) continue
+			if ((propsBits & compiledRule.bitMask) !== compiledRule.bitValue) continue
 
 			for (const key in compiledRule.rule) {
 				result[key] ??= {}

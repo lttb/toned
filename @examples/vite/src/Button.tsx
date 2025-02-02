@@ -4,8 +4,6 @@ import { useStyles } from '@toned/react/index'
 const styles = stylesheet({
 	container: {
 		bgColor: 'action',
-		paddingX: 4,
-		paddingY: 2,
 		borderRadius: 'medium',
 		borderWith: 'none',
 
@@ -46,14 +44,28 @@ const styles = stylesheet({
 }>({
 	'[size=m]': {
 		container: {
-			paddingX: 50,
-			paddingY: 30,
+			paddingX: 4,
+			paddingY: 2,
 		},
 
 		'[alignment=icon-only]': {
 			container: {
-				paddingX: 30,
-				paddingY: 30,
+				paddingX: 2,
+				paddingY: 2,
+			},
+		},
+	},
+
+	'[size=s]': {
+		container: {
+			paddingX: 2,
+			paddingY: 1,
+		},
+
+		'[alignment=icon-only]': {
+			container: {
+				paddingX: 1,
+				paddingY: 2,
 			},
 		},
 	},
@@ -63,7 +75,6 @@ export function Button({ label }: { label: string }) {
 	const s = useStyles(styles, {
 		size: 'm',
 		variant: 'accent',
-		alignment: 'icon-only',
 	})
 
 	return (

@@ -10,6 +10,8 @@ import {
 	type StyleWithPseudo,
 } from './types'
 
+import { StyleMatcher } from './StyleMatcher/StyleMatcher'
+
 const config = {
 	getTokens: (): Tokens => ({}),
 }
@@ -45,7 +47,9 @@ type RefStyle = AnyValue
 
 type PseudoState = ':hover' | ':focus' | ':active'
 
-const setStyles = (curr: Ref, style: RefStyle) => {
+const setStyles = (curr: Ref | undefined, style: RefStyle) => {
+	if (!curr) return
+
 	if (curr.setNativeProps) {
 		curr.setNativeProps({ style })
 	} else {
@@ -101,11 +105,31 @@ export function defineSystem<
 
 				refs: Record<ElementKey, Ref>
 
-				constructor({ tokens }: { tokens: Tokens }) {
+				matcher?: StyleMatcher<any>
+				modsState?: any
+				modsStateCache: Map<number, Record<ElementKey, AppliedStyle>>
+				modsStyle?: Record<ElementKey, AppliedStyle>
+
+				constructor({
+					tokens,
+					mods,
+					modsState,
+				}: { tokens: Tokens; mods?: any; modsState?: any }) {
 					this.tokens = tokens
 					this.state = {}
 					this.stateCache = {}
 					this.refs = {}
+
+					if (mods) {
+						this.matcher = new StyleMatcher(mods)
+
+						if (modsState) {
+							this.modsState = modsState
+							this.modsStyle = this.matcher.match(modsState)
+						}
+					}
+
+					this.modsStateCache = new Map()
 				}
 
 				getStateKey(key: ElementKey) {
@@ -120,11 +144,42 @@ export function defineSystem<
 				}
 
 				getCurrentStyle(key: ElementKey) {
-					return this.stateCache[key].get(this.getStateKey(key))
+					return {
+						...this.stateCache[key].get(this.getStateKey(key)),
+						...this.getStateStyle(key),
+					}
+				}
+
+				getStateStyle(key: ElementKey) {
+					const style = this.modsStyle?.[key]
+					if (style) {
+						return this.applyTokens(style)
+					}
 				}
 
 				applyTokens(value: ElementStyle): AppliedStyle {
 					return ref.exec({ tokens: this.tokens || config.getTokens() }, value)
+				}
+
+				applyState(modsState: any) {
+					if (!this.matcher) return
+
+					this.modsState = modsState
+
+					// const modsStateCacheKey = this.matcher?.getPropsBits(modsState)
+
+					const stateStyle = this.matcher.match(modsState)
+
+					for (const elementKey in stateStyle) {
+						const currentStyle = this.getCurrentStyle(elementKey)
+
+						const updatedStyle = {
+							...currentStyle,
+							...this.applyTokens(stateStyle[elementKey]),
+						}
+
+						setStyles(this.refs[elementKey], updatedStyle)
+					}
 				}
 
 				setOn = (
@@ -219,8 +274,8 @@ export function defineSystem<
 			const withMods = <Mods extends ModType>(mods?: ModStyle<S, T, Mods>) => {
 				return Object.assign({
 					[SYMBOL_REF]: ref,
-					[SYMBOL_INIT]: () => {
-						return new Base({ tokens: config.getTokens() })
+					[SYMBOL_INIT]: (modsState) => {
+						return new Base({ tokens: config.getTokens(), mods, modsState })
 					},
 
 					with<Mods extends ModType>(mods: ModStyle<S, T, Mods>) {
