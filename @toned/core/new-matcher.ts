@@ -1,122 +1,132 @@
-// Original implementation
-export class StyleMatcher {
-	private operations: Array<{
-		attr: string
-		valueMap: Record<string, number>
-		position: number
-	}> = []
+type Selector = {
+	attr: string
+	val: string
+}
 
-	private styles: Array<{
-		mask: number
-		requiredMask: number
-		style: Record<string, any>
-	}> = []
+type Operation = {
+	attr: string
+	bits: Record<string, number>
+	shift: number
+}
+
+type StyleRule = {
+	mask: number
+	required: number
+	styles: Record<string, any>
+}
+
+export class StyleMatcher {
+	private ops: Operation[] = []
+	private rules: StyleRule[] = []
 
 	constructor(config: Record<string, any>) {
-		this.collectOperations(config)
-		this.processConfig(config)
+		const attrs = this.extractSelectors(config)
+		this.ops = this.createOperations(attrs)
+		this.compileRules(config)
 	}
 
-	private collectOperations(obj: Record<string, any>): void {
-		const attrValues: Map<string, Set<string>> = new Map()
-		let position = 0
+	match(props: Record<string, any>): Record<string, any> {
+		const mask = this.computeMask(props)
+		return this.applyMatchingStyles(mask)
+	}
 
-		const collect = (obj: Record<string, any>) => {
+	private extractSelectors(
+		config: Record<string, any>,
+	): Map<string, Set<string>> {
+		const attrs = new Map<string, Set<string>>()
+
+		const collect = (obj: Record<string, any>): void => {
 			for (const [key, value] of Object.entries(obj)) {
-				if (key.startsWith('[')) {
-					const { attr, val } = this.parseSelector(key)
-					if (!attrValues.has(attr)) {
-						attrValues.set(attr, new Set())
-					}
-					attrValues.get(attr)!.add(val)
-				}
+				if (!key.startsWith('[')) continue
+
+				const { attr, val } = this.parseSelector(key)
+				attrs.set(attr, (attrs.get(attr) || new Set()).add(val))
+
 				if (value && typeof value === 'object') {
 					collect(value)
 				}
 			}
 		}
-		collect(obj)
 
-		this.operations = Array.from(attrValues).map(([attr, values], index) => {
-			const valueMap: Record<string, number> = {}
-			const valuesArray = Array.from(values)
-			for (let i = 0; i < valuesArray.length; i++) {
-				valueMap[valuesArray[i]] = index * 2 + i
-			}
-			return { attr, valueMap, position: index }
+		collect(config)
+		return attrs
+	}
+
+	private createOperations(attrs: Map<string, Set<string>>): Operation[] {
+		return Array.from(attrs).map(([attr, values], idx) => {
+			const bits: Record<string, number> = {}
+			Array.from(values).forEach((val, i) => {
+				bits[val] = i
+			})
+			return { attr, bits, shift: idx * 2 }
 		})
 	}
 
-	private processConfig(
+	private compileRules(
 		obj: Record<string, any>,
 		parentMask = 0,
-		requiredMask = 0,
+		required = 0,
 	): void {
-		const directStyles = Object.entries(obj)
+		// Extract direct styles (non-selector properties)
+		const styles = Object.entries(obj)
 			.filter(([key]) => !key.startsWith('['))
-			.reduce<Record<string, any>>((acc, [key, value]) => {
-				acc[key] = value
+			.reduce<Record<string, any>>((acc, [k, v]) => {
+				acc[k] = v
 				return acc
 			}, {})
 
-		if (Object.keys(directStyles).length > 0) {
-			this.styles.push({
-				mask: parentMask,
-				requiredMask,
-				style: directStyles,
-			})
+		if (Object.keys(styles).length > 0) {
+			this.rules.push({ mask: parentMask, required, styles })
 		}
 
+		// Process nested selectors
 		for (const [key, value] of Object.entries(obj)) {
-			if (key.startsWith('[') && typeof value === 'object') {
-				const { attr, val } = this.parseSelector(key)
-				const op = this.operations.find((op) => op.attr === attr)!
-				const index = op.valueMap[val]
-				if (index !== undefined) {
-					const bitMask = 1 << index
-					this.processConfig(
-						value,
-						parentMask | bitMask,
-						requiredMask | bitMask,
-					)
-				}
-			}
+			if (!key.startsWith('[') || typeof value !== 'object') continue
+
+			const { attr, val } = this.parseSelector(key)
+			const op = this.ops.find((op) => op.attr === attr)
+			if (!op) continue
+
+			const bit = op.bits[val]
+			if (bit === undefined) continue
+
+			const bitMask = 1 << (op.shift + bit)
+			this.compileRules(value, parentMask | bitMask, required | bitMask)
 		}
 	}
 
-	private parseSelector(selector: string): { attr: string; val: string } {
+	private computeMask(props: Record<string, any>): number {
+		let mask = 0
+		for (const { attr, bits, shift } of this.ops) {
+			const val = props[attr]
+			if (val === undefined) continue
+
+			const bit = bits[String(val)]
+			if (bit !== undefined) {
+				mask |= 1 << (shift + bit)
+			}
+		}
+		return mask
+	}
+
+	private applyMatchingStyles(mask: number): Record<string, any> {
+		const result: Record<string, any> = {}
+
+		for (const { mask: ruleMask, required, styles } of this.rules) {
+			if ((mask & required) !== required) continue
+
+			for (const key in styles) {
+				result[key] ??= {}
+				Object.assign(result[key], styles[key])
+			}
+		}
+
+		return result
+	}
+
+	private parseSelector(selector: string): Selector {
 		const match = selector.match(/\[([^=]+)=([^\]]+)\]/)
 		if (!match) throw new Error(`Invalid selector: ${selector}`)
 		return { attr: match[1], val: match[2] }
-	}
-
-	match(props: Record<string, any>): Record<string, any> {
-		let mask = 0
-
-		for (const { attr, valueMap } of this.operations) {
-			const value = props[attr]
-			if (value !== undefined) {
-				const index = valueMap[String(value)]
-				if (index !== undefined) {
-					mask |= 1 << index
-				}
-			}
-		}
-
-		const matchingStyles = this.styles.filter(
-			({ mask: styleMask, requiredMask }) => {
-				return (mask & requiredMask) === requiredMask
-			},
-		)
-
-		const result: Record<string, any> = {}
-		matchingStyles.forEach((x) => {
-			for (const k in x.style) {
-				result[k] ??= {}
-				Object.assign(result[k], x.style[k])
-			}
-		})
-
-		return result
 	}
 }

@@ -1,4 +1,3 @@
-import { opacity } from '@toned/systems/base/layout'
 import { StyleMatcher } from './new-matcher'
 
 // Usage example
@@ -25,6 +24,9 @@ const matcher = new StyleMatcher({
 				container: {
 					background: 'gray',
 				},
+				label: {
+					color: 'white',
+				},
 			},
 		},
 
@@ -45,19 +47,22 @@ const matcher = new StyleMatcher({
 })
 
 /* should be
+{
   container: {
-    paddingX: 30,
+    paddingX: 50,
     paddingY: 30,
     background: "gray",
+    color: "white",
     opacity: 0.3,
   },
+}
 */
 console.log(
 	matcher.match({
-		size: 's',
+		size: 'm',
 		variant: 'secondary',
 		disabled: true,
-		theme: 'dark',
+		theme: 'light',
 		alignment: 'icon-only',
 	}),
 )
