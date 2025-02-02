@@ -1,0 +1,12 @@
+{
+	"expo": {
+		"name": "expo-minimum",
+		"slug": "expo-minimum",
+		"version": "1.0.0",
+		"newArchEnabled": true,
+		"experiments": {
+			"reactCanary": false,
+			"reactCompiler": false
+		}
+	}
+}
