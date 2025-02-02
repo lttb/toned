@@ -98,6 +98,8 @@ export function defineSystem<
 			type ElementStyle = AnyValue
 			type AppliedStyle = AnyValue
 
+			type StyleDecl = Record<ElementKey, ElementStyle>
+
 			class Base {
 				tokens: Tokens
 				state: State
@@ -108,7 +110,9 @@ export function defineSystem<
 				matcher?: StyleMatcher<any>
 				modsState?: any
 				modsStateCache: Map<number, Record<ElementKey, AppliedStyle>>
-				modsStyle?: Record<ElementKey, AppliedStyle>
+				modsStyle?: StyleDecl
+
+				mergedStyle: StyleDecl
 
 				constructor({
 					tokens,
@@ -130,6 +134,19 @@ export function defineSystem<
 					}
 
 					this.modsStateCache = new Map()
+
+					this.mergedStyle = this.mergeStyles(value, this.modsStyle)
+				}
+
+				// b has to be a subset of a
+				mergeStyles(a: StyleDecl, b?: StyleDecl) {
+					const style: StyleDecl = {}
+
+					for (const key in a) {
+						style[key] = Object.assign({}, a[key], b?.[key])
+					}
+
+					return style
 				}
 
 				getStateKey(key: ElementKey) {
@@ -144,10 +161,9 @@ export function defineSystem<
 				}
 
 				getCurrentStyle(key: ElementKey) {
-					return {
-						...this.stateCache[key].get(this.getStateKey(key)),
-						...this.getStateStyle(key),
-					}
+					// return this.stateCache[key].get(this.getStateKey(key))
+
+					return this.applyTokens(this.mergedStyle[key])
 				}
 
 				getStateStyle(key: ElementKey) {
@@ -183,11 +199,13 @@ export function defineSystem<
 				}
 
 				setOn = (
-					v: ElementStyle,
+					elementKey: ElementKey,
 					pseudo: PseudoState,
 					onIn: string,
 					onOut: string,
 				) => {
+					const v = this.mergedStyle[elementKey]
+
 					if (!(pseudo in v)) return
 
 					return {
@@ -254,15 +272,15 @@ export function defineSystem<
 							// TODO: move it to config
 							...(isBrowser
 								? {
-										...this.setOn(v, ':hover', 'onMouseOver', 'onMouseOut'),
-										...this.setOn(v, ':active', 'onMouseDown', 'onMouseUp'),
-										...this.setOn(v, ':focus', 'onBlur', 'onFocus'),
+										...this.setOn(k, ':hover', 'onMouseOver', 'onMouseOut'),
+										...this.setOn(k, ':active', 'onMouseDown', 'onMouseUp'),
+										...this.setOn(k, ':focus', 'onBlur', 'onFocus'),
 									}
 								: {
 										// TODO: support an option with a `style` function state
-										...this.setOn(v, ':hover', 'onHoverIn', 'onHoverOut'),
-										...this.setOn(v, ':active', 'onPressIn', 'onPressOut'),
-										...this.setOn(v, ':focus', 'onBlur', 'onFocus'),
+										...this.setOn(k, ':hover', 'onHoverIn', 'onHoverOut'),
+										...this.setOn(k, ':active', 'onPressIn', 'onPressOut'),
+										...this.setOn(k, ':focus', 'onBlur', 'onFocus'),
 									}),
 						}
 

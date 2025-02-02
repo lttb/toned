@@ -7,7 +7,7 @@ export const borderRadius = defineToken({
 	}),
 })
 
-export const borderWith = defineToken({
+export const borderWidth = defineToken({
 	values: ['none', 'thin', 'medium', 'thick', 'heavy'],
 	resolve: (value, tokens) => ({
 		borderWidth: tokens[`border_width_${value}`],

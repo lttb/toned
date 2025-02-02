@@ -3,45 +3,53 @@ import { useStyles } from '@toned/react/index'
 
 const styles = stylesheet({
 	container: {
-		bgColor: 'action',
 		borderRadius: 'medium',
-		borderWith: 'none',
+		borderWidth: 'none',
 
 		style: {
 			cursor: 'pointer',
 		},
-
-		':active': {
-			container: {
-				bgColor: 'destructive',
-			},
-			label: {
-				textColor: 'on_destructive',
-			},
-		},
-
-		':hover': {
-			container: {
-				bgColor: 'action_secondary',
-			},
-			label: {
-				textColor: 'on_action_secondary',
-			},
-		},
 	},
 
 	label: {
-		textColor: 'on_action',
-		style: {
-			pointerEvents: 'none',
-			userSelect: 'none',
-		},
+		// style: {
+		// 	pointerEvents: 'none',
+		// 	userSelect: 'none',
+		// },
 	},
 }).with<{
 	size: 'm' | 's'
 	variant: 'accent' | 'danger'
 	alignment?: 'icon-only' | 'icon-left' | 'icon-right'
 }>({
+	'[variant=accent]': {
+		container: {
+			bgColor: 'action',
+
+			':active': {
+				container: {
+					bgColor: 'destructive',
+				},
+				label: {
+					textColor: 'on_destructive',
+				},
+			},
+
+			':hover': {
+				container: {
+					bgColor: 'action_secondary',
+				},
+				label: {
+					textColor: 'on_action_secondary',
+				},
+			},
+		},
+
+		label: {
+			textColor: 'on_action',
+		},
+	},
+
 	'[size=m]': {
 		container: {
 			paddingX: 4,
