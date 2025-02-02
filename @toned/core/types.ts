@@ -40,7 +40,7 @@ export type ModStyle<
 	Mods extends ModType,
 > = {
 	[key in keyof Mods as key extends string
-		? `[${key}=${Mods[key]}]`
+		? `[${key}=${Exclude<Mods[key], undefined>}]`
 		: never]?: Partial<StyleWithPseudo<S, T>> & ModStyle<S, T, Omit<Mods, key>>
 }
 

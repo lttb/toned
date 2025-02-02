@@ -90,7 +90,11 @@ export function Button({ label }: { label: string }) {
 	})
 
 	return (
-		<button type="button" {...s.container} onClick={() => setSize('s')}>
+		<button
+			type="button"
+			{...s.container}
+			onClick={() => setSize((x) => (x === 'm' ? 's' : 'm'))}
+		>
 			<span {...s.label}>{label}</span>
 		</button>
 	)
