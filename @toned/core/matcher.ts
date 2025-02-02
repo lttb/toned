@@ -1,57 +1,84 @@
 export class StyleMatcher {
-	private valuePositions: Map<string, number> = new Map()
-	private totalBits: number = 0
-	private styles: Array<{ mask: bigint; style: Record<string, any> }> = []
+	private operations: Array<{
+		attr: string
+		valueMap: Record<string, number>
+		position: number
+	}> = []
+
+	private styles: Array<{
+		mask: number
+		requiredMask: number // New: tracks which bits must be set
+		style: Record<string, any>
+	}> = []
 
 	constructor(config: Record<string, any>) {
-		// First pass: collect all unique attribute-value pairs and assign positions
-		this.collectValuePositions(config)
-
-		// Second pass: process styles with computed bit positions
+		this.collectOperations(config)
 		this.processConfig(config)
 	}
 
-	private collectValuePositions(
-		obj: Record<string, any>,
-		path: string[] = [],
-	): void {
-		for (const [key, value] of Object.entries(obj)) {
-			if (key.startsWith('[')) {
-				const { attr, val } = this.parseSelector(key)
-				const valueKey = `${attr}:${val}`
+	private collectOperations(obj: Record<string, any>): void {
+		const attrValues: Map<string, Set<string>> = new Map()
+		let position = 0
 
-				if (!this.valuePositions.has(valueKey)) {
-					this.valuePositions.set(valueKey, this.totalBits++)
+		const collect = (obj: Record<string, any>) => {
+			for (const [key, value] of Object.entries(obj)) {
+				if (key.startsWith('[')) {
+					const { attr, val } = this.parseSelector(key)
+					if (!attrValues.has(attr)) {
+						attrValues.set(attr, new Set())
+					}
+					attrValues.get(attr)!.add(val)
+				}
+				if (value && typeof value === 'object') {
+					collect(value)
 				}
 			}
-
-			if (value && typeof value === 'object') {
-				this.collectValuePositions(value, [...path, key])
-			}
 		}
+		collect(obj)
+
+		this.operations = Array.from(attrValues).map(([attr, values], index) => {
+			const valueMap: Record<string, number> = {}
+			const valuesArray = Array.from(values)
+			for (let i = 0; i < valuesArray.length; i++) {
+				valueMap[valuesArray[i]] = index * 2 + i // Use position to separate different attributes
+			}
+			return { attr, valueMap, position: index }
+		})
 	}
 
 	private processConfig(
 		obj: Record<string, any>,
-		parentMask: bigint = 0n,
+		parentMask = 0,
+		requiredMask = 0,
 	): void {
-		// Extract direct styles (non-selector keys)
 		const directStyles = Object.entries(obj)
 			.filter(([key]) => !key.startsWith('['))
-			.reduce((acc, [key, value]) => ({ ...acc, [key]: value }), {})
+			.reduce<Record<string, any>>((acc, [key, value]) => {
+				acc[key] = value
+				return acc
+			}, {})
 
 		if (Object.keys(directStyles).length > 0) {
-			this.styles.push({ mask: parentMask, style: directStyles })
+			this.styles.push({
+				mask: parentMask,
+				requiredMask,
+				style: directStyles,
+			})
 		}
 
-		// Process nested selectors
 		for (const [key, value] of Object.entries(obj)) {
 			if (key.startsWith('[') && typeof value === 'object') {
 				const { attr, val } = this.parseSelector(key)
-				const position = this.valuePositions.get(`${attr}:${val}`)!
-				const newMask = parentMask | (1n << BigInt(position))
-
-				this.processConfig(value, newMask)
+				const op = this.operations.find((op) => op.attr === attr)!
+				const index = op.valueMap[val]
+				if (index !== undefined) {
+					const bitMask = 1 << index
+					this.processConfig(
+						value,
+						parentMask | bitMask,
+						requiredMask | bitMask,
+					)
+				}
 			}
 		}
 	}
@@ -62,20 +89,41 @@ export class StyleMatcher {
 		return { attr: match[1], val: match[2] }
 	}
 
-	match(props: Record<string, any>): any[] {
-		let propsMask = 0n
+	private mergeStyles(styles: Record<string, any>[]): Record<string, any> {
+		return styles.reduce((acc, style) => {
+			for (const [key, value] of Object.entries(style)) {
+				if (typeof value === 'object' && value !== null) {
+					acc[key] = { ...acc[key], ...value }
+				} else {
+					acc[key] = value
+				}
+			}
+			return acc
+		}, {})
+	}
 
-		// Build props mask
-		for (const [attr, val] of Object.entries(props)) {
-			const position = this.valuePositions.get(`${attr}:${val}`)
-			if (position !== undefined) {
-				propsMask |= 1n << BigInt(position)
+	match(props: Record<string, any>): Record<string, any> {
+		let mask = 0
+
+		// Generate mask from props
+		for (const { attr, valueMap } of this.operations) {
+			const value = props[attr]
+			if (value !== undefined) {
+				const index = valueMap[String(value)]
+				if (index !== undefined) {
+					mask |= 1 << index
+				}
 			}
 		}
 
-		// Return matching styles
-		return this.styles
-			.filter(({ mask }) => (propsMask & mask) === mask)
+		// Filter and merge matching styles
+		const matchingStyles = this.styles
+			.filter(({ mask: styleMask, requiredMask }) => {
+				// Style matches if all required bits are present and match
+				return (mask & requiredMask) === requiredMask
+			})
 			.map(({ style }) => style)
+
+		return this.mergeStyles(matchingStyles)
 	}
 }

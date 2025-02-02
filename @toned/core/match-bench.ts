@@ -42,8 +42,8 @@ console.log(
 	matcher.match({
 		size: 'm',
 		variant: 'secondary',
-		disabled: true,
+		disabled: false,
 		theme: 'dark',
-		alignment: 'icon-only',
+		alignment: 'icon-left',
 	}),
 )
