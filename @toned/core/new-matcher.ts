@@ -1,3 +1,4 @@
+// Original implementation
 export class StyleMatcher {
 	private operations: Array<{
 		attr: string
@@ -7,7 +8,7 @@ export class StyleMatcher {
 
 	private styles: Array<{
 		mask: number
-		requiredMask: number // New: tracks which bits must be set
+		requiredMask: number
 		style: Record<string, any>
 	}> = []
 
@@ -40,7 +41,7 @@ export class StyleMatcher {
 			const valueMap: Record<string, number> = {}
 			const valuesArray = Array.from(values)
 			for (let i = 0; i < valuesArray.length; i++) {
-				valueMap[valuesArray[i]] = index * 2 + i // Use position to separate different attributes
+				valueMap[valuesArray[i]] = index * 2 + i
 			}
 			return { attr, valueMap, position: index }
 		})
@@ -89,23 +90,9 @@ export class StyleMatcher {
 		return { attr: match[1], val: match[2] }
 	}
 
-	private mergeStyles(styles: Record<string, any>[]): Record<string, any> {
-		return styles.reduce((acc, x) => {
-			for (const [key, value] of Object.entries(x.style)) {
-				if (typeof value === 'object' && value !== null) {
-					acc[key] = { ...acc[key], ...value }
-				} else {
-					acc[key] = value
-				}
-			}
-			return acc
-		}, {})
-	}
-
 	match(props: Record<string, any>): Record<string, any> {
 		let mask = 0
 
-		// Generate mask from props
 		for (const { attr, valueMap } of this.operations) {
 			const value = props[attr]
 			if (value !== undefined) {
@@ -116,14 +103,20 @@ export class StyleMatcher {
 			}
 		}
 
-		// Filter and merge matching styles
 		const matchingStyles = this.styles.filter(
 			({ mask: styleMask, requiredMask }) => {
-				// Style matches if all required bits are present and match
 				return (mask & requiredMask) === requiredMask
 			},
 		)
 
-		return this.mergeStyles(matchingStyles)
+		const result: Record<string, any> = {}
+		matchingStyles.forEach((x) => {
+			for (const k in x.style) {
+				result[k] ??= {}
+				Object.assign(result[k], x.style[k])
+			}
+		})
+
+		return result
 	}
 }
