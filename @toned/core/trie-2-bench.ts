@@ -1,4 +1,4 @@
-import { StyleMatcher } from './new-matcher'
+import { StyleMatcher } from './StyleMatcherTrie'
 
 // Usage example
 const matcher = new StyleMatcher({

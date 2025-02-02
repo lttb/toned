@@ -1,4 +1,4 @@
-import { StyleMatcher as StyleMatcherTrie } from './matcher'
+import { StyleMatcher as StyleMatcherTrie } from './StyleMatcherTrie'
 
 import { StyleMatcher as StyleMatcherOriginal } from './new-matcher'
 
@@ -100,7 +100,7 @@ console.log('Initializing benchmarks...')
 const configs = [
 	{ depth: 2, branching: 2, name: 'Small' },
 	{ depth: 3, branching: 3, name: 'Medium' },
-	{ depth: 4, branching: 4, name: 'Large' },
+	{ depth: 15, branching: 4, name: 'Large' },
 ]
 
 for (const { depth, branching, name } of configs) {
@@ -113,16 +113,14 @@ for (const { depth, branching, name } of configs) {
 	const original = new StyleMatcherOriginal(config)
 	const trie = new StyleMatcherTrie(config)
 
-	const originalResults = runBenchmark(
-		'Original Implementation',
-		original,
-		props,
-	)
 	const trieResults = runBenchmark('Trie Implementation', trie, props)
+	// const originalResults = runBenchmark(
+	// 	'Original Implementation',
+	// 	original,
+	// 	props,
+	// )
 
-	const improvement =
-		((originalResults.perMatch - trieResults.perMatch) /
-			originalResults.perMatch) *
-		100
-	console.log(`\nImprovement: ${improvement.toFixed(2)}%`)
+	// const improvement =
+	// 	((originalResults.total - trieResults.total) / trieResults.total) * 100
+	// console.log(`\nImprovement: ${improvement.toFixed(2)}%`)
 }

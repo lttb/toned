@@ -6,6 +6,8 @@ import {
 	SYMBOL_INIT,
 } from './types'
 
+import { ModMatcher } from './ModMatcher'
+
 const config = {
 	getTokens: (): Tokens => ({}),
 }
@@ -199,7 +201,7 @@ export function defineSystem<
 				})
 			})
 
-			return Object.assign(
+			const result = Object.assign(
 				// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 				{} as any,
 				// Object.fromEntries(
@@ -212,8 +214,14 @@ export function defineSystem<
 
 						return stylesheetRef.current
 					},
+
+					with() {
+						return result
+					},
 				},
 			)
+
+			return result
 		},
 		exec: (config, tokenStyle) => {
 			return Object.entries(tokenStyle).reduce<object>((acc, [k, v]) => {

@@ -29,11 +29,29 @@ const styles = stylesheet({
 			},
 		},
 	},
+
 	label: {
 		textColor: 'on_action',
 		style: {
 			pointerEvents: 'none',
 			userSelect: 'none',
+		},
+	},
+}).with<{
+	size: 'm' | 's'
+	variant: 'accent' | 'danger'
+	alignment?: 'icon-only' | 'icon-left' | 'icon-right'
+}>({
+	'[size=m]': {
+		container: {
+			paddingX: 30,
+			paddingY: 30,
+		},
+	},
+	'[size=m][alignment=icon-only]': {
+		container: {
+			paddingX: 50,
+			paddingY: 30,
 		},
 	},
 })

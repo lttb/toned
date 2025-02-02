@@ -1,3 +1,5 @@
+import type { Token } from 'typescript'
+
 export const SYMBOL_REF: unique symbol = Symbol()
 export const SYMBOL_INIT: unique symbol = Symbol()
 
@@ -30,9 +32,12 @@ type TFun<S extends TokenStyleDeclaration> = <D extends TokenStyle<S>[]>(
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 type Ref = { current?: null | any }
 
+type ModType = Record<string, string | boolean | number>
+
 export type Stylesheet<
 	S extends TokenStyleDeclaration,
 	T extends Record<string, TokenStyle<S>>,
+	M extends ModType = Record<never, never>,
 > = {
 	[key in keyof T]: ReturnType<TFun<S>>
 } & {
@@ -41,6 +46,8 @@ export type Stylesheet<
 	[SYMBOL_INIT]: (ref: Ref) => {
 		[key in keyof T]: ReturnType<TFun<S>>
 	}
+
+	with<Mods extends ModType>(modStyle: {}): Stylesheet<S, T, M>
 }
 
 export type TokenSystem<S extends TokenStyleDeclaration> = {
