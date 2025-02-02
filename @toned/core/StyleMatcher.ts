@@ -35,8 +35,8 @@ const WILDCARD = '*' as const
 export class StyleMatcher {
 	propertyBits: PropertyMap = {}
 	compiledRules: Array<{
-		mask: number
-		value: number
+		bitMask: number
+		bitValue: number
 		original: string
 		rule: any
 	}> = []
@@ -73,7 +73,7 @@ export class StyleMatcher {
 				.keys()
 				.toArray()
 				.map((key) => {
-					return `${key}:${selector.get(key) || '*'}`
+					return `${key}:${selector.get(key) || WILDCARD}`
 				})
 				.join('|')
 
@@ -123,24 +123,24 @@ export class StyleMatcher {
 		for (const [ruleStr, ruleData] of Object.entries(config.list)) {
 			if (ruleStr === '') continue // Skip empty rule
 
-			let ruleMask = 0
-			let ruleValue = 0
+			let bitMask = 0
+			let bitValue = 0
 
 			const conditions = ruleStr.split('|')
 			for (const condition of conditions) {
 				const [property, value] = condition.split(':')
 
-				if (value === '*') continue
+				if (value === WILDCARD) continue
 
 				const propertyBitValue = this.propertyBits[property][value]
 
-				ruleMask |= this.getMask(this.propertyBits[property])
-				ruleValue |= propertyBitValue
+				bitMask |= this.getMask(this.propertyBits[property])
+				bitValue |= propertyBitValue
 			}
 
 			this.compiledRules.push({
-				mask: ruleMask,
-				value: ruleValue,
+				bitMask,
+				bitValue,
 				original: ruleStr,
 				rule: ruleData.rule,
 			})
@@ -159,7 +159,7 @@ export class StyleMatcher {
 		// Convert input props to bits
 		let inputBits = 0
 
-		this.bits.forEach((x, bitValues) => {
+		this.bits.forEach((x) => {
 			const prop = x[0]
 			const value = props[prop]
 			inputBits |= x[1][value]
@@ -169,16 +169,11 @@ export class StyleMatcher {
 		const result: Record<string, any> = {}
 
 		for (const compiledRule of this.compiledRules) {
-			// Check if all bits required by the rule match
-			if ((inputBits & compiledRule.mask) === compiledRule.value) {
-				for (const key in compiledRule.rule) {
-					result[key] ??= {}
-					Object.assign(result[key], compiledRule.rule[key])
-				}
-				// matches.push({
-				// 	rule: compiledRule.rule,
-				// 	original: compiledRule.original,
-				// })
+			if ((inputBits & compiledRule.bitMask) !== compiledRule.bitValue) continue
+
+			for (const key in compiledRule.rule) {
+				result[key] ??= {}
+				Object.assign(result[key], compiledRule.rule[key])
 			}
 		}
 
