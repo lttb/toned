@@ -32,7 +32,7 @@ type Config = {
 
 const WILDCARD = '*' as const
 
-export class StyleMatcher {
+export class StyleMatcher<Schema extends NestedStyleRules> {
 	propertyBits: PropertyMap = {}
 	compiledRules: Array<{
 		bitMask: number
@@ -69,9 +69,7 @@ export class StyleMatcher {
 				}
 			})
 
-			const listKey = modIndex
-				.keys()
-				.toArray()
+			const listKey = Array.from(modIndex.keys())
 				.map((key) => {
 					return `${key}:${selector.get(key) || WILDCARD}`
 				})
@@ -155,13 +153,16 @@ export class StyleMatcher {
 		return mask
 	}
 
-	match(props: { [key: string]: any }) {
+	match(props: Partial<Schema>) {
 		// Convert input props to bits
 		let inputBits = 0
 
 		this.bits.forEach((x) => {
 			const prop = x[0]
 			const value = props[prop]
+
+			if (!value) return
+
 			inputBits |= x[1][value]
 		})
 
