@@ -32,7 +32,7 @@ type Config = {
 
 const WILDCARD = '*' as const
 
-export class StyleMatcher<Schema extends NestedStyleRules> {
+export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 	propertyBits: PropertyMap = {}
 	compiledRules: Array<{
 		bitMask: number
