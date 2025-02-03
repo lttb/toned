@@ -28,21 +28,21 @@ const styles = stylesheet({
 		container: {
 			bgColor: 'action',
 
-			':active': {
-				container: {
-					bgColor: 'destructive',
-				},
-				label: {
-					textColor: 'on_destructive',
-				},
-			},
-
 			':hover': {
 				container: {
 					bgColor: 'action_secondary',
 				},
 				label: {
 					textColor: 'on_action_secondary',
+				},
+			},
+
+			':active': {
+				container: {
+					bgColor: 'destructive',
+				},
+				label: {
+					textColor: 'on_destructive',
 				},
 			},
 		},

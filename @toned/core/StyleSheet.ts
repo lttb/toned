@@ -57,12 +57,9 @@ export function createStylesheet<
 
 		refs: Record<ElementKey, Ref>
 
-		matcher?: StyleMatcher
-		modsState?: ModState
-		modsStateCache: Map<number, Record<ElementKey, AppliedStyle>>
-		modsStyle?: StyleDecl
-
-		mergedStyle: StyleDecl
+		matcher: StyleMatcher
+		modsState: ModState
+		modsStyle: StyleDecl
 
 		constructor({
 			tokens,
@@ -78,18 +75,15 @@ export function createStylesheet<
 			this.stateCache = {}
 			this.refs = {}
 
-			if (mods) {
-				this.matcher = new StyleMatcher(mods)
+			this.matcher = new StyleMatcher({
+				...rules,
+				...mods,
+			})
 
-				if (modsState) {
-					this.modsState = modsState
-					this.modsStyle = this.matcher.match(modsState)
-				}
-			}
+			this.modsState = modsState || {}
+			this.modsStyle = this.matcher.match(this.modsState)
 
-			this.modsStateCache = new Map()
-
-			this.mergedStyle = this.mergeStyles(rules, this.modsStyle)
+			console.log(this.matcher.list)
 		}
 
 		mergeStyles(a: StyleDecl, b?: StyleDecl) {
@@ -114,18 +108,7 @@ export function createStylesheet<
 		}
 
 		getCurrentStyle(key: ElementKey) {
-			return this.applyTokens(this.mergedStyle[key])
-		}
-
-		getBaseStyle(key: ElementKey) {
-			return this.stateCache[key].get(this.getInteractionState(key))
-		}
-
-		getStateStyle(key: ElementKey) {
-			const style = this.modsStyle?.[key]
-			if (style) {
-				return this.applyTokens(style)
-			}
+			return this.applyTokens(this.modsStyle[key])
 		}
 
 		applyTokens(value: ElementStyle): AppliedStyle {
@@ -133,52 +116,13 @@ export function createStylesheet<
 		}
 
 		applyState(modsState: ModState) {
-			if (!this.matcher) return
+			Object.assign(this.modsState, modsState)
 
-			this.modsState = modsState
+			this.modsStyle = this.matcher.match(this.modsState)
 
-			// const modsStateCacheKey = this.matcher?.getPropsBits(modsState)
-
-			const stateStyle = this.matcher.match(modsState)
-
-			this.mergedStyle = this.mergeStyles(rules, stateStyle)
-
-			for (const elementKey in stateStyle) {
-				const currentStyle = this.getBaseStyle(elementKey)
-
-				const updatedStyle = {
-					...currentStyle,
-					...this.applyTokens(stateStyle[elementKey]),
-				}
-
-				setStyles(this.refs[elementKey], updatedStyle)
+			for (const elementKey in this.modsStyle) {
+				setStyles(this.refs[elementKey], this.getCurrentStyle(elementKey))
 			}
-		}
-
-		onStateEnter = (stateName: string, rule: StyleDecl) => {
-			Object.entries(rule).forEach(([elementKey, tokenStyle]) => {
-				const currentStyle = this.getCurrentStyle(elementKey)
-
-				// const cacheKey = this.getStateKey(elementKey)
-
-				// TODO: cache by stateName by element
-				const updatedStyle = {
-					...currentStyle,
-					...this.applyTokens(tokenStyle),
-				}
-
-				// this.stateCache[elementKey].set(cacheKey, updatedStyle)
-
-				setStyles(this.refs[elementKey], updatedStyle)
-			})
-		}
-
-		onStateLeave = (stateName: string, rule: StyleDecl) => {
-			Object.entries(rule).forEach(([elementKey]) => {
-				const currentStyle = this.getCurrentStyle(elementKey)
-
-				setStyles(this.refs[elementKey], currentStyle)
-			})
 		}
 
 		setOn = (
@@ -187,17 +131,17 @@ export function createStylesheet<
 			onIn: string,
 			onOut: string,
 		) => {
-			const elementRule = this.mergedStyle[elementKey]
-
-			if (!(pseudo in elementRule)) return
-
 			return {
 				[onIn]: () => {
-					this.onStateEnter(pseudo, elementRule[pseudo])
+					this.applyState({
+						[`${elementKey}${pseudo}`]: true,
+					})
 				},
 
 				[onOut]: () => {
-					this.onStateLeave(pseudo, elementRule[pseudo])
+					this.applyState({
+						[`${elementKey}${pseudo}`]: false,
+					})
 				},
 			}
 		}
@@ -206,22 +150,6 @@ export function createStylesheet<
 	Object.entries(rules).forEach(([elementKey, elementRule]) => {
 		Object.defineProperty(Base.prototype, elementKey, {
 			get(this: Base) {
-				if (!this.state[elementKey]) {
-					this.state[elementKey] = {
-						base: true,
-						':hover': false,
-						':focus': false,
-						':active': false,
-					}
-
-					this.stateCache[elementKey] = new Map([
-						[
-							this.getInteractionState(elementKey),
-							this.applyTokens(elementRule),
-						],
-					])
-				}
-
 				const isBrowser = typeof document !== 'undefined'
 
 				const hasInteraction =
