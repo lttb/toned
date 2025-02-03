@@ -91,7 +91,6 @@ export function createStylesheet<
 			this.mergedStyle = this.mergeStyles(rules, this.modsStyle)
 		}
 
-		// b has to be a subset of a
 		mergeStyles(a: StyleDecl, b?: StyleDecl) {
 			const style: StyleDecl = {}
 
@@ -155,89 +154,125 @@ export function createStylesheet<
 			}
 		}
 
+		onEnter = (elementKey: ElementKey, pseudo: PseudoState) => {
+			const elementRule = this.mergedStyle[elementKey]
+
+			if (!elementRule[pseudo]) return
+
+			Object.entries(elementRule[pseudo]).forEach(
+				([pseudoElementKey, tokenStyle]) => {
+					if (this.state[pseudoElementKey][pseudo]) return
+
+					const currentStyle = this.getCurrentStyle(pseudoElementKey)
+
+					this.state[pseudoElementKey][pseudo] = true
+
+					const cacheKey = this.getStateKey(pseudoElementKey)
+
+					const updatedStyle = {
+						...currentStyle,
+						...this.applyTokens(tokenStyle),
+					}
+
+					this.stateCache[pseudoElementKey].set(cacheKey, updatedStyle)
+
+					setStyles(this.refs[pseudoElementKey], updatedStyle)
+				},
+			)
+		}
+
+		onLeave = (elementKey: ElementKey, pseudo: PseudoState) => {
+			const elementRule = this.mergedStyle[elementKey]
+
+			if (!elementRule[pseudo]) return
+
+			Object.entries(elementRule[pseudo]).forEach(([elementKey]) => {
+				if (!this.state[elementKey][pseudo]) return
+
+				this.state[elementKey][pseudo] = false
+
+				const currentStyle = this.getCurrentStyle(elementKey)
+
+				setStyles(this.refs[elementKey], currentStyle)
+			})
+		}
+
 		setOn = (
 			elementKey: ElementKey,
 			pseudo: PseudoState,
 			onIn: string,
 			onOut: string,
 		) => {
-			const v = this.mergedStyle[elementKey]
+			const elementRule = this.mergedStyle[elementKey]
 
-			if (!(pseudo in v)) return
+			if (!(pseudo in elementRule)) return
 
 			return {
 				[onIn]: () => {
-					Object.entries(v[pseudo]).forEach(([elementKey, tokenStyle]) => {
-						if (this.state[elementKey][pseudo]) return
-
-						const currentStyle = this.getCurrentStyle(elementKey)
-
-						this.state[elementKey][pseudo] = true
-
-						const cacheKey = this.getStateKey(elementKey)
-
-						const updatedStyle = {
-							...currentStyle,
-							...this.applyTokens(tokenStyle),
-						}
-
-						this.stateCache[elementKey].set(cacheKey, updatedStyle)
-
-						setStyles(this.refs[elementKey], updatedStyle)
-					})
+					this.onEnter(elementKey, pseudo)
 				},
 
 				[onOut]: () => {
-					Object.entries(v[pseudo]).forEach(([elementKey]) => {
-						if (!this.state[elementKey][pseudo]) return
-
-						this.state[elementKey][pseudo] = false
-
-						const currentStyle = this.getCurrentStyle(elementKey)
-
-						setStyles(this.refs[elementKey], currentStyle)
-					})
+					this.onLeave(elementKey, pseudo)
 				},
 			}
 		}
 	}
 
-	Object.entries(rules).map(([k, v]) => {
-		Object.defineProperty(Base.prototype, k, {
+	Object.entries(rules).forEach(([elementKey, elementRule]) => {
+		Object.defineProperty(Base.prototype, elementKey, {
 			get(this: Base) {
-				if (!this.state[k]) {
-					this.state[k] = {
+				if (!this.state[elementKey]) {
+					this.state[elementKey] = {
 						base: true,
 						':hover': false,
 						':focus': false,
 						':active': false,
 					}
 
-					this.stateCache[k] = new Map([
-						[this.getStateKey(k), this.applyTokens(v)],
+					this.stateCache[elementKey] = new Map([
+						[this.getStateKey(elementKey), this.applyTokens(elementRule)],
 					])
 				}
 
 				const isBrowser = typeof document !== 'undefined'
 
+				const hasInteraction =
+					elementRule[':active'] ||
+					elementRule[':hover'] ||
+					elementRule[':focus']
+
 				const result = {
 					ref: (current: Ref) => {
-						this.refs[k] = current
+						this.refs[elementKey] = current
 					},
-					style: this.getCurrentStyle(k),
+					style: this.getCurrentStyle(elementKey),
+					// style: hasInteraction ? ({focused, hovered, pressed}) => {
+					//        return this.getCurrentStyle(elementKey)
+					//      } : this.getCurrentStyle(elementKey),
 
 					// TODO: move it to config
 					...(isBrowser
 						? {
-								...this.setOn(k, ':hover', 'onMouseOver', 'onMouseOut'),
-								...this.setOn(k, ':active', 'onMouseDown', 'onMouseUp'),
-								...this.setOn(k, ':focus', 'onBlur', 'onFocus'),
+								...this.setOn(
+									elementKey,
+									':hover',
+									'onMouseOver',
+									'onMouseOut',
+								),
+								...this.setOn(
+									elementKey,
+									':active',
+									'onMouseDown',
+									'onMouseUp',
+								),
+								...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
 							}
 						: {
 								// TODO: support an option with a `style` function state
-								...this.setOn(k, ':hover', 'onHoverIn', 'onHoverOut'),
-								...this.setOn(k, ':active', 'onPressIn', 'onPressOut'),
-								...this.setOn(k, ':focus', 'onBlur', 'onFocus'),
+								...this.setOn(elementKey, ':hover', 'onHoverIn', 'onHoverOut'),
+								...this.setOn(elementKey, ':active', 'onPressIn', 'onPressOut'),
+								...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
 							}),
 				}
 
@@ -246,15 +281,21 @@ export function createStylesheet<
 		})
 	})
 
-	const withMods = <Mods extends ModType>(mods?: ModStyle<S, T, Mods>) => {
+	const withMods = <Mods extends ModType>(
+		baseModStyle?: ModStyle<S, T, Mods>,
+	) => {
 		return Object.assign({
 			[SYMBOL_REF]: ref,
 			[SYMBOL_INIT]: (modsState: ModState) => {
-				return new Base({ tokens: getConfig().getTokens(), mods, modsState })
+				return new Base({
+					tokens: getConfig().getTokens(),
+					mods: baseModStyle,
+					modsState,
+				})
 			},
 
-			with<Mods extends ModType>(mods: ModStyle<S, T, Mods>) {
-				return withMods(mods)
+			with<Mods extends ModType>(modStyle: ModStyle<S, T, Mods>) {
+				return withMods({ ...baseModStyle, ...modStyle })
 			},
 		})
 	}
