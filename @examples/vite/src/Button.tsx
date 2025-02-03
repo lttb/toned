@@ -27,21 +27,21 @@ const styles = stylesheet({
 		container: {
 			bgColor: 'action',
 
-			':active': {
-				container: {
-					bgColor: 'destructive',
-				},
-				label: {
-					textColor: 'on_destructive',
-				},
-			},
-
 			':hover': {
 				container: {
 					bgColor: 'action_secondary',
 				},
 				label: {
 					textColor: 'on_action_secondary',
+				},
+			},
+
+			':active': {
+				container: {
+					bgColor: 'destructive',
+				},
+				label: {
+					textColor: 'on_destructive',
 				},
 			},
 		},
@@ -82,7 +82,7 @@ const styles = stylesheet({
 })
 
 export function Button({ label }: { label: string }) {
-	const [size, setSize] = useState<'m' | 's'>('m')
+	const [size] = useState<'m' | 's'>('m')
 
 	const s = useStyles(styles, {
 		size: size,
@@ -90,11 +90,7 @@ export function Button({ label }: { label: string }) {
 	})
 
 	return (
-		<button
-			type="button"
-			{...s.container}
-			onClick={() => setSize((x) => (x === 'm' ? 's' : 'm'))}
-		>
+		<button type="button" {...s.container}>
 			<span {...s.label}>{label}</span>
 		</button>
 	)
