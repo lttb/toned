@@ -32,6 +32,10 @@ type Config = {
 
 const WILDCARD = '*' as const
 
+type MatcherScheme = Record<string, Set<ModValue>>
+
+type MatcherList = Record<string, { rule: StyleRules }>
+
 export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 	propertyBits: PropertyMap = {}
 	compiledRules: Array<{
@@ -41,10 +45,16 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 		rule: any
 	}> = []
 
+	scheme: MatcherScheme
+	list: MatcherList
+
 	bits: Array<[string, PropertyMap[string]]>
 
 	constructor(rules: NestedStyleRules) {
 		const { scheme, list } = this.flattenRules(rules)
+
+		this.scheme = scheme
+		this.list = list
 
 		this.compile({ scheme, list })
 
@@ -52,16 +62,60 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 	}
 
 	private flattenRules(rules: NestedStyleRules) {
-		const list: Record<string, { rule: StyleRules }> = {}
-		const scheme: Record<string, Set<ModValue>> = {}
+		const list: MatcherList = {}
+		const scheme: MatcherScheme = {}
 
 		const modIndex = new Map<string, number>()
+
+		type Selector = Map<string, string>
+
+		const traverseMod = (
+			selector: Selector,
+			mod: string,
+			modValue: string,
+			rule: StyleRules,
+		) => {
+			scheme[mod] ??= new Set()
+			scheme[mod].add(modValue)
+
+			const nextMap = new Map(selector)
+			nextMap.set(mod, modValue)
+
+			traverse(nextMap, rule)
+		}
+
+		const traverseElement = (
+			selector: Map<string, string>,
+			elementKey: string,
+			elementRule: NestedStyleRules[string],
+		) => {
+			const result: StyleObject = {}
+
+			Object.keys(elementRule).forEach((key) => {
+				if (key[0] === ':') {
+					const mod = `${elementKey}${key}`
+					const modValue = 'true'
+
+					traverseMod(selector, mod, modValue, elementRule[key])
+				} else if (key[0] === '[') {
+					const [mod, modValue] = this.parseSelector(key)
+
+					traverseMod(selector, mod, modValue, {
+						[elementKey]: elementRule[key],
+					})
+				} else {
+					result[key] = elementRule[key]
+				}
+			})
+
+			return result
+		}
 
 		const traverse = (
 			selector: Map<string, string>,
 			node: NestedStyleRules,
 		) => {
-			const rule: NestedStyleRules = Object.create(null)
+			const selectorRule: NestedStyleRules = Object.create(null)
 
 			selector.forEach((value, key) => {
 				if (!modIndex.has(key)) {
@@ -71,25 +125,21 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 
 			const listKey = Array.from(modIndex.keys())
 				.map((key) => {
-					return `${key}:${selector.get(key) || WILDCARD}`
+					return `${key}=${selector.get(key) || WILDCARD}`
 				})
 				.join('|')
 
-			list[listKey] ??= { rule }
-			Object.assign(list[listKey].rule, rule)
+			list[listKey] ??= { rule: selectorRule }
+			Object.assign(list[listKey].rule, selectorRule)
 
 			Object.keys(node).forEach((key) => {
-				if (!key.startsWith('[')) {
-					rule[key] = node[key]
-				} else {
+				if (key[0] === '[') {
 					const [mod, modValue] = this.parseSelector(key)
-					scheme[mod] ??= new Set()
-					scheme[mod].add(modValue)
 
-					const nextMap = new Map(selector)
-					nextMap.set(mod, modValue)
-
-					traverse(nextMap, node[key])
+					traverseMod(selector, mod, modValue, node[key])
+				} else {
+					const elementRule = traverseElement(selector, key, node[key])
+					selectorRule[key] = elementRule
 				}
 			})
 		}
@@ -125,7 +175,7 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 
 			const conditions = ruleStr.split('|')
 			for (const condition of conditions) {
-				const [property, value] = condition.split(':')
+				const [property, value] = condition.split('=')
 
 				if (value === WILDCARD) continue
 
@@ -167,11 +217,11 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 		return bits
 	}
 
-	match(props: Partial<Schema>) {
+	match(props: Partial<Schema & Record<`${string}:${string}`, boolean>>) {
 		const propsBits = this.getPropsBits(props)
 
 		// Match against compiled rules
-		const result: Record<string, any> = {}
+		const result: Record<string, any> = Object.assign({}, this.list['']?.rule)
 
 		for (const compiledRule of this.compiledRules) {
 			if ((propsBits & compiledRule.bitMask) !== compiledRule.bitValue) continue

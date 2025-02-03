@@ -1,6 +1,114 @@
 import { test, describe, expect } from 'vitest'
 
 import { StyleMatcher } from './StyleMatcher'
+import { bgColor } from '@toned/systems/base/colour'
+
+describe('style matcher with pseudo', () => {
+	const matcher = new StyleMatcher<{
+		size: 's' | 'm'
+		variant: 'accent' | 'danger'
+		state: 'disabled' | 'pending'
+		alignment: 'icon-only' | 'icon-left' | 'icon-right'
+	}>({
+		container: {
+			borderRadius: 'medium',
+			borderWidth: 'none',
+
+			style: {
+				cursor: 'pointer',
+			},
+
+			':hover': {
+				container: {
+					bgColor: 'secondary',
+					borderColor: 'secondary',
+				},
+			},
+
+			'[size=m]': {
+				paddingX: 4,
+				paddingY: 2,
+
+				'[alignment=icon-only]': {
+					paddingX: 2,
+				},
+			},
+
+			'[size=s]': {
+				paddingX: 2,
+				paddingY: 1,
+
+				'[alignment=icon-only]': {
+					paddingX: 1,
+					paddingY: 2,
+				},
+			},
+		},
+
+		label: {
+			// style: {
+			// 	pointerEvents: 'none',
+			// 	userSelect: 'none',
+			// },
+		},
+
+		'[variant=accent]': {
+			container: {
+				bgColor: 'action',
+
+				':active': {
+					container: {
+						bgColor: 'destructive',
+					},
+					label: {
+						textColor: 'on_destructive',
+					},
+				},
+
+				':hover': {
+					container: {
+						bgColor: 'action_secondary',
+					},
+					label: {
+						textColor: 'on_action_secondary',
+					},
+				},
+			},
+
+			label: {
+				textColor: 'on_action',
+			},
+		},
+	})
+
+	test('pseudo and nested', () => {
+		expect(
+			matcher.match({
+				size: 'm',
+				variant: 'accent',
+				alignment: 'icon-only',
+				'container:hover': true,
+			}),
+		).toMatchInlineSnapshot(`
+			{
+			  "container": {
+			    "bgColor": "action_secondary",
+			    "borderColor": "secondary",
+			    "borderRadius": "medium",
+			    "borderWidth": "none",
+			    "paddingX": 2,
+			    "paddingY": 2,
+			    "style": {
+			      "cursor": "pointer",
+			    },
+			  },
+			  "label": {
+			    "textColor": "on_action_secondary",
+			  },
+			}
+		`)
+	})
+})
 
 describe('style matcher', () => {
 	const matcher = new StyleMatcher<{
