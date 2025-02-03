@@ -25,6 +25,7 @@ type RefStyle = AnyValue
 const setStyles = (curr: Ref | undefined, style: RefStyle) => {
 	if (!curr) return
 
+	// TODO: move to config
 	if (curr.setNativeProps) {
 		curr.setNativeProps({ style })
 	} else {
@@ -33,22 +34,22 @@ const setStyles = (curr: Ref | undefined, style: RefStyle) => {
 	}
 }
 
+type State = Record<string, Record<PseudoState | 'base', boolean>>
+
+type ElementKey = string
+
+type ElementStyle = AnyValue
+type AppliedStyle = AnyValue
+
+type StyleDecl = Record<ElementKey, ElementStyle>
+
+// TODO: make it type safe
+type ModState = AnyValue
+
 export function createStylesheet<
 	S extends TokenStyleDeclaration,
 	T extends Record<string, TokenStyle<S>>,
 >(ref: TokenSystem<S>, rules: StyleWithPseudo<S, T>) {
-	type State = Record<string, Record<PseudoState | 'base', boolean>>
-
-	type ElementKey = string
-
-	type ElementStyle = AnyValue
-	type AppliedStyle = AnyValue
-
-	type StyleDecl = Record<ElementKey, ElementStyle>
-
-	// TODO: make it type safe
-	type ModState = AnyValue
-
 	class Base {
 		tokens: Tokens
 		state: State
@@ -101,7 +102,7 @@ export function createStylesheet<
 			return style
 		}
 
-		getStateKey(key: ElementKey) {
+		getInteractionState(key: ElementKey) {
 			const {
 				base,
 				':hover': hover,
@@ -117,7 +118,7 @@ export function createStylesheet<
 		}
 
 		getBaseStyle(key: ElementKey) {
-			return this.stateCache[key].get(this.getStateKey(key))
+			return this.stateCache[key].get(this.getInteractionState(key))
 		}
 
 		getStateStyle(key: ElementKey) {
@@ -154,43 +155,26 @@ export function createStylesheet<
 			}
 		}
 
-		onEnter = (elementKey: ElementKey, pseudo: PseudoState) => {
-			const elementRule = this.mergedStyle[elementKey]
+		onStateEnter = (stateName: string, rule: StyleDecl) => {
+			Object.entries(rule).forEach(([elementKey, tokenStyle]) => {
+				const currentStyle = this.getCurrentStyle(elementKey)
 
-			if (!elementRule[pseudo]) return
+				// const cacheKey = this.getStateKey(elementKey)
 
-			Object.entries(elementRule[pseudo]).forEach(
-				([pseudoElementKey, tokenStyle]) => {
-					if (this.state[pseudoElementKey][pseudo]) return
+				// TODO: cache by stateName by element
+				const updatedStyle = {
+					...currentStyle,
+					...this.applyTokens(tokenStyle),
+				}
 
-					const currentStyle = this.getCurrentStyle(pseudoElementKey)
+				// this.stateCache[elementKey].set(cacheKey, updatedStyle)
 
-					this.state[pseudoElementKey][pseudo] = true
-
-					const cacheKey = this.getStateKey(pseudoElementKey)
-
-					const updatedStyle = {
-						...currentStyle,
-						...this.applyTokens(tokenStyle),
-					}
-
-					this.stateCache[pseudoElementKey].set(cacheKey, updatedStyle)
-
-					setStyles(this.refs[pseudoElementKey], updatedStyle)
-				},
-			)
+				setStyles(this.refs[elementKey], updatedStyle)
+			})
 		}
 
-		onLeave = (elementKey: ElementKey, pseudo: PseudoState) => {
-			const elementRule = this.mergedStyle[elementKey]
-
-			if (!elementRule[pseudo]) return
-
-			Object.entries(elementRule[pseudo]).forEach(([elementKey]) => {
-				if (!this.state[elementKey][pseudo]) return
-
-				this.state[elementKey][pseudo] = false
-
+		onStateLeave = (stateName: string, rule: StyleDecl) => {
+			Object.entries(rule).forEach(([elementKey]) => {
 				const currentStyle = this.getCurrentStyle(elementKey)
 
 				setStyles(this.refs[elementKey], currentStyle)
@@ -209,11 +193,11 @@ export function createStylesheet<
 
 			return {
 				[onIn]: () => {
-					this.onEnter(elementKey, pseudo)
+					this.onStateEnter(pseudo, elementRule[pseudo])
 				},
 
 				[onOut]: () => {
-					this.onLeave(elementKey, pseudo)
+					this.onStateLeave(pseudo, elementRule[pseudo])
 				},
 			}
 		}
@@ -231,7 +215,10 @@ export function createStylesheet<
 					}
 
 					this.stateCache[elementKey] = new Map([
-						[this.getStateKey(elementKey), this.applyTokens(elementRule)],
+						[
+							this.getInteractionState(elementKey),
+							this.applyTokens(elementRule),
+						],
 					])
 				}
 
