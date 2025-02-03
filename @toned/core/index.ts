@@ -89,7 +89,7 @@ export function defineSystem<
 			return result as any
 		},
 		stylesheet: <T extends Record<string, TokenStyle<S>>>(
-			value: StyleWithPseudo<S, T>,
+			rules: StyleWithPseudo<S, T>,
 		) => {
 			type State = Record<string, Record<PseudoState | 'base', boolean>>
 
@@ -135,7 +135,7 @@ export function defineSystem<
 
 					this.modsStateCache = new Map()
 
-					this.mergedStyle = this.mergeStyles(value, this.modsStyle)
+					this.mergedStyle = this.mergeStyles(rules, this.modsStyle)
 				}
 
 				// b has to be a subset of a
@@ -188,7 +188,7 @@ export function defineSystem<
 
 					const stateStyle = this.matcher.match(modsState)
 
-					this.mergedStyle = this.mergeStyles(value, stateStyle)
+					this.mergedStyle = this.mergeStyles(rules, stateStyle)
 
 					for (const elementKey in stateStyle) {
 						const currentStyle = this.getBaseStyle(elementKey)
@@ -249,7 +249,7 @@ export function defineSystem<
 				}
 			}
 
-			Object.entries(value).map(([k, v]) => {
+			Object.entries(rules).map(([k, v]) => {
 				Object.defineProperty(Base.prototype, k, {
 					get(this: Base) {
 						if (!this.state[k]) {
@@ -322,7 +322,7 @@ export function defineSystem<
 					return acc
 				}
 
-				Object.assign(acc, system[k].resolve(v, config.tokens))
+				Object.assign(acc, system[k]?.resolve(v, config.tokens))
 
 				return acc
 			}, {})

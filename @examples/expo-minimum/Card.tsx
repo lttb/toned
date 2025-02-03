@@ -6,7 +6,7 @@ import { useStyles } from '@toned/react/index'
 import { Button } from './Button'
 
 const styles = stylesheet({
-	container: { bgColor: 'default' },
+	container: { bgColor: 'default', alignItems: 'flex-start' },
 	code: { textColor: 'destructive' },
 })
 
