@@ -3,9 +3,17 @@ import { useStyles } from '@toned/react/index'
 import { useState } from 'react'
 
 const styles = stylesheet({
+	...stylesheet.state<{
+		size: 'm' | 's'
+		variant: 'accent' | 'danger'
+		alignment?: 'icon-only' | 'icon-left' | 'icon-right'
+	}>,
+
 	container: {
 		borderRadius: 'medium',
 		borderWidth: 'none',
+
+		':active': {},
 
 		style: {
 			cursor: 'pointer',
@@ -20,42 +28,41 @@ const styles = stylesheet({
 	},
 
 	'[variant=accent]': {
-		container: {
+		$container: {
 			bgColor: 'action',
 
 			':hover': {
-				container: {
+				$container: {
 					bgColor: 'action_secondary',
 				},
-				label: {
+				$label: {
 					textColor: 'on_action_secondary',
 				},
 			},
 
 			':active': {
-				container: {
+				$container: {
 					bgColor: 'destructive',
 				},
-				label: {
+				$label: {
 					textColor: 'on_destructive',
 				},
 			},
 		},
 
-		label: {
+		$label: {
 			textColor: 'on_action',
 		},
 	},
 
 	'[size=m]': {
-		container: {
+		$container: {
 			paddingX: 4,
 			paddingY: 2,
-			opacity: 0.5,
 		},
 
 		'[alignment=icon-only]': {
-			container: {
+			$container: {
 				paddingX: 2,
 				paddingY: 2,
 			},
@@ -63,13 +70,13 @@ const styles = stylesheet({
 	},
 
 	'[size=s]': {
-		container: {
+		$container: {
 			paddingX: 2,
 			paddingY: 1,
 		},
 
 		'[alignment=icon-only]': {
-			container: {
+			$container: {
 				paddingX: 1,
 				paddingY: 2,
 			},

@@ -4,9 +4,7 @@ import {
 	type Tokens,
 	type TokenSystem,
 	type ModType,
-	type ModStyle,
-	type TokenStyle,
-	type StyleWithPseudo,
+	type StylesheetValue,
 	type TokenStyleDeclaration,
 } from './types'
 
@@ -48,8 +46,9 @@ type ModState = AnyValue
 
 export function createStylesheet<
 	S extends TokenStyleDeclaration,
-	T extends Record<string, TokenStyle<S>>,
->(ref: TokenSystem<S>, rules: StyleWithPseudo<S, T>) {
+	Mods extends ModType,
+	T,
+>(ref: TokenSystem<S>, rules: StylesheetValue<S, Mods, T>) {
 	class Base {
 		tokens: Tokens
 		state: State
@@ -63,11 +62,9 @@ export function createStylesheet<
 
 		constructor({
 			tokens,
-			mods,
 			modsState,
 		}: {
 			tokens: Tokens
-			mods?: ModStyle<S, T, ModType>
 			modsState?: ModState
 		}) {
 			this.tokens = tokens
@@ -75,15 +72,12 @@ export function createStylesheet<
 			this.stateCache = {}
 			this.refs = {}
 
-			this.matcher = new StyleMatcher({
-				...rules,
-				...mods,
-			})
+			this.matcher = new StyleMatcher(rules)
 
 			this.modsState = modsState || {}
 			this.modsStyle = this.matcher.match(this.modsState)
 
-			console.log(this.matcher.list)
+			// console.log(this.matcher.list)
 		}
 
 		mergeStyles(a: StyleDecl, b?: StyleDecl) {
@@ -152,10 +146,10 @@ export function createStylesheet<
 			get(this: Base) {
 				const isBrowser = typeof document !== 'undefined'
 
-				const hasInteraction =
-					elementRule[':active'] ||
-					elementRule[':hover'] ||
-					elementRule[':focus']
+				// const hasInteraction =
+				// 	elementRule[':active'] ||
+				// 	elementRule[':hover'] ||
+				// 	elementRule[':focus']
 
 				const result = {
 					ref: (current: Ref) => {
@@ -196,24 +190,13 @@ export function createStylesheet<
 		})
 	})
 
-	const withMods = <Mods extends ModType>(
-		baseModStyle?: ModStyle<S, T, Mods>,
-	) => {
-		return Object.assign({
-			[SYMBOL_REF]: ref,
-			[SYMBOL_INIT]: (modsState: ModState) => {
-				return new Base({
-					tokens: getConfig().getTokens(),
-					mods: baseModStyle,
-					modsState,
-				})
-			},
-
-			with<Mods extends ModType>(modStyle: ModStyle<S, T, Mods>) {
-				return withMods({ ...baseModStyle, ...modStyle })
-			},
-		})
-	}
-
-	return withMods()
+	return Object.assign({
+		[SYMBOL_REF]: ref,
+		[SYMBOL_INIT]: (modsState: ModState) => {
+			return new Base({
+				tokens: getConfig().getTokens(),
+				modsState,
+			})
+		},
+	})
 }

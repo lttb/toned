@@ -1,5 +1,3 @@
-import type { Token } from 'typescript'
-
 export const SYMBOL_REF: unique symbol = Symbol()
 export const SYMBOL_INIT: unique symbol = Symbol()
 
@@ -14,9 +12,12 @@ export type TokenConfig<Values extends readonly any[], Result> = {
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 export type TokenStyleDeclaration = Record<string, TokenConfig<any, any>>
 
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
+type InlineStyle = any
+
 export type TokenStyle<S extends TokenStyleDeclaration> = Partial<{
 	[key in keyof S]: S[key]['values'][number]
-}>
+}> & { style?: InlineStyle }
 
 // biome-ignore lint/suspicious/noExplicitAny: <explanation>
 type Merge<D extends any[]> = D extends [infer First, ...infer Rest]
@@ -116,38 +117,38 @@ type ModList<
 		ModList<S, Elements, Omit<Mods, K>, AvailablePseudo>
 }
 
-export type TokenSystem<S extends TokenStyleDeclaration> = {
-	system: S
-	stylesheet: (<
-		Mods extends ModType,
-		T extends {
-			[K in keyof T as K extends `[${string}]` | 'prototype'
-				? never
-				: K]: ElementStyle<
-				S,
-				NoInfer<
-					PickString<
-						Exclude<
-							keyof NoInfer<T>,
-							/* NoInfer<K> | */ `[${string}]` | 'prototype'
-						>
-					>
-				>,
-				Mods,
-				Pseudo
-			>
-		} & ModList<
-			S,
+export type StylesheetValue<
+	S extends TokenStyleDeclaration,
+	Mods extends ModType,
+	T,
+> = {
+	[K in keyof T as K extends `[${string}]` | 'prototype'
+		? never
+		: K]: ElementStyle<
+		S,
+		NoInfer<
 			PickString<
 				Exclude<
 					keyof NoInfer<T>,
 					/* NoInfer<K> | */ `[${string}]` | 'prototype'
 				>
-			>,
-			Mods,
-			Pseudo
+			>
 		>,
-	>(
+		Mods,
+		Pseudo
+	>
+} & ModList<
+	S,
+	PickString<
+		Exclude<keyof NoInfer<T>, /* NoInfer<K> | */ `[${string}]` | 'prototype'>
+	>,
+	Mods,
+	Pseudo
+>
+
+export type TokenSystem<S extends TokenStyleDeclaration> = {
+	system: S
+	stylesheet: (<Mods extends ModType, T extends StylesheetValue<S, Mods, T>>(
 		style: { [SYMBOL_STATE]?: Mods } & T,
 	) => Stylesheet<S, Omit<T, `[${string}]` | 'prototype'>, Mods>) & {
 		state: typeof C

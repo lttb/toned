@@ -138,8 +138,9 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 
 					traverseMod(selector, mod, modValue, node[key])
 				} else {
-					const elementRule = traverseElement(selector, key, node[key])
-					selectorRule[key] = elementRule
+					const elementKey = key.replace(/^\$/, '')
+					const elementRule = traverseElement(selector, elementKey, node[key])
+					selectorRule[elementKey] = elementRule
 				}
 			})
 		}

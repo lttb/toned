@@ -3,13 +3,13 @@ import {
 	type Tokens,
 	type TokenConfig,
 	type TokenSystem,
-	type TokenStyle,
-	type StyleWithPseudo,
+	type StylesheetValue,
+	type ModType,
 } from './types'
 
-import {createStylesheet} from './StyleSheet'
+import { createStylesheet } from './StyleSheet'
 
-import {getConfig} from './config'
+import { getConfig } from './config'
 
 const SYMBOL_STYLE = Symbol()
 const SYMBOL_ACCESS = Symbol()
@@ -37,7 +37,10 @@ export function defineSystem<
 	const ref: TokenSystem<S> = {
 		system,
 		t: (...values) => {
-			const value = values.reduce((acc, v) => Object.assign(acc, SYMBOL_STYLE in v ? v[SYMBOL_STYLE] : v), {})
+			const value = values.reduce(
+				(acc, v) => Object.assign(acc, SYMBOL_STYLE in v ? v[SYMBOL_STYLE] : v),
+				{},
+			)
 
 			if (SYMBOL_REF in value) {
 				return value
@@ -46,20 +49,22 @@ export function defineSystem<
 			const result = {
 				[SYMBOL_REF]: ref,
 				[SYMBOL_STYLE]: value,
-				[SYMBOL_ACCESS]: {ref, value},
+				[SYMBOL_ACCESS]: { ref, value },
 				get style() {
 					const tokens = getConfig().getTokens()
 
-					return ref.exec({tokens}, value)
+					return ref.exec({ tokens }, value)
 				},
 			}
 
 			// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 			return result as any
 		},
-		stylesheet: <T extends Record<string, TokenStyle<S>>>(rules: StyleWithPseudo<S, T>) => {
+		stylesheet: (<Mods extends ModType, T>(
+			rules: StylesheetValue<S, Mods, T>,
+		) => {
 			return createStylesheet(ref, rules)
-		},
+		}) as any,
 		exec: (config, tokenStyle) => {
 			return Object.entries(tokenStyle).reduce<object>((acc, [k, v]) => {
 				if (!v) return acc
