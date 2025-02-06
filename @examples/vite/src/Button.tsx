@@ -18,11 +18,7 @@ const styles = stylesheet({
 		// 	userSelect: 'none',
 		// },
 	},
-}).with<{
-	size: 'm' | 's'
-	variant: 'accent' | 'danger'
-	alignment?: 'icon-only' | 'icon-left' | 'icon-right'
-}>({
+
 	'[variant=accent]': {
 		container: {
 			bgColor: 'action',
@@ -80,7 +76,6 @@ const styles = stylesheet({
 		},
 	},
 })
-
 export function Button({ label }: { label: string }) {
 	const [size] = useState<'m' | 's'>('m')
 

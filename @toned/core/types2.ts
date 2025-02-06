@@ -134,46 +134,20 @@ type StylesheetStyle<
 	[key in keyof T]: NestedStylesheetStyle<Mods, Omit<T, key>, S>
 }
 
-type ElementStyle<S extends TokenStyleDeclaration> = TokenStyle<S>
-
-type TopElementStyle<
-	S extends TokenStyleDeclaration,
-	Mods extends ModType,
-	T extends Record<string, any>,
-	CurrentElement extends string,
-> = TokenStyle<S> & {
-	// TODO: think about mix of states, like `:focus:active`
-	[key in ':hover' | ':active' | ':focus']?: TokenStyle<S> & {
-		// TODO: enforce type safety (currently it's possible to use non K keys)
-		[Key in keyof T as `$${Key extends string ? Exclude<Key, 'prototype' | `[${string}]`> : never}`]?: TokenStyle<S>
-	}
-} & {
-	[key in keyof Mods as key extends string
-		? `[${key}=${Exclude<Mods[key], undefined>}]`
-		: never]?: TopElementStyle<S, Omit<Mods, key>, T, CurrentElement>
-}
-
-type NestedNested<S extends TokenStyleDeclaration, Mods extends ModType, T> = {
-	[key in keyof Mods as key extends string
-		? `[${key}=${Exclude<Mods[key], undefined>}]`
-		: never]?: {
-		[Key in Exclude<
-			keyof T,
-			'prototype' | `[${string}]`
-		> as `$${Key extends string ? Key : never}`]?: ElementStyle<S>
-	} & NestedNested<S, Omit<Mods, key>, T>
-}
-
 export type TokenSystem<S extends TokenStyleDeclaration> = {
 	system: S
-	stylesheet: (<
-		Mods extends ModType,
-		T extends {
-			[K in string]: TopElementStyle<S, NoInfer<Mods>, NoInfer<T>, NoInfer<K>>
-		},
-	>(
+	stylesheet: (<Mods extends ModType, T extends Record<string, any>>(
 		style: { [SYMBOL_STATE]?: Mods } & T &
-			NestedNested<S, NoInfer<Mods>, NoInfer<T>>,
+			StylesheetStyle<Mods, T, S> & {
+				[key in keyof Mods as key extends string
+					? `[${key}=${Exclude<Mods[key], undefined>}]`
+					: never]?: Partial<
+					Omit<
+						StylesheetStyle<Omit<Mods, key>, T, S>,
+						`${'[' | '&' | ':'}${string}`
+					>
+				>
+			},
 	) => Stylesheet<S, T>) & {
 		state: typeof C
 	}
