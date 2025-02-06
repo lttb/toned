@@ -58,6 +58,7 @@ interface Ctor {
 	[SYMBOL_STATE]: this extends typeof C_<infer T> ? T : never
 }
 
+// biome-ignore lint/suspicious/noExplicitAny: <explanation>
 const C: typeof C_ & Ctor = C_ as any
 
 type Pseudo = ':hover' | ':active' | ':focus'
