@@ -9,26 +9,23 @@ const styles = stylesheet({
 		alignment?: 'icon-only' | 'icon-left' | 'icon-right'
 	}>,
 
-	container: {
-		borderRadius: 'medium',
-		borderWidth: 'none',
-
-		':hover': {
-			alignContent: 'normal',
-		},
-	},
-
 	label: {
-		textColor: 'default',
+		alignContent: 'normal',
 
-		'[alignment=icon-left]': {
-			'[size=m]': {
-				'[variant=accent]': {},
-			},
+		':focus': {
+			alignContent: 'space-around',
+
+			$label: {},
 		},
 	},
 
-	'[alignment=icon-left]': {},
+	text: {
+		':hover': {},
+	},
+
+	container: {
+		':active': {},
+	},
 })
 export function Button({ label }: { label: string }) {
 	const [size] = useState<'m' | 's'>('m')

@@ -105,7 +105,7 @@ interface Ctor {
 
 const C: typeof C_ & Ctor = C_ as any
 
-type Pseudo = ':hover' | ':active' | ':focus'
+type Pseudo = 'hover' | 'active' | 'focus'
 
 export type ModStyle2<Mods extends ModType, StyleValue> = {
 	[key in keyof Mods as key extends string
@@ -134,7 +134,7 @@ type StylesheetStyle<
 	[key in keyof T]: NestedStylesheetStyle<Mods, Omit<T, key>, S>
 }
 
-// type ElementStyle<S extends TokenStyleDeclaration> = TokenStyle<S>
+type ElementStyle<S extends TokenStyleDeclaration> = TokenStyle<S>
 
 type TopElementStyle<
 	S extends TokenStyleDeclaration,
@@ -164,35 +164,16 @@ type NestedNested<S extends TokenStyleDeclaration, Mods extends ModType, T> = {
 	} & NestedNested<S, Omit<Mods, key>, T>
 }
 
-type PickString<K> = K extends string ? K : never
-
-type ElementStyle<
-	S extends TokenStyleDeclaration,
-	Elements extends string,
-	AvailablePseudo extends string,
-> = TokenStyle<S> & {
-	[PseudoKey in AvailablePseudo]?: ElementStyle<
-		S,
-		Elements,
-		Exclude<AvailablePseudo, PseudoKey>
-	> & {
-		[ElementKey in `$${Elements}`]?: ElementStyle<S, Elements, AvailablePseudo>
-	}
-}
-
 export type TokenSystem<S extends TokenStyleDeclaration> = {
 	system: S
 	stylesheet: (<
 		Mods extends ModType,
 		T extends {
-			[K in keyof T]: ElementStyle<
-				S,
-				PickString<Exclude<keyof NoInfer<T>, /* NoInfer<K> | */ 'prototype'>>,
-				Pseudo
-			>
+			[K in string]: TopElementStyle<NoInfer<S>, NoInfer<Mods>, NoInfer<T>, K>
 		},
 	>(
-		style: { [SYMBOL_STATE]?: Mods } & T,
+		style: { [SYMBOL_STATE]?: Mods } & Omit<T, 'prototype'> &
+			NestedNested<NoInfer<S>, NoInfer<Mods>, NoInfer<T>>,
 	) => Stylesheet<S, T>) & {
 		state: typeof C
 	}
