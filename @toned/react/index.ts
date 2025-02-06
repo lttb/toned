@@ -7,8 +7,6 @@ import {
 	type ModType,
 	type TokenStyle,
 	type TokenStyleDeclaration,
-	type StylesheetWithState,
-	type StylesheetValue,
 } from '@toned/core/types'
 
 type UseStylesResult<
@@ -20,21 +18,19 @@ type UseStylesResult<
 export function useStyles<
 	S extends TokenStyleDeclaration,
 	T extends Record<string, TokenStyle<S>>,
->(stylesheet: Stylesheet<S, T>): UseStylesResult<S, T>
+>(stylesheet: Stylesheet<S, T, never>): UseStylesResult<S, T>
 
 export function useStyles<
 	S extends TokenStyleDeclaration,
 	T extends Record<string, TokenStyle<S>>,
 	M extends ModType,
->(
-	stylesheet: StylesheetWithState<S, T, M>,
-	state: NoInfer<M>,
-): UseStylesResult<S, T>
+>(stylesheet: Stylesheet<S, T, M>, state: NoInfer<M>): UseStylesResult<S, T>
 
 export function useStyles<
 	S extends TokenStyleDeclaration,
 	T extends Record<string, TokenStyle<S>>,
->(stylesheet: StylesheetValue<S, T>, state?: ModType) {
+	M extends ModType,
+>(stylesheet: Stylesheet<S, T, M>, state?: M) {
 	const ref = useRef()
 
 	if (ref.current?.stylesheet !== stylesheet) {

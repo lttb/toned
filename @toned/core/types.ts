@@ -34,25 +34,10 @@ type Ref = { current?: null | any }
 
 export type ModType = Record<string, string | boolean | number>
 
-export type ModStyle<
+export type Stylesheet<
 	S extends TokenStyleDeclaration,
 	T extends Record<string, TokenStyle<S>>,
-	Mods extends ModType,
-> = {
-	[key in keyof Mods as key extends string
-		? `[${key}=${Exclude<Mods[key], undefined>}]`
-		: never]?: Partial<StyleWithPseudo<S, T>> & ModStyle<S, T, Omit<Mods, key>>
-}
-
-export type StylesheetWithState<
-	S extends TokenStyleDeclaration,
-	T extends Record<string, TokenStyle<S>>,
-	M extends ModType,
-> = StylesheetValue<S, T> & { __mods__: M }
-
-export type StylesheetValue<
-	S extends TokenStyleDeclaration,
-	T extends Record<string, TokenStyle<S>>,
+	M extends ModType = never,
 > = {
 	[key in keyof T]: ReturnType<TFun<S>>
 } & {
@@ -62,36 +47,6 @@ export type StylesheetValue<
 		[key in keyof T]: ReturnType<TFun<S>>
 	}
 }
-
-export type Stylesheet<
-	S extends TokenStyleDeclaration,
-	T extends Record<string, TokenStyle<S>>,
-> = StylesheetValue<S, T> & {
-	with<Mods extends ModType>(
-		modStyle: ModStyle<S, Record<keyof T, TokenStyle<S>>, Mods>,
-	): StylesheetWithState<S, T, Mods>
-}
-
-export type StyleWithPseudo<
-	S extends TokenStyleDeclaration,
-	T extends Record<string, TokenStyle<S>>,
-> = T &
-	Record<
-		keyof T,
-		TokenStyle<S> & {
-			// TODO: think about mix of states, like `:focus:active`
-			[key in ':hover' | ':active' | ':focus']?: {
-				// TODO: enforce type safety (currently it's possible to use non K keys)
-				[key in keyof T]?: TokenStyle<S>
-			}
-		}
-	>
-
-type TotalStyle<
-	S extends TokenStyleDeclaration,
-	T extends Record<string, TokenStyle<S>>,
-	Mods extends ModType,
-> = StyleWithPseudo<S, T> & ModStyle<S, T, Mods>
 
 const SYMBOL_STATE: unique symbol = Symbol.for('@toned/state')
 
@@ -106,63 +61,6 @@ interface Ctor {
 const C: typeof C_ & Ctor = C_ as any
 
 type Pseudo = ':hover' | ':active' | ':focus'
-
-export type ModStyle2<Mods extends ModType, StyleValue> = {
-	[key in keyof Mods as key extends string
-		? `[${key}=${Exclude<Mods[key], undefined>}]`
-		: never]: StyleValue & ModStyle2<Omit<Mods, key>, StyleValue>
-}
-
-type NestedStylesheetStyle<
-	Mods extends ModType,
-	T extends Record<string, any>,
-	S extends TokenStyleDeclaration,
-> = TokenStyle<S> & {
-	'&:hover'?: NestedStylesheetStyle<Mods, T, S>
-	':hover'?: Partial<Record<keyof T, NestedStylesheetStyle<Mods, T, S>>>
-} & {
-	[key in keyof Mods as key extends string
-		? `[${key}=${Exclude<Mods[key], undefined>}]`
-		: never]?: NestedStylesheetStyle<Omit<Mods, key>, T, S>
-}
-
-type StylesheetStyle<
-	Mods extends ModType,
-	T extends Record<string, any>,
-	S extends TokenStyleDeclaration,
-> = {
-	[key in keyof T]: NestedStylesheetStyle<Mods, Omit<T, key>, S>
-}
-
-// type ElementStyle<S extends TokenStyleDeclaration> = TokenStyle<S>
-
-type TopElementStyle<
-	S extends TokenStyleDeclaration,
-	Mods extends ModType,
-	T extends Record<string, any>,
-	CurrentElement extends string,
-> = TokenStyle<S> & {
-	// TODO: think about mix of states, like `:focus:active`
-	[key in ':hover' | ':active' | ':focus']?: TokenStyle<S> & {
-		// TODO: enforce type safety (currently it's possible to use non K keys)
-		[Key in keyof T as `$${Key extends string ? Exclude<Key, `[${string}]`> : never}`]?: TokenStyle<S>
-	}
-} & {
-	[key in keyof Mods as key extends string
-		? `[${key}=${Exclude<Mods[key], undefined>}]`
-		: never]?: TopElementStyle<S, Omit<Mods, key>, T, CurrentElement>
-}
-
-type NestedNested<S extends TokenStyleDeclaration, Mods extends ModType, T> = {
-	[key in keyof Mods as key extends string
-		? `[${key}=${Exclude<Mods[key], undefined>}]`
-		: never]?: {
-		[Key in Exclude<
-			keyof T,
-			'prototype' | `[${string}]`
-		> as `$${Key extends string ? Key : never}`]?: ElementStyle<S>
-	} & NestedNested<S, Omit<Mods, key>, T>
-}
 
 type PickString<K> = K extends string ? K : never
 
@@ -250,7 +148,7 @@ export type TokenSystem<S extends TokenStyleDeclaration> = {
 		>,
 	>(
 		style: { [SYMBOL_STATE]?: Mods } & T,
-	) => Stylesheet<S, T>) & {
+	) => Stylesheet<S, Omit<T, `[${string}]` | 'prototype'>, Mods>) & {
 		state: typeof C
 	}
 	t: TFun<S>
