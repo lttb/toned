@@ -11,11 +11,32 @@ const styles = stylesheet({
 
 	label: {
 		alignContent: 'normal',
+		'[size=m]': {
+			'[alignment=icon-left]': {
+				'[variant=accent]': {
+					':active': {},
+				},
+			},
+		},
 
 		':focus': {
 			alignContent: 'space-around',
 
 			$label: {},
+		},
+	},
+
+	'[size=s]': {
+		'[alignment=icon-left]': {
+			'[variant=danger]': {
+				$container: {
+					':active': {
+						':focus': {
+							':hover': {},
+						},
+					},
+				},
+			},
 		},
 	},
 

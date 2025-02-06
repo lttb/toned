@@ -169,15 +169,52 @@ type PickString<K> = K extends string ? K : never
 type ElementStyle<
 	S extends TokenStyleDeclaration,
 	Elements extends string,
+	Mods extends ModType,
 	AvailablePseudo extends string,
 > = TokenStyle<S> & {
 	[PseudoKey in AvailablePseudo]?: ElementStyle<
 		S,
+		NoInfer<Elements>,
+		Mods,
+		NoInfer<Exclude<AvailablePseudo, PseudoKey>>
+	> &
+		ElementList<S, NoInfer<Elements>, Mods, NoInfer<AvailablePseudo>>
+} & {
+	[K in keyof Mods as `[${PickString<K>}=${Exclude<Mods[K], undefined>}]`]?: ElementStyle<
+		S,
+		NoInfer<Elements>,
+		Omit<Mods, NoInfer<K>>,
+		NoInfer<AvailablePseudo>
+	>
+}
+
+type ElementList<
+	S extends TokenStyleDeclaration,
+	Elements extends string,
+	Mods extends ModType,
+	AvailablePseudo extends string,
+> = {
+	[ElementKey in `$${Elements}`]?: ElementStyle<
+		S,
 		Elements,
-		Exclude<AvailablePseudo, PseudoKey>
-	> & {
-		[ElementKey in `$${Elements}`]?: ElementStyle<S, Elements, AvailablePseudo>
-	}
+		Mods,
+		AvailablePseudo
+	>
+}
+
+type ModList<
+	S extends TokenStyleDeclaration,
+	Elements extends string,
+	Mods extends ModType,
+	AvailablePseudo extends string,
+> = {
+	[K in keyof Mods as `[${PickString<K>}=${Exclude<Mods[K], undefined>}]`]?: ElementList<
+		S,
+		Elements,
+		Mods,
+		AvailablePseudo
+	> &
+		ModList<S, Elements, Omit<Mods, K>, AvailablePseudo>
 }
 
 export type TokenSystem<S extends TokenStyleDeclaration> = {
@@ -185,12 +222,32 @@ export type TokenSystem<S extends TokenStyleDeclaration> = {
 	stylesheet: (<
 		Mods extends ModType,
 		T extends {
-			[K in keyof T]: ElementStyle<
+			[K in keyof T as K extends `[${string}]` | 'prototype'
+				? never
+				: K]: ElementStyle<
 				S,
-				PickString<Exclude<keyof NoInfer<T>, /* NoInfer<K> | */ 'prototype'>>,
+				NoInfer<
+					PickString<
+						Exclude<
+							keyof NoInfer<T>,
+							/* NoInfer<K> | */ `[${string}]` | 'prototype'
+						>
+					>
+				>,
+				Mods,
 				Pseudo
 			>
-		},
+		} & ModList<
+			S,
+			PickString<
+				Exclude<
+					keyof NoInfer<T>,
+					/* NoInfer<K> | */ `[${string}]` | 'prototype'
+				>
+			>,
+			Mods,
+			Pseudo
+		>,
 	>(
 		style: { [SYMBOL_STATE]?: Mods } & T,
 	) => Stylesheet<S, T>) & {
