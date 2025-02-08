@@ -44,7 +44,7 @@ export type Stylesheet<
 } & {
 	// TODO: hide it from the public interface
 	[SYMBOL_REF]: TokenSystem<S>
-	[SYMBOL_INIT]: () => {
+	[SYMBOL_INIT]: (modState?: M) => {
 		[key in keyof T]: ReturnType<TFun<S>>
 	}
 }

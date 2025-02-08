@@ -25,6 +25,9 @@ type RulesList = {
 	}
 }
 
+// NOTE: might be generalised to any mod
+type InteractionList = Record<string, Record<string, boolean>>
+
 type Config = {
 	scheme: SchemeConfig
 	list: RulesList
@@ -47,11 +50,19 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 
 	scheme: MatcherScheme
 	list: MatcherList
+	interactions: InteractionList
+	elementSet: Set<string>
 
 	bits: Array<[string, PropertyMap[string]]>
 
+	cache = new Map<number, any>()
+
 	constructor(rules: NestedStyleRules) {
-		const { scheme, list } = this.flattenRules(rules)
+		const { scheme, list, interactions, elementSet } = this.flattenRules(rules)
+
+		this.elementSet = elementSet
+
+		this.interactions = interactions
 
 		this.scheme = scheme
 		this.list = list
@@ -62,6 +73,8 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 	}
 
 	private flattenRules(rules: NestedStyleRules) {
+		const elementSet = new Set<string>()
+		const interactions: InteractionList = {}
 		const list: MatcherList = {}
 		const scheme: MatcherScheme = {}
 
@@ -91,10 +104,15 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 		) => {
 			const result: StyleObject = {}
 
+			elementSet.add(elementKey)
+
 			Object.keys(elementRule).forEach((key) => {
 				if (key[0] === ':') {
 					const mod = `${elementKey}${key}`
 					const modValue = 'true'
+
+					interactions[elementKey] ??= {}
+					interactions[elementKey][key] = true
 
 					traverseMod(selector, mod, modValue, elementRule[key])
 				} else if (key[0] === '[') {
@@ -147,7 +165,7 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 
 		traverse(new Map(), rules)
 
-		return { scheme, list }
+		return { scheme, list, interactions, elementSet }
 	}
 
 	private parseSelector(selector: string): [string, string] {
@@ -218,21 +236,47 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 		return bits
 	}
 
+	#elementHash = Symbol.for('@toned/StyleMatcher/elementHash')
+	#propsBits = Symbol.for('@toned/StyleMatcher/propsBits')
+
 	match(props: Partial<Schema & Record<`${string}:${string}`, boolean>>) {
 		const propsBits = this.getPropsBits(props)
 
+		if (this.cache.has(propsBits)) {
+			return this.cache.get(propsBits)
+		}
+
 		// Match against compiled rules
-		const result: Record<string, any> = Object.assign({}, this.list['']?.rule)
+		const result: Record<string | symbol, any> = {}
+
+		for (const elementKey in this.list['']?.rule) {
+			result[elementKey] ??= {}
+			Object.assign(result[elementKey], this.list[''].rule[elementKey])
+		}
+
+		result[this.#elementHash] = {}
+		result[this.#propsBits] = propsBits
 
 		for (const compiledRule of this.compiledRules) {
 			if ((propsBits & compiledRule.bitMask) !== compiledRule.bitValue) continue
 
-			for (const key in compiledRule.rule) {
-				result[key] ??= {}
-				Object.assign(result[key], compiledRule.rule[key])
+			for (const elementKey in compiledRule.rule) {
+				result[elementKey] ??= {}
+				Object.assign(result[elementKey], compiledRule.rule[elementKey])
+
+				result[this.#elementHash][elementKey] ^= compiledRule.bitValue
 			}
 		}
 
+		this.cache.set(propsBits, result)
+
 		return result
+	}
+
+	isEqual(elementKey: string, style1: any, style2: any) {
+		return (
+			style1?.[this.#elementHash]?.[elementKey] ===
+			style2?.[this.#elementHash]?.[elementKey]
+		)
 	}
 }

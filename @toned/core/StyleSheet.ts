@@ -58,7 +58,8 @@ export function createStylesheet<
 
 		matcher: StyleMatcher
 		modsState: ModState
-		modsStyle: StyleDecl
+		modsStyle!: StyleDecl
+		modsStylePrev!: StyleDecl
 
 		constructor({
 			tokens,
@@ -75,30 +76,37 @@ export function createStylesheet<
 			this.matcher = new StyleMatcher(rules)
 
 			this.modsState = modsState || {}
-			this.modsStyle = this.matcher.match(this.modsState)
+			// this.modsStyle = this.matcher.match(this.modsState)
+
+			this.matchStyles()
 
 			// console.log(this.matcher.list)
 		}
 
-		mergeStyles(a: StyleDecl, b?: StyleDecl) {
-			const style: StyleDecl = {}
+		// mergeStyles(a: StyleDecl, b?: StyleDecl) {
+		// 	const style: StyleDecl = {}
+		//
+		// 	for (const key in a) {
+		// 		style[key] = Object.assign({}, a[key], b?.[key])
+		// 	}
+		//
+		// 	return style
+		// }
 
-			for (const key in a) {
-				style[key] = Object.assign({}, a[key], b?.[key])
-			}
+		// getInteractionState(key: ElementKey) {
+		// 	const {
+		// 		base,
+		// 		':hover': hover,
+		// 		':focus': focus,
+		// 		':active': active,
+		// 	} = this.state[key]
+		//
+		// 	return +base | (+hover << 1) | (+focus << 2) | (+active << 3)
+		// }
 
-			return style
-		}
-
-		getInteractionState(key: ElementKey) {
-			const {
-				base,
-				':hover': hover,
-				':focus': focus,
-				':active': active,
-			} = this.state[key]
-
-			return +base | (+hover << 1) | (+focus << 2) | (+active << 3)
+		matchStyles() {
+			this.modsStylePrev = this.modsStyle
+			this.modsStyle = this.matcher.match(this.modsState)
 		}
 
 		getCurrentStyle(key: ElementKey) {
@@ -109,14 +117,24 @@ export function createStylesheet<
 			return ref.exec({ tokens: this.tokens || getConfig().getTokens() }, value)
 		}
 
+		applyElementStyles() {
+			this.matcher.elementSet.forEach((elementKey) => {
+				if (
+					this.matcher.isEqual(elementKey, this.modsStylePrev, this.modsStyle)
+				) {
+					return
+				}
+
+				setStyles(this.refs[elementKey], this.getCurrentStyle(elementKey))
+			})
+		}
+
 		applyState(modsState: ModState) {
 			Object.assign(this.modsState, modsState)
 
-			this.modsStyle = this.matcher.match(this.modsState)
+			this.matchStyles()
 
-			for (const elementKey in this.modsStyle) {
-				setStyles(this.refs[elementKey], this.getCurrentStyle(elementKey))
-			}
+			this.applyElementStyles()
 		}
 
 		setOn = (
@@ -155,34 +173,52 @@ export function createStylesheet<
 					ref: (current: Ref) => {
 						this.refs[elementKey] = current
 					},
-					style: this.getCurrentStyle(elementKey),
+
+					style: this.matcher.interactions[elementKey]
+						? (state: any) => {
+								Object.assign(this.modsState, {
+									[`${elementKey}:hover`]: state.hovered,
+									[`${elementKey}:focus`]: state.focused,
+									[`${elementKey}:active`]: state.pressed,
+								})
+
+								this.matchStyles()
+
+								this.applyElementStyles()
+
+								return this.getCurrentStyle(elementKey)
+							}
+						: this.getCurrentStyle(elementKey),
+
+					// style: this.getCurrentStyle(elementKey),
+
 					// style: hasInteraction ? ({focused, hovered, pressed}) => {
 					//        return this.getCurrentStyle(elementKey)
 					//      } : this.getCurrentStyle(elementKey),
 
 					// TODO: move it to config
-					...(isBrowser
-						? {
-								...this.setOn(
-									elementKey,
-									':hover',
-									'onMouseOver',
-									'onMouseOut',
-								),
-								...this.setOn(
-									elementKey,
-									':active',
-									'onMouseDown',
-									'onMouseUp',
-								),
-								...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
-							}
-						: {
-								// TODO: support an option with a `style` function state
-								...this.setOn(elementKey, ':hover', 'onHoverIn', 'onHoverOut'),
-								...this.setOn(elementKey, ':active', 'onPressIn', 'onPressOut'),
-								...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
-							}),
+					// ...(isBrowser
+					// 	? {
+					// 			...this.setOn(
+					// 				elementKey,
+					// 				':hover',
+					// 				'onMouseOver',
+					// 				'onMouseOut',
+					// 			),
+					// 			...this.setOn(
+					// 				elementKey,
+					// 				':active',
+					// 				'onMouseDown',
+					// 				'onMouseUp',
+					// 			),
+					// 			...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
+					// 		}
+					// 	: {
+					// 			// TODO: support an option with a `style` function state
+					// 			...this.setOn(elementKey, ':hover', 'onHoverIn', 'onHoverOut'),
+					// 			...this.setOn(elementKey, ':active', 'onPressIn', 'onPressOut'),
+					// 			...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
+					// 		}),
 				}
 
 				return result

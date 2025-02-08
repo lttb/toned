@@ -18,7 +18,8 @@ type UseStylesResult<
 export function useStyles<
 	S extends TokenStyleDeclaration,
 	T extends Record<string, TokenStyle<S>>,
->(stylesheet: Stylesheet<S, T, never>): UseStylesResult<S, T>
+	M extends ModType = never,
+>(stylesheet: Stylesheet<S, T, M>): UseStylesResult<S, T>
 
 export function useStyles<
 	S extends TokenStyleDeclaration,

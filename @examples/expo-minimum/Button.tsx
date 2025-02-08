@@ -39,6 +39,7 @@ const styles = stylesheet({
 				},
 			},
 
+			// control :active precedence over :hover
 			':active': {
 				$container: {
 					bgColor: 'destructive',
