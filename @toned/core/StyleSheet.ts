@@ -61,6 +61,8 @@ export function createStylesheet<
 		modsStyle!: StyleDecl
 		modsStylePrev!: StyleDecl
 
+		interactiveState: Record<string, Record<string, boolean>> = {}
+
 		constructor({
 			tokens,
 			modsState,
@@ -176,6 +178,19 @@ export function createStylesheet<
 
 					style: this.matcher.interactions[elementKey]
 						? (state: any) => {
+								const interactiveState = {
+									':hover': state.hovered,
+									':active': state.pressed,
+									':focus': state.focused,
+								}
+
+								if (!this.interactiveState[elementKey]) {
+									this.interactiveState[elementKey] = interactiveState
+									return this.getCurrentStyle(elementKey)
+								}
+
+								this.interactiveState[elementKey] = interactiveState
+
 								Object.assign(this.modsState, {
 									[`${elementKey}:hover`]: state.hovered,
 									[`${elementKey}:focus`]: state.focused,
@@ -185,8 +200,6 @@ export function createStylesheet<
 								this.matchStyles()
 
 								this.applyElementStyles()
-
-								return this.getCurrentStyle(elementKey)
 							}
 						: this.getCurrentStyle(elementKey),
 

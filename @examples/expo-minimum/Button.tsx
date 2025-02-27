@@ -13,7 +13,6 @@ const styles = stylesheet({
 	container: {
 		borderRadius: 'medium',
 		borderWidth: 'none',
-
 		style: {
 			cursor: 'pointer',
 		},
@@ -31,9 +30,8 @@ const styles = stylesheet({
 			bgColor: 'action',
 
 			':hover': {
-				$container: {
-					bgColor: 'action_secondary',
-				},
+				bgColor: 'action_secondary',
+
 				$label: {
 					textColor: 'on_action_secondary',
 				},

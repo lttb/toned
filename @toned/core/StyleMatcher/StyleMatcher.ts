@@ -97,6 +97,22 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 			traverse(nextMap, rule)
 		}
 
+		const processElementRule = (elementKey: string, rule: NestedStyleRules) => {
+			const currentRule: NestedStyleRules = {}
+
+			for (const ruleKey in rule) {
+				if (ruleKey[0] === '$') {
+					const elementKey = ruleKey.replace(/^\$/, '')
+					currentRule[elementKey] = rule[ruleKey]
+				} else {
+					currentRule[elementKey] ??= {}
+					currentRule[elementKey][ruleKey] = rule[ruleKey]
+				}
+			}
+
+			return currentRule
+		}
+
 		const traverseElement = (
 			selector: Map<string, string>,
 			elementKey: string,
@@ -114,13 +130,15 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 					interactions[elementKey] ??= {}
 					interactions[elementKey][key] = true
 
-					traverseMod(selector, mod, modValue, elementRule[key])
+					const currentRule = processElementRule(elementKey, elementRule[key])
+
+					traverseMod(selector, mod, modValue, currentRule)
 				} else if (key[0] === '[') {
 					const [mod, modValue] = this.parseSelector(key)
 
-					traverseMod(selector, mod, modValue, {
-						[elementKey]: elementRule[key],
-					})
+					const currentRule = processElementRule(elementKey, elementRule[key])
+
+					traverseMod(selector, mod, modValue, currentRule)
 				} else {
 					result[key] = elementRule[key]
 				}
