@@ -1,0 +1,7 @@
+packages:
+  - '@toned/*'
+  - toned
+  - '@config/*'
+onlyBuiltDependencies:
+  - '@biomejs/biome'
+  - esbuild

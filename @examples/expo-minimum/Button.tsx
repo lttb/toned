@@ -1,7 +1,7 @@
-import { Pressable, Text } from 'react-native'
+import {Pressable, Text} from 'react-native'
 
-import { stylesheet } from '@toned/systems/base'
-import { useStyles } from '@toned/react/index'
+import {stylesheet} from '@toned/systems/base'
+import {useStyles} from '@toned/react/index'
 
 const styles = stylesheet({
 	...stylesheet.state<{
@@ -82,7 +82,7 @@ const styles = stylesheet({
 	},
 })
 
-export function Button({ label }: { label: string }) {
+export function Button({label}: {label: string}) {
 	const s = useStyles(styles, {
 		size: 'm',
 		variant: 'accent',
