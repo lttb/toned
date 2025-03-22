@@ -1,5 +1,7 @@
 {
 	"compilerOptions": {
+		"rootDir": "${configDir}",
+
 		// Enable latest features
 		"lib": ["ESNext", "DOM"],
 		"target": "ESNext",
@@ -14,7 +16,7 @@
 		"moduleResolution": "bundler",
 		"allowImportingTsExtensions": true,
 		"verbatimModuleSyntax": true,
-		"noEmit": true,
+		"noEmit": false,
 		"emitDeclarationOnly": true,
 
 		// Best practices
@@ -31,6 +33,6 @@
 		"outDir": "${configDir}/dist",
 		"declarationDir": "${configDir}/dist",
 	},
-	"include": ["${configDir}/.config.*.ts", "${configDir}/**/*.ts", "${configDir}/**/*.tsx"],
-	"exclude": ["**/dist/**"],
+	"include": ["${configDir}/**/*.ts", "${configDir}/**/*.tsx"],
+	"exclude": ["**/dist/**", ".config.*.ts"],
 }

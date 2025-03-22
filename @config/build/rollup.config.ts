@@ -21,5 +21,7 @@ export default (options: RollupOptions) =>
 				outDir: 'dist',
 				declarationDir: 'dist',
 			}),
+
+			...(Array.isArray(options.plugins) ? options.plugins : []),
 		],
 	})

@@ -1,3 +1,21 @@
 {
-	"name": "@toned/themes"
+	"name": "@toned/themes",
+	"version": "0.0.1",
+	"author": "Kenzhaev Artur",
+	"license": "MIT",
+	"type": "module",
+	"publishConfig": {
+		"access": "public",
+		"directory": "dist",
+		"linkDirectory": false
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/lttb/toned.git",
+		"directory": "@toned/themes"
+	},
+	"scripts": {
+		"prepublishOnly": "bun run build",
+		"build": "bun -e 'import(`@config/build`)'"
+	}
 }
