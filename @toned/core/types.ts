@@ -24,7 +24,7 @@ type Merge<D extends any[]> = D extends [infer First, ...infer Rest]
 	? First & Merge<Rest>
 	: []
 
-type TFun<S extends TokenStyleDeclaration> = <D extends TokenStyle<S>[]>(
+export type TFun<S extends TokenStyleDeclaration> = <D extends TokenStyle<S>[]>(
 	...values: [...D]
 ) => Merge<D> & {
 	[SYMBOL_REF]: TokenSystem<S>
@@ -49,13 +49,13 @@ export type Stylesheet<
 	}
 }
 
-const SYMBOL_STATE: unique symbol = Symbol.for('@toned/state')
+export const SYMBOL_STATE: unique symbol = Symbol.for('@toned/state')
 
-class C_<T> {
+export class C_<T> {
 	// static myStatic: T;
 }
 
-interface Ctor {
+export interface Ctor {
 	[SYMBOL_STATE]: this extends typeof C_<infer T> ? T : never
 }
 
@@ -146,13 +146,18 @@ export type StylesheetValue<
 	Pseudo
 >
 
+export type StylesheetType<S extends TokenStyleDeclaration> = (<
+	Mods extends ModType,
+	T extends StylesheetValue<S, Mods, T>,
+>(
+	style: { [SYMBOL_STATE]?: Mods } & T,
+) => Stylesheet<S, Omit<T, `[${string}]` | 'prototype'>, Mods>) & {
+	state: typeof C
+}
+
 export type TokenSystem<S extends TokenStyleDeclaration> = {
 	system: S
-	stylesheet: (<Mods extends ModType, T extends StylesheetValue<S, Mods, T>>(
-		style: { [SYMBOL_STATE]?: Mods } & T,
-	) => Stylesheet<S, Omit<T, `[${string}]` | 'prototype'>, Mods>) & {
-		state: typeof C
-	}
+	stylesheet: StylesheetType<S>
 	t: TFun<S>
 	exec: (
 		config: {

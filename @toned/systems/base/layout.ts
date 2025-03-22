@@ -1,11 +1,14 @@
 import { defineToken, defineUnit, defineSystem } from '@toned/core'
 
 // TODO: move to configuration level
-const SpaceUnit = defineUnit(Number, (value, tokens) =>
-	String(tokens.base).startsWith('var')
-		? `calc(${tokens.base} * ${Number(value)})`
-		: Number(value) * Number.parseInt(tokens.base, 10),
-)
+const SpaceUnit = defineUnit(Number, (value, tokens) => {
+	// @ts-expect-error
+	const base = tokens.base
+
+	return String(base).startsWith('var')
+		? `calc(${base} * ${Number(value)})`
+		: Number(value) * Number.parseInt(base, 10)
+})
 
 //const space = defineToken({
 //  values: [
