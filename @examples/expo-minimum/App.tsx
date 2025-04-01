@@ -5,7 +5,6 @@ import { TokensContext, defineContext } from '@toned/react/ctx'
 import shadcn from '@toned/themes/shadcn/config'
 
 import { StatusBar } from 'expo-status-bar'
-import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import Card from './Card'

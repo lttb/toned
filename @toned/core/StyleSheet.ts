@@ -177,31 +177,53 @@ export function createStylesheet<
 					},
 
 					style: this.matcher.interactions[elementKey]
-						? (state: any) => {
-								const interactiveState = {
-									':hover': state.hovered,
-									':active': state.pressed,
-									':focus': state.focused,
+						? isBrowser
+							? {
+									...this.getCurrentStyle(elementKey),
 								}
+							: (state: any) => {
+									const interactiveState = {
+										':hover': state.hovered,
+										':active': state.pressed,
+										':focus': state.focused,
+									}
 
-								if (!this.interactiveState[elementKey]) {
+									if (!this.interactiveState[elementKey]) {
+										this.interactiveState[elementKey] = interactiveState
+										return this.getCurrentStyle(elementKey)
+									}
+
 									this.interactiveState[elementKey] = interactiveState
-									return this.getCurrentStyle(elementKey)
+
+									Object.assign(this.modsState, {
+										[`${elementKey}:hover`]: state.hovered,
+										[`${elementKey}:focus`]: state.focused,
+										[`${elementKey}:active`]: state.pressed,
+									})
+
+									this.matchStyles()
+
+									this.applyElementStyles()
 								}
-
-								this.interactiveState[elementKey] = interactiveState
-
-								Object.assign(this.modsState, {
-									[`${elementKey}:hover`]: state.hovered,
-									[`${elementKey}:focus`]: state.focused,
-									[`${elementKey}:active`]: state.pressed,
-								})
-
-								this.matchStyles()
-
-								this.applyElementStyles()
-							}
 						: this.getCurrentStyle(elementKey),
+
+					...(isBrowser
+						? {
+								...this.setOn(
+									elementKey,
+									':hover',
+									'onMouseOver',
+									'onMouseOut',
+								),
+								...this.setOn(
+									elementKey,
+									':active',
+									'onMouseDown',
+									'onMouseUp',
+								),
+								...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
+							}
+						: {}),
 
 					// style: this.getCurrentStyle(elementKey),
 

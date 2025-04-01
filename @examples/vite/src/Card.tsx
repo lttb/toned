@@ -1,29 +1,20 @@
-import { stylesheet, t } from '@toned/systems/base'
+import { useStyles } from '@toned/react'
+import { t } from '@toned/systems/base'
+
+import { styles } from '@examples/shared/card'
 
 import { Button } from './Button'
 
-const s = stylesheet({
-	container: { bgColor: 'default' },
-	button: {
-		bgColor: 'action',
-		textColor: 'on_action',
-		paddingX: 4,
-		paddingY: 2,
-		borderRadius: 'medium',
-		borderWith: 'none',
-		typo: 'label_medium',
-	},
-	code: { textColor: 'destructive' },
-})
-
 function Card() {
+	const s = useStyles(styles)
+
 	return (
 		<div {...s.container}>
-			<Button label="click" />
+			<Button label={String(Math.random())} />
 
-			<p {...t({ textColor: 'status_info' })}>
+			<span {...t({ textColor: 'status_info' })}>
 				Edit <code {...s.code}>src/App.tsx</code> and save to test HMR
-			</p>
+			</span>
 		</div>
 	)
 }

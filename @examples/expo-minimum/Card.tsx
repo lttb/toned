@@ -1,14 +1,11 @@
-import {View, Text} from 'react-native'
+import { View, Text } from 'react-native'
 
-import {stylesheet, t} from '@toned/systems/base'
-import {useStyles} from '@toned/react/index'
+import { t } from '@toned/systems/base'
+import { useStyles } from '@toned/react/index'
 
-import {Button} from './Button'
+import { styles } from '@examples/shared/card'
 
-const styles = stylesheet({
-	container: {bgColor: 'default', alignItems: 'flex-start'},
-	code: {textColor: 'destructive'},
-})
+import { Button } from './Button'
 
 function Card() {
 	const s = useStyles(styles)
@@ -17,7 +14,7 @@ function Card() {
 		<View {...s.container}>
 			<Button label={String(Math.random())} />
 
-			<Text {...t({textColor: 'status_info'})}>
+			<Text {...t({ textColor: 'status_info' })}>
 				Edit <Text {...s.code}>src/App.tsx</Text> and save to test HMR
 			</Text>
 		</View>

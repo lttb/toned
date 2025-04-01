@@ -10,10 +10,17 @@
 		"build:server": "vite build --ssr src/entry-server.tsx --outDir dist/server",
 		"preview": "cross-env NODE_ENV=production bun server"
 	},
+	"workspaces": [
+		"../../toned/",
+		"../../@toned/*",
+		"../../@config/*",
+		"../shared/"
+	],
 	"dependencies": {
-		"@toned/react": "../../@toned/react",
-		"@toned/themes": "../../@toned/themes",
-		"@toned/systems": "../../@toned/systems",
+		"@examples/shared": "workspace:*",
+		"@toned/react": "workspace:*",
+		"@toned/themes": "workspace:*",
+		"@toned/systems": "workspace:*",
 		"compression": "^1.7.5",
 		"express": "^5.0.1",
 		"react": "^18.3.1",
