@@ -176,7 +176,7 @@ export function createStylesheet<
 						this.refs[elementKey] = current
 					},
 
-					style: this.matcher.interactions[elementKey]
+					style: false && this.matcher.interactions[elementKey]
 						? isBrowser
 							? {
 									...this.getCurrentStyle(elementKey),
