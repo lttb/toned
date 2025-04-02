@@ -1,8 +1,9 @@
+import { use } from 'react'
 import { TokensContext, defineContext } from '@toned/react/ctx.native'
 import shadcn from '@toned/themes/shadcn/config'
 import { setConfig } from '@toned/core'
 
-import { Document, Page } from '@react-pdf/renderer'
+import { Body, Html } from '@react-email/components'
 
 import Card from './Card'
 
@@ -10,17 +11,19 @@ const ctx = defineContext(shadcn)
 
 setConfig({
 	getTokens() {
-		return ctx
+		return use(TokensContext)
 	},
 })
 
 const Main = () => {
 	return (
-			<Document>
-				<Page size="A4">
+		<TokensContext.Provider value={ctx}>
+			<Html>
+				<Body>
 					<Card />
-				</Page>
-			</Document>
+				</Body>
+			</Html>
+		</TokensContext.Provider>
 	)
 }
 
