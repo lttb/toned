@@ -176,11 +176,11 @@ export function createStylesheet<
 						this.refs[elementKey] = current
 					},
 
-					style: false && this.matcher.interactions[elementKey]
+					// TODO: move to the configuration platform-agnostic level
+
+					style: this.matcher.interactions[elementKey]
 						? isBrowser
-							? {
-									...this.getCurrentStyle(elementKey),
-								}
+							? this.getCurrentStyle(elementKey)
 							: (state: any) => {
 									const interactiveState = {
 										':hover': state.hovered,
