@@ -1,10 +1,9 @@
-// @ts-expect-error
 import * as ReactAll from 'react'
 import { setConfig } from '@toned/core'
 
 import { TokensContext } from './ctx'
 
-const React = ReactAll as typeof import('react18')
+const React = ReactAll as unknown as typeof import('react18')
 
 setConfig({
 	getTokens() {

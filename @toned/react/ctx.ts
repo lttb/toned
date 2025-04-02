@@ -1,4 +1,3 @@
-// @ts-expect-error
 import { createContext } from 'react'
 
 import type { Tokens } from '@toned/core/types'
