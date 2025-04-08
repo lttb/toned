@@ -31,8 +31,8 @@
 
 		"declaration": true,
 		"outDir": "${configDir}/dist",
-		"declarationDir": "${configDir}/dist",
+		"declarationDir": "${configDir}/dist"
 	},
 	"include": ["${configDir}/**/*.ts", "${configDir}/**/*.tsx"],
-	"exclude": ["**/dist/**", ".config.*.ts"],
+	"exclude": ["**/dist/**", ".config.*.ts"]
 }

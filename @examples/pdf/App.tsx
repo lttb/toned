@@ -16,11 +16,11 @@ setConfig({
 
 const Main = () => {
 	return (
-			<Document>
-				<Page size="A4">
-					<Card />
-				</Page>
-			</Document>
+		<Document>
+			<Page size="A4">
+				<Card />
+			</Page>
+		</Document>
 	)
 }
 

@@ -16,7 +16,10 @@ export function Button({ label }: { label: string }) {
 	})
 
 	return (
-		<View {...s.container} style={{...s.container.style, borderWidth: 0.00005}}>
+		<View
+			{...s.container}
+			style={{ ...s.container.style, borderWidth: 0.00005 }}
+		>
 			<Text {...s.label}>{label}</Text>
 		</View>
 	)

@@ -19,7 +19,8 @@ const tokens = {
 	colors_bg_subtle: 'var(--colors_base_100)',
 	colors_bg_muted: 'var(--colors_base_200)',
 	colors_bg_emphasized: 'var(--colors_base_300)',
-	colors_bg_overlay: 'color-mix(in srgb, var(--colors_base_950) 50%, transparent)',
+	colors_bg_overlay:
+		'color-mix(in srgb, var(--colors_base_950) 50%, transparent)',
 	colors_bg_elevated: 'var(--colors_base_50)',
 
 	colors_bg_interactive: 'var(--colors_base_100)',
@@ -127,10 +128,14 @@ const tokens = {
 	// Shadows
 	shadow_none: 'none',
 	shadow_small: '0 1px 2px 0 rgb(0 0 0 / 0.05)',
-	shadow_medium: '0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
-	shadow_large: '0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
-	shadow_xlarge: '0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
-	shadow_focus: '0 0 0 2px var(--colors_outline_focus_center), 0 0 0 4px var(--colors_outline_focus_edge)',
+	shadow_medium:
+		'0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)',
+	shadow_large:
+		'0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1)',
+	shadow_xlarge:
+		'0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)',
+	shadow_focus:
+		'0 0 0 2px var(--colors_outline_focus_center), 0 0 0 4px var(--colors_outline_focus_edge)',
 
 	// Typography
 	typo_font_sans:

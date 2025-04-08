@@ -32,7 +32,11 @@ export function useStyles<
 	T extends Record<string, TokenStyle<S>>,
 	M extends ModType,
 >(stylesheet: Stylesheet<S, T, M>, state?: M) {
-	const ref = useRef<{stylesheet: Stylesheet<S, T, M>, state?: M, result: UseStylesResult<S, T>}>(null)
+	const ref = useRef<{
+		stylesheet: Stylesheet<S, T, M>
+		state?: M
+		result: UseStylesResult<S, T>
+	}>(null)
 
 	if (ref.current?.stylesheet !== stylesheet) {
 		ref.current = { stylesheet, state, result: stylesheet[SYMBOL_INIT](state) }
