@@ -6,6 +6,7 @@ import {
 	type ModType,
 	type StylesheetValue,
 	type TokenStyleDeclaration,
+	type Config,
 } from './types'
 
 import { getConfig, type Config } from './config'
