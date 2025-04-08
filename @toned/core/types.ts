@@ -35,6 +35,13 @@ type Ref = { current?: null | any }
 
 export type ModType = Record<string, string | boolean | number>
 
+export type Config = Readonly<{
+	getTokens: () => Tokens
+
+	initRef: () => void
+	initInteraction: () => void
+}>
+
 export type Stylesheet<
 	S extends TokenStyleDeclaration,
 	T extends Record<string, TokenStyle<S>>,
@@ -44,7 +51,10 @@ export type Stylesheet<
 } & {
 	// TODO: hide it from the public interface
 	[SYMBOL_REF]: TokenSystem<S>
-	[SYMBOL_INIT]: (modState?: M) => {
+	[SYMBOL_INIT]: (
+		config: Config,
+		modState?: M,
+	) => {
 		[key in keyof T]: ReturnType<TFun<S>>
 	}
 }

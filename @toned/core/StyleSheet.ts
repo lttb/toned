@@ -6,6 +6,7 @@ import {
 	type ModType,
 	type StylesheetValue,
 	type TokenStyleDeclaration,
+	type Config,
 } from './types'
 
 import { getConfig } from './config'
@@ -50,6 +51,8 @@ export function createStylesheet<
 	T,
 >(ref: TokenSystem<S>, rules: StylesheetValue<S, Mods, T>) {
 	class Base {
+		config: Config
+
 		tokens: Tokens
 		state: State
 		stateCache: Record<ElementKey, Map<number, AppliedStyle>>
@@ -64,13 +67,15 @@ export function createStylesheet<
 		interactiveState: Record<string, Record<string, boolean>> = {}
 
 		constructor({
-			tokens,
+			config,
 			modsState,
 		}: {
-			tokens: Tokens
+			config: Config
 			modsState?: ModState
 		}) {
-			this.tokens = tokens
+			this.config = config ?? getConfig()
+
+			this.tokens = this.config.getTokens()
 			this.state = {}
 			this.stateCache = {}
 			this.refs = {}
@@ -116,7 +121,7 @@ export function createStylesheet<
 		}
 
 		applyTokens(value: ElementStyle): AppliedStyle {
-			return ref.exec({ tokens: this.tokens || getConfig().getTokens() }, value)
+			return ref.exec({ tokens: this.tokens }, value)
 		}
 
 		applyElementStyles() {
@@ -263,9 +268,9 @@ export function createStylesheet<
 
 	return Object.assign({
 		[SYMBOL_REF]: ref,
-		[SYMBOL_INIT]: (modsState: ModState) => {
+		[SYMBOL_INIT]: (config: Config, modsState: ModState) => {
 			return new Base({
-				tokens: getConfig().getTokens(),
+				config,
 				modsState,
 			})
 		},

@@ -2,12 +2,12 @@ import { useRef } from 'react'
 
 import {
 	SYMBOL_INIT,
-	type TFun,
 	type Stylesheet,
 	type ModType,
 	type TokenStyle,
 	type TokenStyleDeclaration,
 } from '@toned/core/types'
+import { getConfig } from '@toned/core/config'
 
 type UseStylesResult<
 	S extends TokenStyleDeclaration,
@@ -39,7 +39,12 @@ export function useStyles<
 	}>(null)
 
 	if (ref.current?.stylesheet !== stylesheet) {
-		ref.current = { stylesheet, state, result: stylesheet[SYMBOL_INIT](state) }
+		const config = getConfig()
+		ref.current = {
+			stylesheet,
+			state,
+			result: stylesheet[SYMBOL_INIT](config, state),
+		}
 	}
 
 	if (ref.current.state !== state) {
