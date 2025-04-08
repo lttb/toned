@@ -1,13 +1,13 @@
-import type { Tokens } from './types'
+import type { Tokens, Config } from './types'
 
-const config = {
+const config: Config = {
 	getTokens: (): Tokens => ({}),
 
 	initRef: () => {},
 	initInteraction: () => {},
 }
 
-export function getConfig(): Readonly<typeof config> {
+export function getConfig(): Config {
 	return config
 }
 
