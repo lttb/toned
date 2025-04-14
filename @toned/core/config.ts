@@ -2,9 +2,6 @@ import type { Tokens, Config } from './types'
 
 const config: Config = {
 	getTokens: (): Tokens => ({}),
-
-	initRef: () => {},
-	initInteraction: () => {},
 }
 
 export function getConfig(): Config {

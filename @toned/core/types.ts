@@ -37,9 +37,6 @@ export type ModType = Record<string, string | boolean | number>
 
 export type Config = Readonly<{
 	getTokens: () => Tokens
-
-	initRef: () => void
-	initInteraction: () => void
 }>
 
 export type Stylesheet<

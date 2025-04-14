@@ -40,6 +40,7 @@ export function useStyles<
 
 	if (ref.current?.stylesheet !== stylesheet) {
 		const config = getConfig()
+
 		ref.current = {
 			stylesheet,
 			state,
