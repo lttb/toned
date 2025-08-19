@@ -167,7 +167,7 @@ export function createStylesheet<
   Object.entries(rules).forEach(([elementKey, _elementRule]) => {
     Object.defineProperty(Base.prototype, elementKey, {
       get(this: Base) {
-        const isBrowser = typeof document !== 'undefined'
+        const isBrowser = typeof document !== 'undefined' || true
 
         // const hasInteraction =
         // 	elementRule[':active'] ||
