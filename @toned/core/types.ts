@@ -1,5 +1,5 @@
-export const SYMBOL_REF: unique symbol = Symbol()
-export const SYMBOL_INIT: unique symbol = Symbol()
+export const SYMBOL_REF = Symbol.for('@toned/ref')
+export const SYMBOL_INIT = Symbol.for('@toned/init')
 
 export type Tokens = Record<string, string>
 
@@ -13,14 +13,14 @@ export type TokenConfig<Values extends readonly any[], Result> = {
 export type TokenStyleDeclaration = Record<string, TokenConfig<any, any>>
 
 // biome-ignore lint/suspicious/noExplicitAny: ignore
-type InlineStyle = any
+export type InlineStyle = any
 
 export type TokenStyle<S extends TokenStyleDeclaration> = Partial<{
   [key in keyof S]: S[key]['values'][number]
 }> & { style?: InlineStyle }
 
 // biome-ignore lint/suspicious/noExplicitAny: ignore
-type Merge<D extends any[]> = D extends [infer First, ...infer Rest]
+export type Merge<D extends any[]> = D extends [infer First, ...infer Rest]
   ? First & Merge<Rest>
   : []
 
@@ -59,7 +59,7 @@ export type Stylesheet<
   }
 }
 
-export const SYMBOL_STATE: unique symbol = Symbol.for('@toned/state')
+export const SYMBOL_STATE = Symbol.for('@toned/state')
 
 export class C_<_T> {
   // static myStatic: T;
@@ -70,13 +70,13 @@ export interface Ctor {
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: ignore
-const C: typeof C_ & Ctor = C_ as any
+export const C: typeof C_ & Ctor = C_ as any
 
-type Pseudo = ':hover' | ':active' | ':focus'
+export type Pseudo = ':hover' | ':active' | ':focus'
 
-type PickString<K> = K extends string ? K : never
+export type PickString<K> = K extends string ? K : never
 
-type ElementStyle<
+export type ElementStyle<
   S extends TokenStyleDeclaration,
   Elements extends string,
   Mods extends ModType,
@@ -98,7 +98,7 @@ type ElementStyle<
   >
 }
 
-type ElementList<
+export type ElementList<
   S extends TokenStyleDeclaration,
   Elements extends string,
   Mods extends ModType,
@@ -112,7 +112,7 @@ type ElementList<
   >
 }
 
-type ModList<
+export type ModList<
   S extends TokenStyleDeclaration,
   Elements extends string,
   Mods extends ModType,
@@ -156,10 +156,10 @@ export type StylesheetValue<
   Pseudo
 >
 
-export type StylesheetType<S extends TokenStyleDeclaration> = (<
+export type StylesheetType<
+  S extends TokenStyleDeclaration,
   Mods extends ModType,
-  T extends StylesheetValue<S, Mods, T>,
->(
+> = (<T extends StylesheetValue<S, Mods, T>>(
   style: { [SYMBOL_STATE]?: Mods } & T,
 ) => Stylesheet<S, Omit<T, `[${string}]` | 'prototype'>, Mods>) & {
   state: typeof C
@@ -167,7 +167,7 @@ export type StylesheetType<S extends TokenStyleDeclaration> = (<
 
 export type TokenSystem<S extends TokenStyleDeclaration> = {
   system: S
-  stylesheet: StylesheetType<S>
+  stylesheet: <Mods extends ModType>() => { create: StylesheetType<S, Mods> }
   t: TFun<S>
   exec: (
     config: {

@@ -29,6 +29,8 @@ export function defineUnit<T extends typeof Number | typeof String>(
   return resolver
 }
 
+export type { TokenSystem }
+
 export function defineSystem<
   // biome-ignore lint/suspicious/noExplicitAny: ignore
   const S extends Record<string, TokenConfig<any, any>>,
