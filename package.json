@@ -9,12 +9,12 @@
 		"./@config/*"
 	],
 	"devDependencies": {
-		"@biomejs/biome": "1.9.4",
-		"@changesets/cli": "^2.28.1",
-		"@types/bun": "latest",
-		"vitest": "^3.0.4"
+		"@biomejs/biome": "2.2.0",
+		"@changesets/cli": "^2.29.6",
+		"@types/bun": "1.2.20",
+		"vitest": "^3.2.4"
 	},
 	"peerDependencies": {
-		"typescript": "^5.0.0"
+		"typescript": "^5.9.2"
 	}
 }
