@@ -1,3 +1,4 @@
 {
-	"name": "@toned/compiler"
+  "name": "@toned/compiler",
+  "private": true
 }

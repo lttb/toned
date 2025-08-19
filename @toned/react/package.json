@@ -1,30 +1,30 @@
 {
-	"name": "@toned/react",
-	"version": "0.0.1",
-	"author": "Kenzhaev Artur",
-	"license": "MIT",
-	"type": "module",
-	"publishConfig": {
-		"access": "public",
-		"directory": "dist",
-		"linkDirectory": false
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/lttb/toned.git",
-		"directory": "@toned/react"
-	},
-	"scripts": {
-		"prepublishOnly": "bun run build",
-		"build": "bun -e 'import(`@config/build`)'"
-	},
-	"peerDependencies": {
-		"react": ">=18",
-		"@toned/core": "workspace:*"
-	},
-	"devDependencies": {
-		"@types/react": "npm:@types/react@^19.0.0",
-		"@types/react18": "npm:@types/react@^18.3.12",
-		"@types/react19": "npm:@types/react@^19.0.0"
-	}
+  "name": "@toned/react",
+  "version": "0.0.1",
+  "author": "Kenzhaev Artur",
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist",
+    "linkDirectory": false
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lttb/toned.git",
+    "directory": "@toned/react"
+  },
+  "scripts": {
+    "prepublishOnly": "bun run build",
+    "build": "bun -e 'import(`@config/build`)'"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "@toned/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "npm:@types/react@^19.0.0",
+    "@types/react18": "npm:@types/react@^18.3.12",
+    "@types/react19": "npm:@types/react@^19.0.0"
+  }
 }

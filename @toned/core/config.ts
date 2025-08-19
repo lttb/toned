@@ -1,16 +1,16 @@
-import type { Tokens, Config } from './types'
+import type { Config, Tokens } from './types'
 
 const config: Config = {
-	getTokens: (): Tokens => ({}),
+  getTokens: (): Tokens => ({}),
 
-	initRef: () => {},
-	initInteraction: () => {},
+  initRef: () => {},
+  initInteraction: () => {},
 }
 
 export function getConfig(): Config {
-	return config
+  return config
 }
 
 export function setConfig(newConfig: Partial<typeof config>) {
-	Object.assign(config, newConfig)
+  Object.assign(config, newConfig)
 }

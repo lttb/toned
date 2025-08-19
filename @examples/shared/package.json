@@ -1,14 +1,14 @@
 {
-	"name": "@examples/shared",
-	"type": "module",
-	"private": true,
-	"version": "1.0.0",
-	"main": "index.ts",
-	"dependencies": {
-		"@toned/themes": "../../@toned/themes",
-		"@toned/systems": "../../@toned/systems"
-	},
-	"devDependencies": {
-		"@config/typescript": "../../@config/typescript/"
-	}
+  "name": "@examples/shared",
+  "type": "module",
+  "private": true,
+  "version": "1.0.0",
+  "main": "index.ts",
+  "dependencies": {
+    "@toned/themes": "../../@toned/themes",
+    "@toned/systems": "../../@toned/systems"
+  },
+  "devDependencies": {
+    "@config/typescript": "../../@config/typescript/"
+  }
 }

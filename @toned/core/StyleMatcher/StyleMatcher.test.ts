@@ -1,95 +1,93 @@
-import { test, describe, expect } from 'vitest'
-
+import { describe, expect, test } from 'vitest'
 import { StyleMatcher } from './StyleMatcher'
-import { bgColor } from '@toned/systems/base/colour'
 
 describe('style matcher with pseudo', () => {
-	const matcher = new StyleMatcher<{
-		size: 's' | 'm'
-		variant: 'accent' | 'danger'
-		state: 'disabled' | 'pending'
-		alignment: 'icon-only' | 'icon-left' | 'icon-right'
-	}>({
-		container: {
-			borderRadius: 'medium',
-			borderWidth: 'none',
+  const matcher = new StyleMatcher<{
+    size: 's' | 'm'
+    variant: 'accent' | 'danger'
+    state: 'disabled' | 'pending'
+    alignment: 'icon-only' | 'icon-left' | 'icon-right'
+  }>({
+    container: {
+      borderRadius: 'medium',
+      borderWidth: 'none',
 
-			style: {
-				cursor: 'pointer',
-			},
+      style: {
+        cursor: 'pointer',
+      },
 
-			':hover': {
-				container: {
-					bgColor: 'secondary',
-					borderColor: 'secondary',
-				},
-			},
+      ':hover': {
+        container: {
+          bgColor: 'secondary',
+          borderColor: 'secondary',
+        },
+      },
 
-			'[size=m]': {
-				paddingX: 4,
-				paddingY: 2,
+      '[size=m]': {
+        paddingX: 4,
+        paddingY: 2,
 
-				'[alignment=icon-only]': {
-					paddingX: 2,
-				},
-			},
+        '[alignment=icon-only]': {
+          paddingX: 2,
+        },
+      },
 
-			'[size=s]': {
-				paddingX: 2,
-				paddingY: 1,
+      '[size=s]': {
+        paddingX: 2,
+        paddingY: 1,
 
-				'[alignment=icon-only]': {
-					paddingX: 1,
-					paddingY: 2,
-				},
-			},
-		},
+        '[alignment=icon-only]': {
+          paddingX: 1,
+          paddingY: 2,
+        },
+      },
+    },
 
-		label: {
-			// style: {
-			// 	pointerEvents: 'none',
-			// 	userSelect: 'none',
-			// },
-		},
+    label: {
+      // style: {
+      // 	pointerEvents: 'none',
+      // 	userSelect: 'none',
+      // },
+    },
 
-		'[variant=accent]': {
-			container: {
-				bgColor: 'action',
+    '[variant=accent]': {
+      container: {
+        bgColor: 'action',
 
-				':active': {
-					container: {
-						bgColor: 'destructive',
-					},
-					label: {
-						textColor: 'on_destructive',
-					},
-				},
+        ':active': {
+          container: {
+            bgColor: 'destructive',
+          },
+          label: {
+            textColor: 'on_destructive',
+          },
+        },
 
-				':hover': {
-					container: {
-						bgColor: 'action_secondary',
-					},
-					label: {
-						textColor: 'on_action_secondary',
-					},
-				},
-			},
+        ':hover': {
+          container: {
+            bgColor: 'action_secondary',
+          },
+          label: {
+            textColor: 'on_action_secondary',
+          },
+        },
+      },
 
-			label: {
-				textColor: 'on_action',
-			},
-		},
-	})
+      label: {
+        textColor: 'on_action',
+      },
+    },
+  })
 
-	test('pseudo and nested', () => {
-		expect(
-			matcher.match({
-				size: 'm',
-				variant: 'accent',
-				alignment: 'icon-only',
-				'container:hover': true,
-			}),
-		).toMatchInlineSnapshot(`
+  test('pseudo and nested', () => {
+    expect(
+      matcher.match({
+        size: 'm',
+        variant: 'accent',
+        alignment: 'icon-only',
+        'container:hover': true,
+      }),
+    ).toMatchInlineSnapshot(`
 			{
 			  "container": {
 			    "bgColor": "action_secondary",
@@ -107,62 +105,62 @@ describe('style matcher with pseudo', () => {
 			  },
 			}
 		`)
-	})
+  })
 })
 
 describe('style matcher', () => {
-	const matcher = new StyleMatcher<{
-		size: 's' | 'm'
-		variant: 'accent' | 'danger'
-		state: 'disabled' | 'pending'
-		alignment: 'icon-only' | 'icon-left' | 'icon-right'
-	}>({
-		'[size=m]': {
-			container: {
-				paddingX: 30,
-				paddingY: 30,
-				background: 'blue',
-			},
+  const matcher = new StyleMatcher<{
+    size: 's' | 'm'
+    variant: 'accent' | 'danger'
+    state: 'disabled' | 'pending'
+    alignment: 'icon-only' | 'icon-left' | 'icon-right'
+  }>({
+    '[size=m]': {
+      container: {
+        paddingX: 30,
+        paddingY: 30,
+        background: 'blue',
+      },
 
-			'[alignment=icon-only]': {
-				container: {
-					paddingX: 50,
-					color: 'white',
-				},
-			},
+      '[alignment=icon-only]': {
+        container: {
+          paddingX: 50,
+          color: 'white',
+        },
+      },
 
-			'[state=disabled]': {
-				container: {
-					opacity: 0.5,
-				},
-				'[variant=accent]': {
-					container: {
-						background: 'gray',
-					},
-					label: {
-						color: 'white',
-					},
-				},
-			},
-		},
+      '[state=disabled]': {
+        container: {
+          opacity: 0.5,
+        },
+        '[variant=accent]': {
+          container: {
+            background: 'gray',
+          },
+          label: {
+            color: 'white',
+          },
+        },
+      },
+    },
 
-		'[variant=accent]': {
-			container: {
-				background: 'yellow',
-			},
-		},
+    '[variant=accent]': {
+      container: {
+        background: 'yellow',
+      },
+    },
 
-		'[size=s]': {
-			container: {
-				paddingX: 30,
-				paddingY: 30,
-				background: 'red',
-			},
-		},
-	})
+    '[size=s]': {
+      container: {
+        paddingX: 30,
+        paddingY: 30,
+        background: 'red',
+      },
+    },
+  })
 
-	test('match snapshots', () => {
-		expect(matcher.match({ size: 'm' })).toMatchInlineSnapshot(`
+  test('match snapshots', () => {
+    expect(matcher.match({ size: 'm' })).toMatchInlineSnapshot(`
 		  {
 		    "container": {
 		      "background": "blue",
@@ -172,7 +170,7 @@ describe('style matcher', () => {
 		  }
 		`)
 
-		expect(matcher.match({ size: 's' })).toMatchInlineSnapshot(`
+    expect(matcher.match({ size: 's' })).toMatchInlineSnapshot(`
 			{
 			  "container": {
 			    "background": "red",
@@ -182,14 +180,14 @@ describe('style matcher', () => {
 			}
 		`)
 
-		expect(
-			matcher.match({
-				size: 'm',
-				alignment: 'icon-only',
-				state: 'disabled',
-				variant: 'accent',
-			}),
-		).toMatchInlineSnapshot(`
+    expect(
+      matcher.match({
+        size: 'm',
+        alignment: 'icon-only',
+        state: 'disabled',
+        variant: 'accent',
+      }),
+    ).toMatchInlineSnapshot(`
 			{
 			  "container": {
 			    "background": "yellow",
@@ -204,13 +202,13 @@ describe('style matcher', () => {
 			}
 		`)
 
-		expect(
-			matcher.match({
-				size: 'm',
-				variant: 'accent',
-				state: 'disabled',
-			}),
-		).toMatchInlineSnapshot(`
+    expect(
+      matcher.match({
+        size: 'm',
+        variant: 'accent',
+        state: 'disabled',
+      }),
+    ).toMatchInlineSnapshot(`
 			{
 			  "container": {
 			    "background": "yellow",
@@ -223,5 +221,5 @@ describe('style matcher', () => {
 			  },
 			}
 		`)
-	})
+  })
 })

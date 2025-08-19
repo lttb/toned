@@ -1,26 +1,25 @@
+import type { Tokens } from '@toned/core/types'
 import { createContext } from 'react'
 
-import type { Tokens } from '@toned/core/types'
-
 export const defineContext = (tokens: Tokens) =>
-	new Proxy(tokens, {
-		get(_target, prop: string) {
-			const value = _target[prop]
+  new Proxy(tokens, {
+    get(_target, prop: string) {
+      const value = _target[prop]
 
-			if (typeof value !== 'string') {
-				return value
-			}
+      if (typeof value !== 'string') {
+        return value
+      }
 
-			if (value.startsWith('var')) {
-				return _target[value.slice(6, -1)]
-			}
+      if (value.startsWith('var')) {
+        return _target[value.slice(6, -1)]
+      }
 
-			if (value.includes('px')) {
-				return Number.parseInt(value, 10)
-			}
+      if (value.includes('px')) {
+        return Number.parseInt(value, 10)
+      }
 
-			return value
-		},
-	})
+      return value
+    },
+  })
 
 export const TokensContext = createContext<Tokens>(defineContext({}))

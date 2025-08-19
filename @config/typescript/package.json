@@ -1,9 +1,9 @@
 {
-	"name": "@config/typescript",
-	"private": true,
-	"type": "module",
-	"main": "tsconfig.json",
-	"devDependencies": {
-		"typescript": "^5.9.2"
-	}
+  "name": "@config/typescript",
+  "private": true,
+  "type": "module",
+  "main": "tsconfig.json",
+  "devDependencies": {
+    "typescript": "^5.9.2"
+  }
 }

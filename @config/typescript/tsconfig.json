@@ -1,39 +1,39 @@
 {
-	"compilerOptions": {
-		"rootDir": "${configDir}",
+  "compilerOptions": {
+    "rootDir": "${configDir}",
 
-		// Enable latest features
-		"lib": ["ESNext", "DOM"],
-		"target": "ESNext",
-		"module": "preserve",
-		"moduleDetection": "auto",
-		"jsx": "react-jsx",
-		"allowJs": true,
-		"checkJs": true,
-		"resolveJsonModule": true,
+    // Enable latest features
+    "lib": ["ESNext", "DOM"],
+    "target": "ESNext",
+    "module": "preserve",
+    "moduleDetection": "auto",
+    "jsx": "react-jsx",
+    "allowJs": true,
+    "checkJs": true,
+    "resolveJsonModule": true,
 
-		// Bundler mode
-		"moduleResolution": "bundler",
-		"allowImportingTsExtensions": true,
-		"verbatimModuleSyntax": true,
-		"noEmit": false,
-		"emitDeclarationOnly": true,
-		"rewriteRelativeImportExtensions": true,
+    // Bundler mode
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": false,
+    "emitDeclarationOnly": true,
+    "rewriteRelativeImportExtensions": true,
 
-		// Best practices
-		"strict": true,
-		"skipLibCheck": true,
-		"noFallthroughCasesInSwitch": true,
+    // Best practices
+    "strict": true,
+    "skipLibCheck": true,
+    "noFallthroughCasesInSwitch": true,
 
-		// Some stricter flags (disabled by default)
-		"noUnusedLocals": false,
-		"noUnusedParameters": false,
-		"noPropertyAccessFromIndexSignature": true,
+    // Some stricter flags (disabled by default)
+    "noUnusedLocals": false,
+    "noUnusedParameters": false,
+    "noPropertyAccessFromIndexSignature": true,
 
-		"declaration": true,
-		"outDir": "${configDir}/dist",
-		"declarationDir": "${configDir}/dist"
-	},
-	"include": ["${configDir}/**/*.ts", "${configDir}/**/*.tsx"],
-	"exclude": ["**/dist/**", ".config.*.ts"]
+    "declaration": true,
+    "outDir": "${configDir}/dist",
+    "declarationDir": "${configDir}/dist"
+  },
+  "include": ["${configDir}/**/*.ts", "${configDir}/**/*.tsx"],
+  "exclude": ["**/dist/**", ".config.*.ts"]
 }

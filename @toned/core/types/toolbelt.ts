@@ -12,11 +12,11 @@ type Narrowable = string | number | bigint | boolean
  * @param W
  */
 export type Exact<A, W> = W extends unknown
-	? A extends W
-		? A extends Narrowable
-			? A
-			: {
-					[K in keyof A]: K extends keyof W ? Exact<A[K], W[K]> : never
-				}
-		: W
-	: never
+  ? A extends W
+    ? A extends Narrowable
+      ? A
+      : {
+          [K in keyof A]: K extends keyof W ? Exact<A[K], W[K]> : never
+        }
+    : W
+  : never

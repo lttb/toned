@@ -1,24 +1,24 @@
 {
-	"name": "@toned/systems",
-	"version": "0.0.1",
-	"author": "Kenzhaev Artur",
-	"license": "MIT",
-	"type": "module",
-	"publishConfig": {
-		"access": "public",
-		"directory": "dist",
-		"linkDirectory": false
-	},
-	"repository": {
-		"type": "git",
-		"url": "git+https://github.com/lttb/toned.git",
-		"directory": "@toned/systems"
-	},
-	"scripts": {
-		"prepublishOnly": "bun run build",
-		"build": "bun -e 'import(`@config/build`)'"
-	},
-	"peerDependencies": {
-		"@toned/core": "workspace:*"
-	}
+  "name": "@toned/systems",
+  "version": "0.0.1",
+  "author": "Kenzhaev Artur",
+  "license": "MIT",
+  "type": "module",
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist",
+    "linkDirectory": false
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lttb/toned.git",
+    "directory": "@toned/systems"
+  },
+  "scripts": {
+    "prepublishOnly": "bun run build",
+    "build": "bun -e 'import(`@config/build`)'"
+  },
+  "peerDependencies": {
+    "@toned/core": "workspace:*"
+  }
 }

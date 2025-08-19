@@ -1,20 +1,20 @@
 {
-	"name": "root",
-	"private": true,
-	"license": "MIT",
-	"type": "module",
-	"workspaces": [
-		"./toned/",
-		"./@toned/*",
-		"./@config/*"
-	],
-	"devDependencies": {
-		"@biomejs/biome": "2.2.0",
-		"@changesets/cli": "^2.29.6",
-		"@types/bun": "1.2.20",
-		"vitest": "^3.2.4"
-	},
-	"peerDependencies": {
-		"typescript": "^5.9.2"
-	}
+  "name": "root",
+  "private": true,
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "./toned/",
+    "./@toned/*",
+    "./@config/*"
+  ],
+  "devDependencies": {
+    "@biomejs/biome": "2.2.0",
+    "@changesets/cli": "^2.29.6",
+    "@types/bun": "1.2.20",
+    "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "typescript": "^5.9.2"
+  }
 }
