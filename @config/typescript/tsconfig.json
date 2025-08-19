@@ -18,6 +18,7 @@
 		"verbatimModuleSyntax": true,
 		"noEmit": false,
 		"emitDeclarationOnly": true,
+		"rewriteRelativeImportExtensions": true,
 
 		// Best practices
 		"strict": true,

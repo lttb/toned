@@ -3,7 +3,11 @@
 	"private": true,
 	"license": "MIT",
 	"type": "module",
-	"workspaces": ["./toned/", "./@toned/*", "./@config/*"],
+	"workspaces": [
+		"./toned/",
+		"./@toned/*",
+		"./@config/*"
+	],
 	"devDependencies": {
 		"@biomejs/biome": "1.9.4",
 		"@changesets/cli": "^2.28.1",
