@@ -1,4 +1,4 @@
-import '@toned/react/config'
+import '@toned/react/config.19'
 import '@toned/themes/shadcn/config.css'
 import './index.css'
 
