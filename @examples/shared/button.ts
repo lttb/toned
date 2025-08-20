@@ -1,11 +1,12 @@
+import '@toned/core/types'
 import { stylesheet } from '@toned/systems/base'
 
 export const styles = stylesheet({
-  ...stylesheet.state<{
-    size: 'm' | 's'
-    variant: 'accent' | 'danger'
-    alignment?: 'icon-only' | 'icon-left' | 'icon-right'
-  }>,
+  // ...stylesheet.state<{
+  //   size: 'm' | 's'
+  //   variant: 'accent' | 'danger'
+  //   alignment?: 'icon-only' | 'icon-left' | 'icon-right'
+  // }>,
 
   container: {
     borderRadius: 'medium',

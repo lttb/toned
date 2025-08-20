@@ -55,8 +55,8 @@ export type Stylesheet<
     config: Config,
     modState?: M,
   ) => {
-    [key in keyof T]: ReturnType<TFun<S>>
-  }
+      [key in keyof T]: ReturnType<TFun<S>>
+    }
 }
 
 export const SYMBOL_STATE: unique symbol = Symbol.for('@toned/state')
@@ -70,13 +70,13 @@ export interface Ctor {
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: ignore
-const C: typeof C_ & Ctor = C_ as any
+export const C: typeof C_ & Ctor = C_ as any
 
-type Pseudo = ':hover' | ':active' | ':focus'
+export type Pseudo = ':hover' | ':active' | ':focus'
 
-type PickString<K> = K extends string ? K : never
+export type PickString<K> = K extends string ? K : never
 
-type ElementStyle<
+export type ElementStyle<
   S extends TokenStyleDeclaration,
   Elements extends string,
   Mods extends ModType,
@@ -88,44 +88,44 @@ type ElementStyle<
     Mods,
     NoInfer<Exclude<AvailablePseudo, PseudoKey>>
   > &
-    ElementList<S, NoInfer<Elements>, Mods, NoInfer<AvailablePseudo>>
+  ElementList<S, NoInfer<Elements>, Mods, NoInfer<AvailablePseudo>>
 } & {
-  [K in keyof Mods as `[${PickString<K>}=${Exclude<Mods[K], undefined>}]`]?: ElementStyle<
-    S,
-    NoInfer<Elements>,
-    Omit<Mods, NoInfer<K>>,
-    NoInfer<AvailablePseudo>
-  >
-}
+    [K in keyof Mods as `[${PickString<K>}=${Exclude<Mods[K], undefined>}]`]?: ElementStyle<
+      S,
+      NoInfer<Elements>,
+      Omit<Mods, NoInfer<K>>,
+      NoInfer<AvailablePseudo>
+    >
+  }
 
-type ElementList<
+export type ElementList<
   S extends TokenStyleDeclaration,
   Elements extends string,
   Mods extends ModType,
   AvailablePseudo extends string,
 > = {
-  [ElementKey in `$${Elements}`]?: ElementStyle<
-    S,
-    Elements,
-    Mods,
-    AvailablePseudo
-  >
-}
+    [ElementKey in `$${Elements}`]?: ElementStyle<
+      S,
+      Elements,
+      Mods,
+      AvailablePseudo
+    >
+  }
 
-type ModList<
+export type ModList<
   S extends TokenStyleDeclaration,
   Elements extends string,
   Mods extends ModType,
   AvailablePseudo extends string,
 > = {
-  [K in keyof Mods as `[${PickString<K>}=${Exclude<Mods[K], undefined>}]`]?: ElementList<
-    S,
-    Elements,
-    Mods,
-    AvailablePseudo
-  > &
+    [K in keyof Mods as `[${PickString<K>}=${Exclude<Mods[K], undefined>}]`]?: ElementList<
+      S,
+      Elements,
+      Mods,
+      AvailablePseudo
+    > &
     ModList<S, Elements, Omit<Mods, K>, AvailablePseudo>
-}
+  }
 
 export type StylesheetValue<
   S extends TokenStyleDeclaration,
@@ -133,8 +133,8 @@ export type StylesheetValue<
   T,
 > = {
   [K in keyof T as K extends `[${string}]` | 'prototype'
-    ? never
-    : K]: ElementStyle<
+  ? never
+  : K]: ElementStyle<
     S,
     NoInfer<
       PickString<

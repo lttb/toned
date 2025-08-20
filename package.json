@@ -6,7 +6,8 @@
   "workspaces": [
     "./toned/",
     "./@toned/*",
-    "./@config/*"
+    "./@config/*",
+    "./@examples/*"
   ],
   "devDependencies": {
     "@biomejs/biome": "2.2.0",

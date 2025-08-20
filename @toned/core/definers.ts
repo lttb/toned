@@ -10,8 +10,10 @@ import {
   type Tokens,
 } from './types'
 
-const SYMBOL_STYLE = Symbol()
-const SYMBOL_ACCESS = Symbol()
+export const SYMBOL_STYLE = Symbol()
+export const SYMBOL_ACCESS = Symbol()
+
+export type { TokenSystem }
 
 export function defineToken<
   // biome-ignore lint/suspicious/noExplicitAny: ignore
