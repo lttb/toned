@@ -2,13 +2,15 @@ import '@toned/core/types'
 import { stylesheet } from '@toned/systems/base'
 
 export const styles = stylesheet({
-  // ...stylesheet.state<{
-  //   size: 'm' | 's'
-  //   variant: 'accent' | 'danger'
-  //   alignment?: 'icon-only' | 'icon-left' | 'icon-right'
-  // }>,
+  ...stylesheet.state<{
+    size: 'm' | 's'
+    variant: 'accent' | 'danger'
+    alignment?: 'icon-only' | 'icon-left' | 'icon-right'
+  }>,
 
   container: {
+    $$type: 'view',
+
     borderRadius: 'medium',
     borderWidth: 'none',
     style: {
@@ -17,6 +19,7 @@ export const styles = stylesheet({
   },
 
   label: {
+    $$type: 'text',
     // style: {
     // 	pointerEvents: 'none',
     // 	userSelect: 'none',
