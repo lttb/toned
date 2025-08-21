@@ -59,7 +59,7 @@ export type Stylesheet<
   }
 }
 
-export const SYMBOL_STATE: unique symbol = Symbol.for('@toned/state')
+export const SYMBOL_STATE = '__symbol_state__'
 
 export class C_<_T> {
   // static myStatic: T;

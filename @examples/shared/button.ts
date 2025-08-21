@@ -1,4 +1,3 @@
-import '@toned/core/types'
 import { stylesheet } from '@toned/systems/base'
 
 export const styles = stylesheet({
