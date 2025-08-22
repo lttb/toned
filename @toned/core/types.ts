@@ -1,5 +1,9 @@
-export const SYMBOL_REF: unique symbol = Symbol()
-export const SYMBOL_INIT: unique symbol = Symbol()
+// required for types portability
+const sym = <N extends string>(name: N) =>
+  Symbol.for(`@toned/${name}`) as unknown as N
+
+export const SYMBOL_REF = sym('SYMBOL_REF')
+export const SYMBOL_INIT = sym('SYMBOL_INIT')
 
 export type Tokens = Record<string, string>
 
@@ -27,6 +31,7 @@ type Merge<D extends any[]> = D extends [infer First, ...infer Rest]
 export type TFun<S extends TokenStyleDeclaration> = <D extends TokenStyle<S>[]>(
   ...values: [...D]
 ) => Merge<D> & {
+  /* @internal */
   [SYMBOL_REF]: TokenSystem<S>
 }
 
@@ -49,8 +54,9 @@ export type Stylesheet<
 > = {
   [key in keyof T]: ReturnType<TFun<S>>
 } & {
-  // TODO: hide it from the public interface
+  /* @internal */
   [SYMBOL_REF]: TokenSystem<S>
+  /* @internal */
   [SYMBOL_INIT]: (
     config: Config,
     modState?: M,
@@ -59,13 +65,14 @@ export type Stylesheet<
   }
 }
 
-export const SYMBOL_STATE = '__symbol_state__'
+export const SYMBOL_STATE = sym('SYMBOL_STATE')
 
 export class C_<_T> {
   // static myStatic: T;
 }
 
 export interface Ctor {
+  /* @internal */
   [SYMBOL_STATE]: this extends typeof C_<infer T> ? T : never
 }
 

@@ -32,7 +32,9 @@
 
     "declaration": true,
     "outDir": "${configDir}/dist",
-    "declarationDir": "${configDir}/dist"
+    "declarationDir": "${configDir}/dist",
+
+    "stripInternal": true
   },
   "include": ["${configDir}/**/*.ts", "${configDir}/**/*.tsx"],
   "exclude": ["**/dist/**", ".config.*.ts"]
