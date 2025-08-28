@@ -2,6 +2,7 @@ import { defineToken } from '@toned/core'
 import type { Tokens } from '@toned/core/types'
 import type { CSSProperties } from 'react'
 
+// TODO: consider moving to the core
 export const defineCssToken = <const Values extends Readonly<any[]>>(
   propName: keyof CSSProperties | Array<keyof CSSProperties>,
   values: Values,

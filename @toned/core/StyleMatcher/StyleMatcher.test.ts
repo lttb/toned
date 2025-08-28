@@ -1,5 +1,139 @@
-import { describe, expect, test } from 'vitest'
+import { describe, expect, test } from 'bun:test'
 import { StyleMatcher } from './StyleMatcher'
+
+describe('style matcher', () => {
+  const matcher = new StyleMatcher<{
+    size: 's' | 'm'
+    variant: 'accent' | 'danger'
+    state: 'disabled' | 'pending'
+    alignment: 'icon-only' | 'icon-left' | 'icon-right'
+  }>({
+    '[size=m]': {
+      $container: {
+        paddingX: 30,
+        paddingY: 30,
+        background: 'blue',
+      },
+
+      '[alignment=icon-only]': {
+        $container: {
+          paddingX: 50,
+          color: 'white',
+        },
+      },
+
+      '[state=disabled]': {
+        $container: {
+          opacity: 0.5,
+        },
+        '[variant=accent]': {
+          $container: {
+            background: 'gray',
+          },
+          $label: {
+            color: 'white',
+          },
+        },
+      },
+    },
+
+    '[variant=accent]': {
+      $container: {
+        background: 'yellow',
+      },
+    },
+
+    '[size=s]': {
+      $container: {
+        paddingX: 30,
+        paddingY: 30,
+        background: 'red',
+      },
+    },
+  })
+
+  test('match snapshots', () => {
+    expect(matcher.match({ size: 'm' })).toMatchInlineSnapshot(`
+		  {
+		    [Symbol(@toned/StyleMatcher/elementHash)]: {
+		      "container": 1,
+		    },
+		    [Symbol(@toned/StyleMatcher/propsBits)]: 1,
+		    "container": {
+		      "background": "blue",
+		      "paddingX": 30,
+		      "paddingY": 30,
+		    },
+		  }
+		`)
+
+    expect(matcher.match({ size: 's' })).toMatchInlineSnapshot(`
+			{
+			  [Symbol(@toned/StyleMatcher/elementHash)]: {
+			    "container": 2,
+			  },
+			  [Symbol(@toned/StyleMatcher/propsBits)]: 2,
+			  "container": {
+			    "background": "red",
+			    "paddingX": 30,
+			    "paddingY": 30,
+			  },
+			}
+		`)
+
+    expect(
+      matcher.match({
+        size: 'm',
+        alignment: 'icon-only',
+        state: 'disabled',
+        variant: 'accent',
+      }),
+    ).toMatchInlineSnapshot(`
+			{
+			  [Symbol(@toned/StyleMatcher/elementHash)]: {
+			    "container": 4,
+			    "label": 25,
+			  },
+			  [Symbol(@toned/StyleMatcher/propsBits)]: 29,
+			  "container": {
+			    "background": "yellow",
+			    "color": "white",
+			    "opacity": 0.5,
+			    "paddingX": 50,
+			    "paddingY": 30,
+			  },
+			  "label": {
+			    "color": "white",
+			  },
+			}
+		`)
+
+    expect(
+      matcher.match({
+        size: 'm',
+        variant: 'accent',
+        state: 'disabled',
+      }),
+    ).toMatchInlineSnapshot(`
+			{
+			  [Symbol(@toned/StyleMatcher/elementHash)]: {
+			    "container": 1,
+			    "label": 25,
+			  },
+			  [Symbol(@toned/StyleMatcher/propsBits)]: 25,
+			  "container": {
+			    "background": "yellow",
+			    "opacity": 0.5,
+			    "paddingX": 30,
+			    "paddingY": 30,
+			  },
+			  "label": {
+			    "color": "white",
+			  },
+			}
+		`)
+  })
+})
 
 describe('style matcher with pseudo', () => {
   const matcher = new StyleMatcher<{
@@ -17,7 +151,7 @@ describe('style matcher with pseudo', () => {
       },
 
       ':hover': {
-        container: {
+        $container: {
           bgColor: 'secondary',
           borderColor: 'secondary',
         },
@@ -51,29 +185,29 @@ describe('style matcher with pseudo', () => {
     },
 
     '[variant=accent]': {
-      container: {
+      $container: {
         bgColor: 'action',
 
         ':active': {
-          container: {
+          $container: {
             bgColor: 'destructive',
           },
-          label: {
+          $label: {
             textColor: 'on_destructive',
           },
         },
 
         ':hover': {
-          container: {
+          $container: {
             bgColor: 'action_secondary',
           },
-          label: {
+          $label: {
             textColor: 'on_action_secondary',
           },
         },
       },
 
-      label: {
+      $label: {
         textColor: 'on_action',
       },
     },
@@ -89,6 +223,11 @@ describe('style matcher with pseudo', () => {
       }),
     ).toMatchInlineSnapshot(`
 			{
+			  [Symbol(@toned/StyleMatcher/elementHash)]: {
+			    "container": 8,
+			    "label": 1,
+			  },
+			  [Symbol(@toned/StyleMatcher/propsBits)]: 27,
 			  "container": {
 			    "bgColor": "action_secondary",
 			    "borderColor": "secondary",
@@ -108,116 +247,100 @@ describe('style matcher with pseudo', () => {
   })
 })
 
-describe('style matcher', () => {
+describe('style matcher with media', () => {
   const matcher = new StyleMatcher<{
     size: 's' | 'm'
     variant: 'accent' | 'danger'
     state: 'disabled' | 'pending'
     alignment: 'icon-only' | 'icon-left' | 'icon-right'
   }>({
-    '[size=m]': {
-      container: {
-        paddingX: 30,
-        paddingY: 30,
-        background: 'blue',
+    container: {
+      borderRadius: 'medium',
+      borderWidth: 'none',
+
+      style: {
+        cursor: 'pointer',
       },
 
-      '[alignment=icon-only]': {
-        container: {
-          paddingX: 50,
-          color: 'white',
+      '@media.medium': {
+        bgColor: 'secondary',
+        borderColor: 'secondary',
+      },
+
+      '[size=m]': {
+        paddingX: 4,
+        paddingY: 2,
+
+        '[alignment=icon-only]': {
+          paddingX: 2,
         },
       },
 
-      '[state=disabled]': {
-        container: {
-          opacity: 0.5,
-        },
-        '[variant=accent]': {
-          container: {
-            background: 'gray',
-          },
-          label: {
-            color: 'white',
-          },
+      '[size=s]': {
+        paddingX: 2,
+        paddingY: 1,
+
+        '[alignment=icon-only]': {
+          paddingX: 1,
+          paddingY: 2,
         },
       },
+    },
+
+    label: {
+      // style: {
+      // 	pointerEvents: 'none',
+      // 	userSelect: 'none',
+      // },
     },
 
     '[variant=accent]': {
-      container: {
-        background: 'yellow',
-      },
-    },
+      $container: {
+        bgColor: 'action',
 
-    '[size=s]': {
-      container: {
-        paddingX: 30,
-        paddingY: 30,
-        background: 'red',
+        '@media.medium': {
+          bgColor: 'destructive',
+        },
+
+        '@media.small': {
+          bgColor: 'action_secondary',
+        },
+      },
+
+      label: {
+        textColor: 'on_action',
       },
     },
   })
 
-  test('match snapshots', () => {
-    expect(matcher.match({ size: 'm' })).toMatchInlineSnapshot(`
-		  {
-		    "container": {
-		      "background": "blue",
-		      "paddingX": 30,
-		      "paddingY": 30,
-		    },
-		  }
-		`)
-
-    expect(matcher.match({ size: 's' })).toMatchInlineSnapshot(`
-			{
-			  "container": {
-			    "background": "red",
-			    "paddingX": 30,
-			    "paddingY": 30,
-			  },
-			}
-		`)
-
+  test('pseudo and nested', () => {
     expect(
       matcher.match({
         size: 'm',
+        variant: 'accent',
         alignment: 'icon-only',
-        state: 'disabled',
-        variant: 'accent',
+        // TODO: think if we should support multiple @ rules simultanuasly
+        '@media': 'small',
       }),
     ).toMatchInlineSnapshot(`
 			{
+			  [Symbol(@toned/StyleMatcher/elementHash)]: {
+			    "container": 18,
+			    "label": 32,
+			  },
+			  [Symbol(@toned/StyleMatcher/propsBits)]: 54,
 			  "container": {
-			    "background": "yellow",
-			    "color": "white",
-			    "opacity": 0.5,
-			    "paddingX": 50,
-			    "paddingY": 30,
+			    "bgColor": "action_secondary",
+			    "borderRadius": "medium",
+			    "borderWidth": "none",
+			    "paddingX": 2,
+			    "paddingY": 2,
+			    "style": {
+			      "cursor": "pointer",
+			    },
 			  },
 			  "label": {
-			    "color": "white",
-			  },
-			}
-		`)
-
-    expect(
-      matcher.match({
-        size: 'm',
-        variant: 'accent',
-        state: 'disabled',
-      }),
-    ).toMatchInlineSnapshot(`
-			{
-			  "container": {
-			    "background": "yellow",
-			    "opacity": 0.5,
-			    "paddingX": 30,
-			    "paddingY": 30,
-			  },
-			  "label": {
-			    "color": "white",
+			    "textColor": "on_action",
 			  },
 			}
 		`)
