@@ -1,64 +1,86 @@
 import { defineToken, defineUnit } from '@toned/core'
+import { defineCssToken } from '../defineCssToken'
 
 // TODO: move to configuration level
-const SpaceUnit = defineUnit(Number, (value, tokens) => {
+// biome-ignore lint/complexity/noBannedTypes: instance is expected
+const SpaceUnit = defineUnit<Number | String>((value, tokens) => {
   // @ts-expect-error
   const base = tokens.base
+
+  if (typeof value === 'string') {
+    return tokens[`space_${value}`]
+  }
 
   return String(base).startsWith('var')
     ? `calc(${base} * ${Number(value)})`
     : Number(value) * Number.parseInt(base, 10)
 })
 
-//const space = defineToken({
-//  values: [
-//  	'none',
-//  	'xxsmall',
-//  	'xsmall',
-//  	'small',
-//  	'medium',
-//  	'large',
-//  	'xlarge',
-//  	'xxlarge',
-//  ],
-//  resolve: (value, tokens) => tokens[`space_${value}`],
-//})
+export const overflow = defineCssToken('overflow', [
+  'hidden',
+  'auto',
+  'visible',
+  'scroll',
+])
+export const overflowX = defineCssToken('overflowX', [
+  'hidden',
+  'auto',
+  'visible',
+  'scroll',
+])
+export const overflowY = defineCssToken('overflowY', [
+  'hidden',
+  'auto',
+  'visible',
+  'scroll',
+])
 
-export const paddingX = defineToken({
-  values: [new Number()],
-  resolve: (value, tokens) => {
-    const space = SpaceUnit(value, tokens)
+const paddingValues = [
+  new Number(),
+  'xxsmal',
+  'xsmall',
+  'small',
+  'medium',
+  'large',
+  'xlarge',
+  'xxlarge',
+] as const
 
-    return {
-      paddingLeft: space,
-      paddingRight: space,
-    }
-  },
-})
-export const paddingY = defineToken({
-  values: [new Number()],
-  resolve: (value, tokens) => {
-    const space = SpaceUnit(value, tokens)
+export const padding = defineCssToken(
+  ['paddingLeft', 'paddingTop', 'paddingBottom', 'paddingRight'],
+  paddingValues,
+  SpaceUnit,
+)
+export const paddingX = defineCssToken(
+  ['paddingLeft', 'paddingRight'],
+  paddingValues,
+  SpaceUnit,
+)
+export const paddingY = defineCssToken(
+  ['paddingTop', 'paddingBottom'],
+  paddingValues,
+  SpaceUnit,
+)
+export const paddingLeft = defineCssToken(
+  'paddingLeft',
+  paddingValues,
+  SpaceUnit,
+)
+export const paddingRight = defineCssToken(
+  'paddingRight',
+  paddingValues,
+  SpaceUnit,
+)
+export const paddingTop = defineCssToken('paddingTop', paddingValues, SpaceUnit)
+export const paddingBottom = defineCssToken(
+  'paddingBottom',
+  paddingValues,
+  SpaceUnit,
+)
 
-    return {
-      paddingTop: space,
-      paddingBottom: space,
-    }
-  },
-})
-export const padding = defineToken({
-  values: [new Number()],
-  resolve: (value, tokens) => {
-    const space = SpaceUnit(value, tokens)
-
-    return {
-      paddingLeft: space,
-      paddingTop: space,
-      paddingBottom: space,
-      paddingRight: space,
-    }
-  },
-})
+export const gap = defineCssToken('gap', paddingValues, SpaceUnit)
+export const rowGap = defineCssToken('rowGap', paddingValues, SpaceUnit)
+export const columnGap = defineCssToken('columnGap', paddingValues, SpaceUnit)
 
 export const flexLayout = defineToken({
   values: ['column', 'column-reverse', 'row', 'row-reverse'],
@@ -67,137 +89,90 @@ export const flexLayout = defineToken({
     flexDirection: value,
   }),
 })
-export const flexGrow = defineToken({
-  values: ['0', '1'],
-  resolve: (value) => ({
-    flexGrow: value,
-  }),
-})
-export const flexBasis = defineToken({
-  values: [new Number()],
-  resolve: (value, tokens) => {
-    const space = SpaceUnit(value, tokens)
 
-    return {
-      flexBasis: space,
-    }
-  },
-})
-export const flexWrap = defineToken({
-  values: ['wrap', 'wrap-reverse', 'nowrap'],
-  resolve: (value) => ({
-    flexWrap: value,
-  }),
-})
-export const flexShrink = defineToken({
-  values: ['0', '1'],
-  resolve: (value) => ({
-    flexShrink: value,
-  }),
-})
-export const gap = defineToken({
-  values: [new Number()],
-  resolve: (value, tokens) => {
-    const space = SpaceUnit(value, tokens)
+export const flexGrow = defineCssToken('flexGrow', ['0', '1'])
+export const flexWrap = defineCssToken('flexWrap', [
+  'wrap',
+  'wrap-reverse',
+  'nowrap',
+])
+export const flexShrink = defineCssToken('flexShrink', ['0', '1'])
+export const justifyContent = defineCssToken('justifyContent', [
+  'normal',
+  'flex-start',
+  'flex-end',
+  'center',
+  'space-between',
+  'space-around',
+  'space-evenly',
+  'stretch',
+])
+export const justifyItems = defineCssToken('justifyItems', [
+  'flex-start',
+  'flex-end',
+  'center',
+  'stretch',
+])
+export const justifySelf = defineCssToken('justifySelf', [
+  'auto',
+  'flex-start',
+  'flex-end',
+  'center',
+  'stretch',
+])
 
-    return {
-      gap: space,
-    }
-  },
-})
+export const alignContent = defineCssToken('alignContent', [
+  'normal',
+  'flex-start',
+  'flex-end',
+  'center',
+  'space-between',
+  'space-around',
+  'space-evenly',
+  'baseline',
+  'stretch',
+])
 
-export const opacity = defineToken({
-  values: [new Number()],
-  resolve: (value) => {
-    return {
-      opacity: value,
-    }
-  },
-})
+export const alignItems = defineCssToken('alignItems', [
+  'flex-start',
+  'flex-end',
+  'center',
+  'baseline',
+  'stretch',
+])
 
-export const justifyContent = defineToken({
-  values: [
-    'normal',
-    'flex-start',
-    'flex-end',
-    'center',
-    'space-between',
-    'space-around',
-    'space-evenly',
-    'stretch',
-  ],
-  resolve: (value) => {
-    return { justifyContent: value }
-  },
-})
+export const alignSelf = defineCssToken('alignSelf', [
+  'auto',
+  'flex-start',
+  'flex-end',
+  'center',
+  'baseline',
+  'stretch',
+])
 
-export const justifyItems = defineToken({
-  values: ['flex-start', 'flex-end', 'center', 'stretch'],
-  resolve: (value) => {
-    return { justifyItems: value }
-  },
-})
+export const placeContent = defineCssToken('placeContent', [
+  'start',
+  'end',
+  'center',
+  'space-between',
+  'space-around',
+  'space-evenly',
+  'baseline',
+  'stretch',
+])
 
-export const justifySelf = defineToken({
-  values: ['auto', 'flex-start', 'flex-end', 'center', 'stretch'],
-  resolve: (value) => {
-    return { justifySelf: value }
-  },
-})
+export const placeItems = defineCssToken('placeItems', [
+  'start',
+  'end',
+  'center',
+  'baseline',
+  'stretch',
+])
 
-export const alignContent = defineToken({
-  values: [
-    'normal',
-    'flex-start',
-    'flex-end',
-    'center',
-    'space-between',
-    'space-around',
-    'space-evenly',
-    'baseline',
-    'stretch',
-  ],
-  resolve: (value) => {
-    return { alignContent: value }
-  },
-})
-export const alignItems = defineToken({
-  values: ['flex-start', 'flex-end', 'center', 'baseline', 'stretch'],
-  resolve: (value) => {
-    return { alignItems: value }
-  },
-})
-export const alignSelf = defineToken({
-  values: ['auto', 'flex-start', 'flex-end', 'center', 'baseline', 'stretch'],
-  resolve: (value) => {
-    return { alignSelf: value }
-  },
-})
-
-export const placeContent = defineToken({
-  values: [
-    'start',
-    'end',
-    'center',
-    'space-between',
-    'space-around',
-    'space-evenly',
-    'baseline',
-    'stretch',
-  ],
-  resolve: (value) => {
-    return { placeContent: value }
-  },
-})
-export const placeItems = defineToken({
-  values: ['start', 'end', 'center', 'baseline', 'stretch'],
-  resolve: (value) => {
-    return { placeItems: value }
-  },
-})
-export const placeSelf = defineToken({
-  values: ['auto', 'start', 'end', 'center', 'stretch'],
-  resolve: (value) => {
-    return { placeSelf: value }
-  },
-})
+export const placeSelf = defineCssToken('placeSelf', [
+  'auto',
+  'start',
+  'end',
+  'center',
+  'stretch',
+])

@@ -3,6 +3,7 @@ import * as border from './border'
 import * as colour from './colour'
 import * as layout from './layout'
 import * as shadow from './shadow'
+import * as sizes from './sizes'
 import * as typo from './typo'
 
 export const { system, stylesheet, t } = defineSystem({
@@ -11,4 +12,5 @@ export const { system, stylesheet, t } = defineSystem({
   ...colour,
   ...layout,
   ...shadow,
+  ...sizes,
 })

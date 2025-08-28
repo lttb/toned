@@ -24,9 +24,8 @@ export function defineToken<
   return config
 }
 
-export function defineUnit<T extends typeof Number | typeof String>(
-  _type: T,
-  resolver: (value: InstanceType<T>, tokens: Tokens) => number | string,
+export function defineUnit<T>(
+  resolver: (value: T, tokens: Tokens) => number | string,
 ) {
   return resolver
 }
