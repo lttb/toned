@@ -12,6 +12,7 @@ export const styles = stylesheet({
 
     borderRadius: 'medium',
     borderWidth: 'none',
+
     style: {
       cursor: 'pointer',
     },
@@ -57,6 +58,11 @@ export const styles = stylesheet({
     $container: {
       paddingX: 4,
       paddingY: 2,
+
+      '@media.small': {
+        paddingX: 1,
+        paddingY: 1,
+      },
     },
 
     '[alignment=icon-only]': {

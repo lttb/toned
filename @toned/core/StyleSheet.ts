@@ -274,3 +274,41 @@ export function createStylesheet<
     },
   })
 }
+
+// TODO: move to configuration
+
+const mediaSmall = window?.matchMedia('(width >= 640px)')
+const mediaMedium = window?.matchMedia('(width >= 768px)')
+const mediaLarge = window?.matchMedia('(width >= 1024px)')
+
+export class Emitter<I extends Record<string, any>> extends EventTarget {
+  emit<N extends keyof I>(type: N, data: I[N]) {
+    this.dispatchEvent(new CustomEvent(String(type), data))
+  }
+
+  sub<N extends keyof I>(type: N, cb: (event: CustomEvent<I[N]>) => void) {
+    const listner = (event: Event) => {
+      cb(event as CustomEvent<I[N]>)
+    }
+
+    this.addEventListener(String(type), listner)
+
+    return () => this.removeEventListener(String(type), listner)
+  }
+}
+
+const mediaEmitter = new Emitter<{
+  '@media.small': boolean
+  '@media.medium': boolean
+  '@media.large': boolean
+}>()
+
+mediaSmall.addEventListener('change', (e) => {
+  mediaEmitter.emit('@media.small', e.matches)
+})
+mediaMedium.addEventListener('change', (e) => {
+  mediaEmitter.emit('@media.medium', e.matches)
+})
+mediaLarge.addEventListener('change', (e) => {
+  mediaEmitter.emit('@media.large', e.matches)
+})
