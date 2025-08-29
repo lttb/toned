@@ -204,9 +204,7 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
   }
 
   private parseAtSelector(selector: string): [string, string] {
-    const [name, value] = selector.split('.')
-
-    return [name, value]
+    return [selector, String(true)]
   }
 
   compile(config: Config) {
@@ -279,7 +277,7 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
     props: Partial<
       Schema &
         Record<`${string}:${string}`, boolean> &
-        Record<`@${string}`, string>
+        Record<`@${string}.${string}`, boolean>
     >,
   ) {
     const propsBits = this.getPropsBits(props)

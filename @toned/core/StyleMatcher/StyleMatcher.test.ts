@@ -320,15 +320,16 @@ describe('style matcher with media', () => {
         variant: 'accent',
         alignment: 'icon-only',
         // TODO: think if we should support multiple @ rules simultanuasly
-        '@media': 'small',
+        '@media.desktop': false,
+        '@media.small': true,
       }),
     ).toMatchInlineSnapshot(`
 			{
 			  [Symbol(@toned/StyleMatcher/elementHash)]: {
-			    "container": 18,
-			    "label": 32,
+			    "container": 40,
+			    "label": 16,
 			  },
-			  [Symbol(@toned/StyleMatcher/propsBits)]: 54,
+			  [Symbol(@toned/StyleMatcher/propsBits)]: 58,
 			  "container": {
 			    "bgColor": "action_secondary",
 			    "borderRadius": "medium",

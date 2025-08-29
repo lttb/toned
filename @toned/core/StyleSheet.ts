@@ -80,10 +80,18 @@ export function createStylesheet<
 
       this.matcher = new StyleMatcher(rules)
 
-      this.modsState = modsState || {}
+      // TODO: think about perf improvements
+      this.modsState = {
+        ...modsState,
+        ...mediaEmitter.data?.media,
+      }
       // this.modsStyle = this.matcher.match(this.modsState)
 
       this.matchStyles()
+
+      mediaEmitter.sub('media', () => {
+        this.applyState(mediaEmitter.data?.media || {})
+      })
 
       // console.log(this.matcher.list)
     }
@@ -277,12 +285,20 @@ export function createStylesheet<
 
 // TODO: move to configuration
 
-const mediaSmall = window?.matchMedia('(width >= 640px)')
-const mediaMedium = window?.matchMedia('(width >= 768px)')
-const mediaLarge = window?.matchMedia('(width >= 1024px)')
+const w = typeof window === 'undefined' ? null : window
+
+const mediaSmall = w?.matchMedia('(width >= 640px)')
+const mediaMedium = w?.matchMedia('(width >= 768px)')
+const mediaLarge = w?.matchMedia('(width >= 1024px)')
 
 export class Emitter<I extends Record<string, any>> extends EventTarget {
+  constructor(public data: I) {
+    super()
+  }
+
   emit<N extends keyof I>(type: N, data: I[N]) {
+    Object.assign(this.data[type], data)
+
     this.dispatchEvent(new CustomEvent(String(type), data))
   }
 
@@ -298,17 +314,25 @@ export class Emitter<I extends Record<string, any>> extends EventTarget {
 }
 
 const mediaEmitter = new Emitter<{
-  '@media.small': boolean
-  '@media.medium': boolean
-  '@media.large': boolean
-}>()
+  media: Partial<{
+    '@media.small': boolean
+    '@media.medium': boolean
+    '@media.large': boolean
+  }>
+}>({
+  media: {
+    '@media.small': mediaSmall?.matches,
+    '@media.medium': mediaMedium?.matches,
+    '@media.large': mediaLarge?.matches,
+  },
+})
 
-mediaSmall.addEventListener('change', (e) => {
-  mediaEmitter.emit('@media.small', e.matches)
+mediaSmall?.addEventListener('change', (e) => {
+  mediaEmitter.emit('media', { '@media.small': e.matches })
 })
-mediaMedium.addEventListener('change', (e) => {
-  mediaEmitter.emit('@media.medium', e.matches)
+mediaMedium?.addEventListener('change', (e) => {
+  mediaEmitter.emit('media', { '@media.medium': e.matches })
 })
-mediaLarge.addEventListener('change', (e) => {
-  mediaEmitter.emit('@media.large', e.matches)
+mediaLarge?.addEventListener('change', (e) => {
+  mediaEmitter.emit('media', { '@media.large': e.matches })
 })
