@@ -80,17 +80,21 @@ export function createStylesheet<
 
       this.matcher = new StyleMatcher(rules)
 
+      initMedia()
+
       // TODO: think about perf improvements
       this.modsState = {
         ...modsState,
-        ...mediaEmitter.data?.media,
+        ...mediaEmitter.data,
       }
       // this.modsStyle = this.matcher.match(this.modsState)
 
       this.matchStyles()
 
-      mediaEmitter.sub('media', () => {
-        this.applyState(mediaEmitter.data?.media || {})
+      mediaEmitter.sub(() => {
+        console.log('update')
+
+        this.applyState(mediaEmitter.data || {})
       })
 
       // console.log(this.matcher.list)
@@ -285,54 +289,46 @@ export function createStylesheet<
 
 // TODO: move to configuration
 
-const w = typeof window === 'undefined' ? null : window
+const initMedia = () => {
+  const w = typeof window === 'undefined' ? null : window
 
-const mediaSmall = w?.matchMedia('(width >= 640px)')
-const mediaMedium = w?.matchMedia('(width >= 768px)')
-const mediaLarge = w?.matchMedia('(width >= 1024px)')
+  const mediaSmall = w?.matchMedia('(width >= 400px)')
+  const mediaMedium = w?.matchMedia('(width >= 768px)')
+  const mediaLarge = w?.matchMedia('(width >= 1024px)')
 
-export class Emitter<I extends Record<string, any>> extends EventTarget {
-  constructor(public data: I) {
-    super()
+  mediaSmall?.addListener((e) => {
+    mediaEmitter.emit({ '@media.small': e.matches })
+  })
+  mediaMedium?.addListener((e) => {
+    mediaEmitter.emit({ '@media.medium': e.matches })
+  })
+  mediaLarge?.addListener((e) => {
+    mediaEmitter.emit({ '@media.large': e.matches })
+  })
+}
+
+class Emitter<T extends Record<string, any>> {
+  private listeners = new Set<(data: Partial<T>) => void>()
+
+  constructor(public data: T) {}
+
+  emit(data: Partial<T>) {
+    this.listeners.forEach((cb) => {
+      cb(data)
+    })
   }
 
-  emit<N extends keyof I>(type: N, data: I[N]) {
-    Object.assign(this.data[type], data)
+  sub(listener: (data: T) => void) {
+    this.listeners.add(listener)
 
-    this.dispatchEvent(new CustomEvent(String(type), data))
-  }
-
-  sub<N extends keyof I>(type: N, cb: (event: CustomEvent<I[N]>) => void) {
-    const listner = (event: Event) => {
-      cb(event as CustomEvent<I[N]>)
-    }
-
-    this.addEventListener(String(type), listner)
-
-    return () => this.removeEventListener(String(type), listner)
+    return () => this.listeners.delete(listener)
   }
 }
 
-const mediaEmitter = new Emitter<{
-  media: Partial<{
+const mediaEmitter = new Emitter<
+  Partial<{
     '@media.small': boolean
     '@media.medium': boolean
     '@media.large': boolean
   }>
-}>({
-  media: {
-    '@media.small': mediaSmall?.matches,
-    '@media.medium': mediaMedium?.matches,
-    '@media.large': mediaLarge?.matches,
-  },
-})
-
-mediaSmall?.addEventListener('change', (e) => {
-  mediaEmitter.emit('media', { '@media.small': e.matches })
-})
-mediaMedium?.addEventListener('change', (e) => {
-  mediaEmitter.emit('media', { '@media.medium': e.matches })
-})
-mediaLarge?.addEventListener('change', (e) => {
-  mediaEmitter.emit('media', { '@media.large': e.matches })
-})
+>({})
