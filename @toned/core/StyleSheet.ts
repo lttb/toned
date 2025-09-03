@@ -80,7 +80,7 @@ export function createStylesheet<
 
       this.matcher = new StyleMatcher(rules)
 
-      initMedia()
+      const mediaEmitter = initMedia()
 
       // TODO: think about perf improvements
       this.modsState = {
@@ -92,7 +92,7 @@ export function createStylesheet<
       this.matchStyles()
 
       mediaEmitter.sub(() => {
-        console.log('update')
+        console.log('update', mediaEmitter.data)
 
         this.applyState(mediaEmitter.data || {})
       })
@@ -292,11 +292,24 @@ export function createStylesheet<
 const initMedia = () => {
   const w = typeof window === 'undefined' ? null : window
 
-  const mediaSmall = w?.matchMedia('(width >= 400px)')
-  const mediaMedium = w?.matchMedia('(width >= 768px)')
-  const mediaLarge = w?.matchMedia('(width >= 1024px)')
+  const mediaSmall = w?.matchMedia('(min-width: 640px)')
+  const mediaMedium = w?.matchMedia('(min-width: 768px)')
+  const mediaLarge = w?.matchMedia('(min-width: 1024px)')
+
+  const mediaEmitter = new Emitter<
+    Partial<{
+      '@media.small': boolean
+      '@media.medium': boolean
+      '@media.large': boolean
+    }>
+  >({
+    '@media.small': mediaSmall.matches,
+    '@media.medium': mediaMedium.matches,
+    '@media.large': mediaLarge.matches,
+  })
 
   mediaSmall?.addListener((e) => {
+    console.log('emit.small', e.matches)
     mediaEmitter.emit({ '@media.small': e.matches })
   })
   mediaMedium?.addListener((e) => {
@@ -305,6 +318,8 @@ const initMedia = () => {
   mediaLarge?.addListener((e) => {
     mediaEmitter.emit({ '@media.large': e.matches })
   })
+
+  return mediaEmitter
 }
 
 class Emitter<T extends Record<string, any>> {
@@ -313,6 +328,8 @@ class Emitter<T extends Record<string, any>> {
   constructor(public data: T) {}
 
   emit(data: Partial<T>) {
+    Object.assign(this.data, data)
+
     this.listeners.forEach((cb) => {
       cb(data)
     })
@@ -324,11 +341,3 @@ class Emitter<T extends Record<string, any>> {
     return () => this.listeners.delete(listener)
   }
 }
-
-const mediaEmitter = new Emitter<
-  Partial<{
-    '@media.small': boolean
-    '@media.medium': boolean
-    '@media.large': boolean
-  }>
->({})
