@@ -1,4 +1,4 @@
-const { getDefaultConfig } = require('expo/metro-config')
+const {getDefaultConfig} = require('expo/metro-config')
 const path = require('node:path')
 
 // Find the project and workspace directories
@@ -8,8 +8,6 @@ const monorepoRoot = path.resolve(projectRoot, '../..')
 
 /** @type {import('expo/metro-config').MetroConfig} */
 const config = getDefaultConfig(projectRoot)
-
-config.resolver.disableHierarchicalLookup = true
 
 // 1. Watch all files within the monorepo
 config.watchFolders = [monorepoRoot]

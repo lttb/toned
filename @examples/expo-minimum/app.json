@@ -7,6 +7,9 @@
     "experiments": {
       "reactCanary": false,
       "reactCompiler": false
-    }
+    },
+    "plugins": [
+      "expo-router"
+    ]
   }
 }
