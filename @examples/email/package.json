@@ -4,13 +4,11 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {},
-  "workspaces": [
-    "../../toned/",
-    "../../@toned/*",
-    "../../@config/*",
-    "../shared/"
-  ],
   "dependencies": {
+    "@toned/core": "workspace:*",
+    "@toned/react": "workspace:*",
+    "@toned/themes": "workspace:*",
+    "@toned/systems": "workspace:*",
     "@react-email/components": "^0.0.35",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"

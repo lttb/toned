@@ -1,3 +1,4 @@
 [install]
+dev    = true
 linker = "isolated"
 peer   = false

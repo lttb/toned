@@ -21,7 +21,13 @@ type InlineStyle = any
 
 export type TokenStyle<S extends TokenStyleDeclaration> = Partial<{
   [key in keyof S]: S[key]['values'][number]
-}> & { style?: InlineStyle }
+}> & { style?: InlineStyle } & {
+  // TODO: make at rules configurable
+  [key in `@media.${'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge'}`]?: Omit<
+    TokenStyle<S>,
+    `@media.${string}`
+  >
+}
 
 // biome-ignore lint/suspicious/noExplicitAny: ignore
 type Merge<D extends any[]> = D extends [infer First, ...infer Rest]

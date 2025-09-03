@@ -1,3 +1,6 @@
+// TODO: think about improving the types portability
+export * from '@toned/core/types'
+
 import { defineSystem } from '@toned/core'
 import * as border from './border'
 import * as colour from './colour'

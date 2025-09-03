@@ -4,13 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {},
-  "workspaces": [
-    "../../toned/",
-    "../../@toned/*",
-    "../../@config/*",
-    "../shared/"
-  ],
   "dependencies": {
+    "@examples/shared": "workspace:*",
+    "@toned/core": "workspace:*",
+    "@toned/react": "workspace:*",
+    "@toned/themes": "workspace:*",
+    "@toned/systems": "workspace:*",
     "@react-pdf/renderer": "4.3.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
