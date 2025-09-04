@@ -20,6 +20,8 @@
   },
   "devDependencies": {
     "@config/typescript": "workspace:*",
-    "@config/build": "workspace:*"
+    "@config/build": "workspace:*",
+    "rollup-copy-transform-css": "^2.1.0",
+    "rollup-plugin-copy": "^3.5.0"
   }
 }

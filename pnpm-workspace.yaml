@@ -1,8 +1,10 @@
 packages:
-  - '@toned/*'
+  - "@toned/*"
   - toned
-  - '@config/*'
+  - "@config/*"
 
 onlyBuiltDependencies:
-  - '@biomejs/biome'
+  - "@biomejs/biome"
   - esbuild
+
+autoInstallPeers: false

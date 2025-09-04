@@ -17,7 +17,7 @@ const transformPkg = async () => {
 
 await $`rm -rf ${dist}`
 
-await $`bun --bun rollup -c .config.rollup.ts`
+await $`bun --bun ${path.join(__dirname, 'node_modules', '.bin', 'rollup')} -c .config.rollup.ts --configPlugin typescript`
 
 await $`cp README.md ${dist}`
 await transformPkg()

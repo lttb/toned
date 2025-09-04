@@ -16,7 +16,7 @@
   },
   "scripts": {
     "prepublishOnly": "bun run build",
-    "build": "bun -e 'import(`@config/build`)'"
+    "build": "bun --bun -e 'import(`@config/build`)'"
   },
   "devDependencies": {
     "@config/typescript": "workspace:*",

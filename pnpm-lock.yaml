@@ -1,16 +1,12 @@
 lockfileVersion: '9.0'
 
 settings:
-  autoInstallPeers: true
+  autoInstallPeers: false
   excludeLinksFromLockfile: false
 
 importers:
 
   .:
-    dependencies:
-      typescript:
-        specifier: ^5.9.2
-        version: 5.9.2
     devDependencies:
       '@biomejs/biome':
         specifier: 2.2.0
@@ -26,7 +22,7 @@ importers:
         version: 3.2.4(@types/node@22.13.10)
 
   '@config/build':
-    devDependencies:
+    dependencies:
       '@rollup/plugin-multi-entry':
         specifier: ^6.0.1
         version: 6.0.1(rollup@4.46.3)
@@ -45,6 +41,10 @@ importers:
       tslib:
         specifier: ^2.8.1
         version: 2.8.1
+    devDependencies:
+      '@config/typescript':
+        specifier: workspace:*
+        version: link:../typescript
 
   '@config/typescript':
     devDependencies:
@@ -52,20 +52,36 @@ importers:
         specifier: ^5.9.2
         version: 5.9.2
 
-  '@toned/compiler': {}
+  '@toned/compiler':
+    devDependencies:
+      '@config/build':
+        specifier: workspace:*
+        version: link:../../@config/build
+      '@config/typescript':
+        specifier: workspace:*
+        version: link:../../@config/typescript
 
   '@toned/core':
+    devDependencies:
+      '@config/build':
+        specifier: workspace:*
+        version: link:../../@config/build
+      '@config/typescript':
+        specifier: workspace:*
+        version: link:../../@config/typescript
     publishDirectory: dist
 
   '@toned/react':
-    dependencies:
+    devDependencies:
+      '@config/build':
+        specifier: workspace:*
+        version: link:../../@config/build
+      '@config/typescript':
+        specifier: workspace:*
+        version: link:../../@config/typescript
       '@toned/core':
         specifier: workspace:*
         version: link:../core
-      react:
-        specifier: '>=18'
-        version: 19.0.0
-    devDependencies:
       '@types/react':
         specifier: npm:@types/react@^19.0.0
         version: 19.0.12
@@ -78,13 +94,32 @@ importers:
     publishDirectory: dist
 
   '@toned/systems':
-    dependencies:
+    devDependencies:
+      '@config/build':
+        specifier: workspace:*
+        version: link:../../@config/build
+      '@config/typescript':
+        specifier: workspace:*
+        version: link:../../@config/typescript
       '@toned/core':
         specifier: workspace:*
         version: link:../core
     publishDirectory: dist
 
   '@toned/themes':
+    devDependencies:
+      '@config/build':
+        specifier: workspace:*
+        version: link:../../@config/build
+      '@config/typescript':
+        specifier: workspace:*
+        version: link:../../@config/typescript
+      rollup-copy-transform-css:
+        specifier: ^2.1.0
+        version: 2.1.0(rollup@4.46.3)
+      rollup-plugin-copy:
+        specifier: ^3.5.0
+        version: 3.5.0
     publishDirectory: dist
 
   toned: {}
@@ -1449,10 +1484,6 @@ packages:
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
-
-  react@19.0.0:
-    resolution: {integrity: sha512-V8AVnmPIICiWpGfm6GLzCR/W5FXLchHop40W4nXBmdlEceh16rCN8O8LNWm5bh5XUX91fh7KpA+W0TgMKmgTpQ==}
-    engines: {node: '>=0.10.0'}
 
   read-cache@1.0.0:
     resolution: {integrity: sha512-Owdv/Ft7IjOgm/i0xvNDZ1LrRANRfew4b2prF3OWMQLxLfu3bS8FVhCsrSCMK4lR56Y9ya+AThoTpDCTxCmpRA==}
@@ -2962,8 +2993,6 @@ snapshots:
   quansync@0.2.10: {}
 
   queue-microtask@1.2.3: {}
-
-  react@19.0.0: {}
 
   read-cache@1.0.0:
     dependencies:
