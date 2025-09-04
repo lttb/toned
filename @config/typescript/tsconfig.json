@@ -37,5 +37,5 @@
     "stripInternal": true
   },
   "include": ["${configDir}/**/*.ts", "${configDir}/**/*.tsx"],
-  "exclude": ["**/dist/**", ".config.*.ts"]
+  "exclude": ["${configDir}/dist", ".config.*.ts"]
 }
