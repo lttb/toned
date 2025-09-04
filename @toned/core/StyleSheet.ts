@@ -19,16 +19,17 @@ type AnyValue = any
 type Ref = AnyValue
 type RefStyle = AnyValue
 
-const setStyles = (curr: Ref | undefined, style: RefStyle) => {
-  if (!curr) return
-
-  // TODO: move to config
-  if (curr.setNativeProps) {
-    curr.setNativeProps({ style })
-  } else {
-    curr.removeAttribute('style')
-    Object.assign(curr.style, style)
-  }
+const setStyles = (refs: RefMap, style: RefStyle) => {
+  refs.forEach((curr) => {
+    if (!curr) return
+    // TODO: move to config
+    if (curr.setNativeProps) {
+      curr.setNativeProps({ style })
+    } else {
+      curr.removeAttribute('style')
+      Object.assign(curr.style, style)
+    }
+  })
 }
 
 type State = Record<string, Record<PseudoState | 'base', boolean>>
@@ -43,6 +44,10 @@ type StyleDecl = Record<ElementKey, ElementStyle>
 // TODO: make it type safe
 type ModState = AnyValue
 
+type RefConfig = AnyValue
+
+type RefMap = Map<Ref, RefConfig>
+
 export function createStylesheet<
   S extends TokenStyleDeclaration,
   Mods extends ModType,
@@ -55,7 +60,7 @@ export function createStylesheet<
     state: State
     stateCache: Record<ElementKey, Map<number, AppliedStyle>>
 
-    refs: Record<ElementKey, Ref>
+    refs: Record<ElementKey, RefMap>
 
     matcher: StyleMatcher
     modsState: ModState
@@ -92,8 +97,6 @@ export function createStylesheet<
       this.matchStyles()
 
       mediaEmitter.sub(() => {
-        console.log('update', mediaEmitter.data)
-
         this.applyState(mediaEmitter.data || {})
       })
 
@@ -126,7 +129,8 @@ export function createStylesheet<
       this.modsStyle = this.matcher.match(this.modsState)
     }
 
-    getCurrentStyle(key: ElementKey) {
+    getCurrentStyle(key: ElementKey, ref?: Ref) {
+      // apply refs
       return this.applyTokens(this.modsStyle[key])
     }
 
@@ -186,92 +190,140 @@ export function createStylesheet<
         // 	elementRule[':hover'] ||
         // 	elementRule[':focus']
 
-        const result = {
-          ref: (current: Ref) => {
-            this.refs[elementKey] = current
-          },
+        const createResult = (options?: any[]) => {
+          const result = {
+            ref: (current: Ref) => {
+              this.refs[elementKey] ??= new Map()
+              this.refs[elementKey].set(result.ref, { ref: current, options })
+            },
 
-          // TODO: move to the configuration platform-agnostic level
+            with: (...args: any[]) => {
+              return createResult(args)
+              // return args.reduce(
+              //   (acc, arg) => {
+              //     if (arg.style) {
+              //       const currStyle = acc.style
+              //
+              //       if (typeof acc.style === 'function') {
+              //         acc.style = (state: any) => {
+              //           return {
+              //             ...currStyle(state),
+              //             ...(typeof arg.style === 'function'
+              //               ? arg.style(state)
+              //               : arg.style),
+              //           }
+              //         }
+              //       } else {
+              //         if (typeof arg.style === 'function') {
+              //           acc.style = (state: any) => ({
+              //             ...currStyle,
+              //             ...arg.style(state),
+              //           })
+              //         } else {
+              //           acc.style = { ...currStyle, ...arg.style }
+              //         }
+              //       }
+              //     }
+              //
+              //     if (arg.ref) {
+              //       const currRef = acc.ref
+              //
+              //       acc.ref = (curr: Ref) => {
+              //         currRef(curr)
+              //         arg.ref(curr)
+              //       }
+              //     }
+              //
+              //     return acc
+              //   },
+              //   { ...result },
+              // )
+            },
 
-          style: this.matcher.interactions[elementKey]
-            ? isBrowser
-              ? this.getCurrentStyle(elementKey)
-              : (state: any) => {
-                  const interactiveState = {
-                    ':hover': state.hovered,
-                    ':active': state.pressed,
-                    ':focus': state.focused,
-                  }
+            // TODO: move to the configuration platform-agnostic level
 
-                  if (!this.interactiveState[elementKey]) {
+            style: this.matcher.interactions[elementKey]
+              ? isBrowser
+                ? this.getCurrentStyle(elementKey)
+                : (state: any) => {
+                    const interactiveState = {
+                      ':hover': state.hovered,
+                      ':active': state.pressed,
+                      ':focus': state.focused,
+                    }
+
+                    if (!this.interactiveState[elementKey]) {
+                      this.interactiveState[elementKey] = interactiveState
+                      return this.getCurrentStyle(elementKey)
+                    }
+
                     this.interactiveState[elementKey] = interactiveState
-                    return this.getCurrentStyle(elementKey)
+
+                    Object.assign(this.modsState, {
+                      [`${elementKey}:hover`]: state.hovered,
+                      [`${elementKey}:focus`]: state.focused,
+                      [`${elementKey}:active`]: state.pressed,
+                    })
+
+                    this.matchStyles()
+
+                    this.applyElementStyles()
                   }
+              : this.getCurrentStyle(elementKey),
 
-                  this.interactiveState[elementKey] = interactiveState
-
-                  Object.assign(this.modsState, {
-                    [`${elementKey}:hover`]: state.hovered,
-                    [`${elementKey}:focus`]: state.focused,
-                    [`${elementKey}:active`]: state.pressed,
-                  })
-
-                  this.matchStyles()
-
-                  this.applyElementStyles()
+            ...(isBrowser
+              ? {
+                  ...this.setOn(
+                    elementKey,
+                    ':hover',
+                    'onMouseOver',
+                    'onMouseOut',
+                  ),
+                  ...this.setOn(
+                    elementKey,
+                    ':active',
+                    'onMouseDown',
+                    'onMouseUp',
+                  ),
+                  ...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
                 }
-            : this.getCurrentStyle(elementKey),
+              : {}),
 
-          ...(isBrowser
-            ? {
-                ...this.setOn(
-                  elementKey,
-                  ':hover',
-                  'onMouseOver',
-                  'onMouseOut',
-                ),
-                ...this.setOn(
-                  elementKey,
-                  ':active',
-                  'onMouseDown',
-                  'onMouseUp',
-                ),
-                ...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
-              }
-            : {}),
+            // style: this.getCurrentStyle(elementKey),
 
-          // style: this.getCurrentStyle(elementKey),
+            // style: hasInteraction ? ({focused, hovered, pressed}) => {
+            //        return this.getCurrentStyle(elementKey)
+            //      } : this.getCurrentStyle(elementKey),
 
-          // style: hasInteraction ? ({focused, hovered, pressed}) => {
-          //        return this.getCurrentStyle(elementKey)
-          //      } : this.getCurrentStyle(elementKey),
+            // TODO: move it to config
+            // ...(isBrowser
+            // 	? {
+            // 			...this.setOn(
+            // 				elementKey,
+            // 				':hover',
+            // 				'onMouseOver',
+            // 				'onMouseOut',
+            // 			),
+            // 			...this.setOn(
+            // 				elementKey,
+            // 				':active',
+            // 				'onMouseDown',
+            // 				'onMouseUp',
+            // 			),
+            // 			...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
+            // 		}
+            // 	: {
+            // 			// TODO: support an option with a `style` function state
+            // 			...this.setOn(elementKey, ':hover', 'onHoverIn', 'onHoverOut'),
+            // 			...this.setOn(elementKey, ':active', 'onPressIn', 'onPressOut'),
+            // 			...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
+            // 		}),
+          }
 
-          // TODO: move it to config
-          // ...(isBrowser
-          // 	? {
-          // 			...this.setOn(
-          // 				elementKey,
-          // 				':hover',
-          // 				'onMouseOver',
-          // 				'onMouseOut',
-          // 			),
-          // 			...this.setOn(
-          // 				elementKey,
-          // 				':active',
-          // 				'onMouseDown',
-          // 				'onMouseUp',
-          // 			),
-          // 			...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
-          // 		}
-          // 	: {
-          // 			// TODO: support an option with a `style` function state
-          // 			...this.setOn(elementKey, ':hover', 'onHoverIn', 'onHoverOut'),
-          // 			...this.setOn(elementKey, ':active', 'onPressIn', 'onPressOut'),
-          // 			...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
-          // 		}),
+          return result
         }
 
-        return result
+        return createResult()
       },
     })
   })
@@ -303,13 +355,12 @@ const initMedia = () => {
       '@media.large': boolean
     }>
   >({
-    '@media.small': mediaSmall.matches,
-    '@media.medium': mediaMedium.matches,
-    '@media.large': mediaLarge.matches,
+    '@media.small': mediaSmall?.matches,
+    '@media.medium': mediaMedium?.matches,
+    '@media.large': mediaLarge?.matches,
   })
 
   mediaSmall?.addListener((e) => {
-    console.log('emit.small', e.matches)
     mediaEmitter.emit({ '@media.small': e.matches })
   })
   mediaMedium?.addListener((e) => {
@@ -323,7 +374,7 @@ const initMedia = () => {
 }
 
 class Emitter<T extends Record<string, any>> {
-  private listeners = new Set<(data: Partial<T>) => void>()
+  private listeners = new Set<(data: T) => void>()
 
   constructor(public data: T) {}
 
@@ -331,7 +382,7 @@ class Emitter<T extends Record<string, any>> {
     Object.assign(this.data, data)
 
     this.listeners.forEach((cb) => {
-      cb(data)
+      cb(this.data)
     })
   }
 

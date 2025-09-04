@@ -11,7 +11,7 @@ export function Button({ label }: { label: string }) {
 
   return (
     <Pressable role="button" {...s.container}>
-      <Text {...s.label}>{label}</Text>
+      <Text {...s.label.with({ style: { color: 'red' } })}>{label}</Text>
     </Pressable>
   )
 }

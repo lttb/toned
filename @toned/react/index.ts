@@ -13,7 +13,11 @@ type UseStylesResult<
   S extends TokenStyleDeclaration,
   T extends Record<string, TokenStyle<S>>,
   // biome-ignore lint/complexity/noBannedTypes: ignore
-> = Record<keyof T, {}>
+> = {
+  [k in keyof T]: Record<never, never> & {
+    with: (...args: any) => Record<never, never>
+  }
+}
 
 export function useStyles<
   S extends TokenStyleDeclaration,
@@ -47,10 +51,10 @@ export function useStyles<
     }
   }
 
-  if (ref.current.state !== state) {
+  if (ref.current?.state !== state) {
     // @ts-expect-error hidden API
     ref.current.result.applyState(state)
   }
 
-  return ref.current.result
+  return ref.current?.result
 }

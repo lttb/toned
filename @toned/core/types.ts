@@ -67,7 +67,9 @@ export type Stylesheet<
     config: Config,
     modState?: M,
   ) => {
-    [key in keyof T]: ReturnType<TFun<S>>
+    [key in keyof T]: ReturnType<TFun<S>> & {
+      with: (...args: any[]) => Record<never, never>
+    }
   }
 }
 
@@ -169,18 +171,19 @@ export type StylesheetValue<
   Pseudo
 >
 
-export type StylesheetType<S extends TokenStyleDeclaration> = (<
+export type StylesheetType<S extends TokenStyleDeclaration> = <
   Mods extends ModType,
   T extends StylesheetValue<S, Mods, T>,
 >(
   style: { [SYMBOL_STATE]?: Mods } & T,
-) => Stylesheet<S, Omit<T, `[${string}]` | 'prototype'>, Mods>) & {
-  state: typeof C
-}
+) => Stylesheet<S, Omit<T, `[${string}]` | 'prototype'>, Mods>
 
 export type TokenSystem<S extends TokenStyleDeclaration> = {
   system: S
-  stylesheet: StylesheetType<S>
+  stylesheet: StylesheetType<S> & {
+    state: typeof C
+  }
+
   t: TFun<S>
   exec: (
     config: {
