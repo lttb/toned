@@ -140,7 +140,7 @@
     },
     "@toned/core": {
       "name": "@toned/core",
-      "version": "0.0.2",
+      "version": "0.0.3",
       "devDependencies": {
         "@config/build": "workspace:*",
         "@config/typescript": "workspace:*",
@@ -148,7 +148,7 @@
     },
     "@toned/react": {
       "name": "@toned/react",
-      "version": "0.0.1",
+      "version": "0.0.3",
       "devDependencies": {
         "@config/build": "workspace:*",
         "@config/typescript": "workspace:*",
@@ -158,7 +158,7 @@
         "@types/react19": "npm:@types/react@^19.0.0",
       },
       "peerDependencies": {
-        "@toned/core": "workspace:*",
+        "@toned/core": "workspace:~",
         "react": ">=18",
       },
     },
@@ -171,7 +171,7 @@
         "@toned/core": "workspace:*",
       },
       "peerDependencies": {
-        "@toned/core": "workspace:*",
+        "@toned/core": "workspace:~",
       },
     },
     "@toned/themes": {
