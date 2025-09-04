@@ -19,7 +19,7 @@
     "build": "bun -e 'import(`@config/build`)'"
   },
   "peerDependencies": {
-    "@toned/core": "workspace:*"
+    "@toned/core": "workspace:~"
   },
   "devDependencies": {
     "@config/typescript": "workspace:*",

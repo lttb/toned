@@ -20,7 +20,7 @@
   },
   "peerDependencies": {
     "react": ">=18",
-    "@toned/core": "workspace:*"
+    "@toned/core": "workspace:~"
   },
   "devDependencies": {
     "@config/typescript": "workspace:*",
