@@ -1,4 +1,8 @@
 {
   "name": "@toned/compiler",
-  "private": true
+  "private": true,
+  "devDependencies": {
+    "@config/typescript": "workspace:*",
+    "@config/build": "workspace:*"
+  }
 }

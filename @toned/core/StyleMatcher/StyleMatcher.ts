@@ -67,6 +67,8 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
     this.scheme = scheme
     this.list = list
 
+    // console.dir(list, { depth: null })
+
     this.compile({ scheme, list })
 
     this.bits = Object.entries(this.propertyBits)
@@ -139,6 +141,12 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
           const currentRule = processElementRule(elementKey, elementRule[key])
 
           traverseMod(selector, mod, modValue, currentRule)
+        } else if (key[0] === '@') {
+          const [mod, modValue] = this.parseAtSelector(key)
+
+          const currentRule = processElementRule(elementKey, elementRule[key])
+
+          traverseMod(selector, mod, modValue, currentRule)
         } else {
           result[key] = elementRule[key]
         }
@@ -173,6 +181,10 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
           const [mod, modValue] = this.parseSelector(key)
 
           traverseMod(selector, mod, modValue, node[key])
+        } else if (key[0] === '@') {
+          const [mod, modValue] = this.parseAtSelector(key)
+
+          traverseMod(selector, mod, modValue, node[key])
         } else {
           const elementKey = key.replace(/^\$/, '')
           const elementRule = traverseElement(selector, elementKey, node[key])
@@ -189,6 +201,10 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
   private parseSelector(selector: string): [string, string] {
     const [name, value] = selector.slice(1, -1).split('=')
     return [name, value]
+  }
+
+  private parseAtSelector(selector: string): [string, string] {
+    return [selector, String(true)]
   }
 
   compile(config: Config) {
@@ -257,7 +273,13 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
   #elementHash = Symbol.for('@toned/StyleMatcher/elementHash')
   #propsBits = Symbol.for('@toned/StyleMatcher/propsBits')
 
-  match(props: Partial<Schema & Record<`${string}:${string}`, boolean>>) {
+  match(
+    props: Partial<
+      Schema &
+        Record<`${string}:${string}`, boolean> &
+        Record<`@${string}.${string}`, boolean>
+    >,
+  ) {
     const propsBits = this.getPropsBits(props)
 
     if (this.cache.has(propsBits)) {

@@ -5,10 +5,10 @@
   "version": "1.0.0",
   "main": "index.ts",
   "dependencies": {
-    "@toned/themes": "../../@toned/themes",
-    "@toned/systems": "../../@toned/systems"
+    "@toned/themes": "workspace:*",
+    "@toned/systems": "workspace:*"
   },
   "devDependencies": {
-    "@config/typescript": "../../@config/typescript/"
+    "@config/typescript": "workspace:*"
   }
 }

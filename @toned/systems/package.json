@@ -20,5 +20,10 @@
   },
   "peerDependencies": {
     "@toned/core": "workspace:*"
+  },
+  "devDependencies": {
+    "@config/typescript": "workspace:*",
+    "@config/build": "workspace:*",
+    "@toned/core": "workspace:*"
   }
 }
