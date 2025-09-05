@@ -2,6 +2,7 @@ packages:
   - "@toned/*"
   - toned
   - "@config/*"
+  - "@examples/*"
 
 onlyBuiltDependencies:
   - "@biomejs/biome"

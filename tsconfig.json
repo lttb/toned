@@ -22,6 +22,21 @@
     },
     {
       "path": "@config/build"
+    },
+    {
+      "path": "@examples/email"
+    },
+    {
+      "path": "@examples/expo-app"
+    },
+    {
+      "path": "@examples/pdf"
+    },
+    {
+      "path": "@examples/shared"
+    },
+    {
+      "path": "@examples/vite"
     }
   ]
 }
