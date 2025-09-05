@@ -3,10 +3,17 @@ import { $ } from 'bun'
 
 const cwd = process.cwd()
 const dist = path.resolve(cwd, 'dist/')
+const monorepoRoot = path.resolve(__dirname, '../..')
+
+const licenseLocation = path.join(monorepoRoot, 'LICENSE')
+const rollupBin = path.join(__dirname, 'node_modules', '.bin', 'rollup')
 
 const transformPkg = async () => {
-  const { scripts, devDependencies, ...pkg } =
-    await Bun.file('package.json').json()
+  const {
+    scripts: _scripts,
+    devDependencies: _devDeps,
+    ...pkg
+  } = await Bun.file('package.json').json()
 
   await Bun.write(
     path.join(dist, 'package.json'),
@@ -17,8 +24,8 @@ const transformPkg = async () => {
 
 await $`rm -rf ${dist}`
 
-await $`bun --bun ${path.join(__dirname, 'node_modules', '.bin', 'rollup')} -c .config.rollup.ts --configPlugin typescript`
+await $`bun --bun ${rollupBin} -c .config.rollup.ts --configPlugin typescript`
 
 await $`cp README.md ${dist}`
 await transformPkg()
-await $`cp ../../LICENSE ${dist}`
+await $`cp ${licenseLocation} ${dist}`

@@ -1,0 +1,27 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "files": [],
+  "references": [
+    {
+      "path": "@toned/compiler"
+    },
+    {
+      "path": "@toned/core"
+    },
+    {
+      "path": "@toned/react"
+    },
+    {
+      "path": "@toned/systems"
+    },
+    {
+      "path": "@toned/themes"
+    },
+    {
+      "path": "toned"
+    },
+    {
+      "path": "@config/build"
+    }
+  ]
+}

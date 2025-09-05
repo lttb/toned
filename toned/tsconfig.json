@@ -2,7 +2,10 @@
   "extends": "@config/typescript/lib",
   "references": [
     {
-      "path": "../../@config/build"
+      "path": "../@config/build"
+    },
+    {
+      "path": "../@toned/core"
     }
   ]
 }

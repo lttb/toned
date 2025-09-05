@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+
+  "display": "React",
+
+  "extends": ["./base.tsconfig.json"],
+
+  "compilerOptions": {
+    "lib": ["ESNext", "DOM", "DOM.Iterable", "DOM.AsyncIterable"],
+    "jsx": "preserve"
+  }
+}

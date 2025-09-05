@@ -22,6 +22,7 @@
     "@toned/core": "workspace:~"
   },
   "devDependencies": {
+    "@types/react": "catalog:",
     "@config/typescript": "workspace:*",
     "@config/build": "workspace:*",
     "@toned/core": "workspace:*"

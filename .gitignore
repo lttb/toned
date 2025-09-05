@@ -1,4 +1,6 @@
 .dist
+.build
+.tsc
 
 # Logs
 logs

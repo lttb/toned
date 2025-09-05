@@ -3,5 +3,10 @@
   "version": "0.0.0",
   "license": "MIT",
   "type": "module",
-  "files": []
+  "files": [],
+  "devDependencies": {
+    "@toned/core": "workspace:*",
+    "@config/typescript": "workspace:*",
+    "@config/build": "workspace:*"
+  }
 }

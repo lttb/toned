@@ -1,3 +1,20 @@
 {
-  "extends": "@config/typescript"
+  "extends": "@config/typescript",
+  "references": [
+    {
+      "path": "../../@toned/core"
+    },
+    {
+      "path": "../../@toned/react"
+    },
+    {
+      "path": "../../@toned/systems"
+    },
+    {
+      "path": "../../@toned/themes"
+    },
+    {
+      "path": "../shared"
+    }
+  ]
 }
