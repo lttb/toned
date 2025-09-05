@@ -53,6 +53,7 @@ export type Config = Readonly<{
   initInteraction: () => void
 }>
 
+declare const _internalBrand: unique symbol
 export type Stylesheet<
   S extends TokenStyleDeclaration,
   T extends Record<string, TokenStyle<S>>,
@@ -69,6 +70,8 @@ export type Stylesheet<
   ) => {
     [key in keyof T]: ReturnType<TFun<S>>
   }
+  // keep it in the shape so it won't collapse to {} after build
+  [_internalBrand]?: never
 }
 
 export const SYMBOL_STATE = sym('SYMBOL_STATE')
