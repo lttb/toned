@@ -1,6 +1,6 @@
 import { getConfig } from './config'
 
-import { createStylesheet } from './StyleSheet'
+import { createStylesheet } from './StyleSheet/StyleSheet'
 import {
   type ModType,
   type StylesheetValue,
