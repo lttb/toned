@@ -48,6 +48,8 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
     rule: any
   }> = []
 
+  useAtPrefix: boolean
+
   scheme: MatcherScheme
   list: MatcherList
   interactions: InteractionList
@@ -66,6 +68,8 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 
     this.scheme = scheme
     this.list = list
+
+    this.useAtPrefix = false
 
     // console.dir(list, { depth: null })
 
@@ -89,6 +93,7 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
       mod: string,
       modValue: string,
       rule: StyleRules,
+      propPrefix?: string,
     ) => {
       scheme[mod] ??= new Set()
       scheme[mod].add(modValue)
@@ -96,7 +101,7 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
       const nextMap = new Map(selector)
       nextMap.set(mod, modValue)
 
-      traverse(nextMap, rule)
+      traverse(nextMap, rule, propPrefix)
     }
 
     const processElementRule = (elementKey: string, rule: NestedStyleRules) => {
@@ -119,6 +124,7 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
       selector: Map<string, string>,
       elementKey: string,
       elementRule: NestedStyleRules[string],
+      propPrefix = '',
     ) => {
       const result: StyleObject = {}
 
@@ -146,9 +152,15 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 
           const currentRule = processElementRule(elementKey, elementRule[key])
 
-          traverseMod(selector, mod, modValue, currentRule)
+          traverseMod(
+            selector,
+            mod,
+            modValue,
+            currentRule,
+            this.useAtPrefix ? `${mod}_${modValue}_` : undefined,
+          )
         } else {
-          result[key] = elementRule[key]
+          result[propPrefix + key] = elementRule[key]
         }
       })
 
@@ -158,6 +170,7 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
     const traverse = (
       selector: Map<string, string>,
       node: NestedStyleRules,
+      propPrefix?: string,
     ) => {
       const selectorRule: NestedStyleRules = Object.create(null)
 
@@ -187,7 +200,12 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
           traverseMod(selector, mod, modValue, node[key])
         } else {
           const elementKey = key.replace(/^\$/, '')
-          const elementRule = traverseElement(selector, elementKey, node[key])
+          const elementRule = traverseElement(
+            selector,
+            elementKey,
+            node[key],
+            propPrefix,
+          )
           selectorRule[elementKey] = elementRule
         }
       })
