@@ -25,7 +25,7 @@ export function defineToken<
 }
 
 export function defineUnit<T>(
-  resolver: (value: T, tokens: Tokens) => number | string,
+  resolver: (value: T, tokens: Tokens) => number | string | undefined,
 ) {
   return resolver
 }

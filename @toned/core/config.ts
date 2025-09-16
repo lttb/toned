@@ -9,6 +9,11 @@ const customGlobal = globalThis as typeof globalThis & {
 customGlobal[SYMBOL_CONFIG] ??= {
   getTokens: (): Tokens => ({}),
 
+  // TODO
+  getProps() {
+    return {}
+  },
+
   initRef: () => {},
   initInteraction: () => {},
 }
@@ -21,4 +26,8 @@ export function getConfig(): Config {
 
 export function setConfig(newConfig: Partial<typeof config>) {
   Object.assign(config, newConfig)
+}
+
+export function defineConfig(newConfig: Partial<typeof config>) {
+  return Object.assign({}, config, newConfig)
 }

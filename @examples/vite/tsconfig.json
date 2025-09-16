@@ -28,6 +28,9 @@
   ],
   "references": [
     {
+      "path": "../../@toned/core"
+    },
+    {
       "path": "../../@toned/react"
     },
     {

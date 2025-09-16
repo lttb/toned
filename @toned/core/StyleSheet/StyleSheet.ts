@@ -50,228 +50,12 @@ export function createStylesheet<
   Mods extends ModType,
   T,
 >(ref: TokenSystem<S>, rules: StylesheetValue<S, Mods, T>) {
-  class Base {
-    config: Config
-
-    tokens: Tokens
-    state: State
-    stateCache: Record<ElementKey, Map<number, AppliedStyle>>
-
-    refs: Record<ElementKey, Ref>
-
-    matcher: StyleMatcher
-    modsState: ModState
-    modsStyle!: StyleDecl
-    modsStylePrev!: StyleDecl
-
-    interactiveState: Record<string, Record<string, boolean>> = {}
-
-    constructor({
-      config,
-      modsState,
-    }: {
-      config?: Config
-      modsState?: ModState
-    }) {
-      this.config = config ?? getConfig()
-
-      this.tokens = this.config.getTokens()
-      this.state = {}
-      this.stateCache = {}
-      this.refs = {}
-
-      this.matcher = new StyleMatcher(rules)
-
-      const mediaEmitter = initMedia()
-
-      // TODO: think about perf improvements
-      this.modsState = {
-        ...modsState,
-        ...mediaEmitter.data,
-      }
-      // this.modsStyle = this.matcher.match(this.modsState)
-
-      this.matchStyles()
-
-      mediaEmitter.sub(() => {
-        console.log('update', mediaEmitter.data)
-
-        this.applyState(mediaEmitter.data || {})
-      })
-
-      // console.log(this.matcher.list)
-    }
-
-    // mergeStyles(a: StyleDecl, b?: StyleDecl) {
-    // 	const style: StyleDecl = {}
-    //
-    // 	for (const key in a) {
-    // 		style[key] = Object.assign({}, a[key], b?.[key])
-    // 	}
-    //
-    // 	return style
-    // }
-
-    // getInteractionState(key: ElementKey) {
-    // 	const {
-    // 		base,
-    // 		':hover': hover,
-    // 		':focus': focus,
-    // 		':active': active,
-    // 	} = this.state[key]
-    //
-    // 	return +base | (+hover << 1) | (+focus << 2) | (+active << 3)
-    // }
-
-    matchStyles() {
-      this.modsStylePrev = this.modsStyle
-      this.modsStyle = this.matcher.match(this.modsState)
-    }
-
-    getCurrentStyle(key: ElementKey) {
-      return this.applyTokens(this.modsStyle[key])
-    }
-
-    applyTokens(value: ElementStyle): AppliedStyle {
-      return ref.exec({ tokens: this.tokens }, value)
-    }
-
-    applyElementStyles() {
-      this.matcher.elementSet.forEach((elementKey) => {
-        if (
-          this.matcher.isEqual(elementKey, this.modsStylePrev, this.modsStyle)
-        ) {
-          return
-        }
-
-        setStyles(this.refs[elementKey], this.getCurrentStyle(elementKey))
-      })
-    }
-
-    applyState(modsState: ModState) {
-      Object.assign(this.modsState, modsState)
-
-      this.matchStyles()
-
-      this.applyElementStyles()
-    }
-
-    setOn = (
-      elementKey: ElementKey,
-      pseudo: PseudoState,
-      onIn: string,
-      onOut: string,
-    ) => {
-      return {
-        [onIn]: () => {
-          this.applyState({
-            [`${elementKey}${pseudo}`]: true,
-          })
-        },
-
-        [onOut]: () => {
-          this.applyState({
-            [`${elementKey}${pseudo}`]: false,
-          })
-        },
-      }
-    }
-  }
+  class LocalBase extends Base {}
 
   Object.entries(rules).forEach(([elementKey, _elementRule]) => {
-    Object.defineProperty(Base.prototype, elementKey, {
-      get(this: Base) {
-        const isBrowser = typeof document !== 'undefined' || true
-
-        // const hasInteraction =
-        // 	elementRule[':active'] ||
-        // 	elementRule[':hover'] ||
-        // 	elementRule[':focus']
-
-        const result = {
-          ref: (current: Ref) => {
-            this.refs[elementKey] = current
-          },
-
-          // TODO: move to the configuration platform-agnostic level
-
-          style: this.matcher.interactions[elementKey]
-            ? isBrowser
-              ? this.getCurrentStyle(elementKey)
-              : (state: any) => {
-                  const interactiveState = {
-                    ':hover': state.hovered,
-                    ':active': state.pressed,
-                    ':focus': state.focused,
-                  }
-
-                  if (!this.interactiveState[elementKey]) {
-                    this.interactiveState[elementKey] = interactiveState
-                    return this.getCurrentStyle(elementKey)
-                  }
-
-                  this.interactiveState[elementKey] = interactiveState
-
-                  Object.assign(this.modsState, {
-                    [`${elementKey}:hover`]: state.hovered,
-                    [`${elementKey}:focus`]: state.focused,
-                    [`${elementKey}:active`]: state.pressed,
-                  })
-
-                  this.matchStyles()
-
-                  this.applyElementStyles()
-                }
-            : this.getCurrentStyle(elementKey),
-
-          ...(isBrowser
-            ? {
-                ...this.setOn(
-                  elementKey,
-                  ':hover',
-                  'onMouseOver',
-                  'onMouseOut',
-                ),
-                ...this.setOn(
-                  elementKey,
-                  ':active',
-                  'onMouseDown',
-                  'onMouseUp',
-                ),
-                ...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
-              }
-            : {}),
-
-          // style: this.getCurrentStyle(elementKey),
-
-          // style: hasInteraction ? ({focused, hovered, pressed}) => {
-          //        return this.getCurrentStyle(elementKey)
-          //      } : this.getCurrentStyle(elementKey),
-
-          // TODO: move it to config
-          // ...(isBrowser
-          // 	? {
-          // 			...this.setOn(
-          // 				elementKey,
-          // 				':hover',
-          // 				'onMouseOver',
-          // 				'onMouseOut',
-          // 			),
-          // 			...this.setOn(
-          // 				elementKey,
-          // 				':active',
-          // 				'onMouseDown',
-          // 				'onMouseUp',
-          // 			),
-          // 			...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
-          // 		}
-          // 	: {
-          // 			// TODO: support an option with a `style` function state
-          // 			...this.setOn(elementKey, ':hover', 'onHoverIn', 'onHoverOut'),
-          // 			...this.setOn(elementKey, ':active', 'onPressIn', 'onPressOut'),
-          // 			...this.setOn(elementKey, ':focus', 'onBlur', 'onFocus'),
-          // 		}),
-        }
+    Object.defineProperty(LocalBase.prototype, elementKey, {
+      get(this: LocalBase) {
+        const result = this.config.getProps.call(this, elementKey)
 
         return result
       },
@@ -281,10 +65,154 @@ export function createStylesheet<
   return Object.assign({
     [SYMBOL_REF]: ref,
     [SYMBOL_INIT]: (config: Config, modsState: ModState) => {
-      return new Base({
+      return new LocalBase({
+        // TODO: fix types
+        ref: ref as AnyValue,
+        rules,
         config,
         modsState,
       })
     },
   })
+}
+
+type BaseRef = TokenSystem<TokenStyleDeclaration>
+type BaseRules = StylesheetValue<AnyValue, AnyValue, AnyValue>
+
+export class Base {
+  config: Config
+
+  ref: BaseRef
+  rules: BaseRules
+
+  tokens: Tokens
+  state: State
+  stateCache: Record<ElementKey, Map<number, AppliedStyle>>
+
+  refs: Record<ElementKey, Ref>
+
+  matcher: StyleMatcher
+  modsState: ModState
+  modsStyle!: StyleDecl
+  modsStylePrev!: StyleDecl
+
+  interactiveState: Record<string, Record<string, boolean>> = {}
+
+  constructor({
+    ref,
+    rules,
+    config,
+    modsState,
+  }: {
+    ref: BaseRef
+    rules: BaseRules
+    config?: Config
+    modsState?: ModState
+  }) {
+    this.config = config ?? getConfig()
+
+    this.ref = ref
+    this.rules = rules
+
+    this.tokens = this.config.getTokens()
+    this.state = {}
+    this.stateCache = {}
+    this.refs = {}
+
+    this.matcher = new StyleMatcher(rules)
+
+    const mediaEmitter = initMedia()
+
+    // TODO: think about perf improvements
+    this.modsState = {
+      ...modsState,
+      ...mediaEmitter.data,
+    }
+    // this.modsStyle = this.matcher.match(this.modsState)
+
+    this.matchStyles()
+
+    mediaEmitter.sub(() => {
+      console.log('update', mediaEmitter.data)
+
+      this.applyState(mediaEmitter.data || {})
+    })
+
+    // console.log(this.matcher.list)
+  }
+
+  // mergeStyles(a: StyleDecl, b?: StyleDecl) {
+  // 	const style: StyleDecl = {}
+  //
+  // 	for (const key in a) {
+  // 		style[key] = Object.assign({}, a[key], b?.[key])
+  // 	}
+  //
+  // 	return style
+  // }
+
+  // getInteractionState(key: ElementKey) {
+  // 	const {
+  // 		base,
+  // 		':hover': hover,
+  // 		':focus': focus,
+  // 		':active': active,
+  // 	} = this.state[key]
+  //
+  // 	return +base | (+hover << 1) | (+focus << 2) | (+active << 3)
+  // }
+
+  matchStyles() {
+    this.modsStylePrev = this.modsStyle
+    this.modsStyle = this.matcher.match(this.modsState)
+  }
+
+  getCurrentStyle(key: ElementKey) {
+    return this.applyTokens(this.modsStyle[key])
+  }
+
+  applyTokens(value: ElementStyle): AppliedStyle {
+    return this.ref.exec({ tokens: this.tokens }, value)
+  }
+
+  applyElementStyles() {
+    this.matcher.elementSet.forEach((elementKey) => {
+      if (
+        this.matcher.isEqual(elementKey, this.modsStylePrev, this.modsStyle)
+      ) {
+        return
+      }
+
+      setStyles(this.refs[elementKey], this.getCurrentStyle(elementKey))
+    })
+  }
+
+  applyState(modsState: ModState) {
+    Object.assign(this.modsState, modsState)
+
+    this.matchStyles()
+
+    this.applyElementStyles()
+  }
+
+  setOn = (
+    elementKey: ElementKey,
+    pseudo: PseudoState,
+    onIn: string,
+    onOut: string,
+  ) => {
+    return {
+      [onIn]: () => {
+        this.applyState({
+          [`${elementKey}${pseudo}`]: true,
+        })
+      },
+
+      [onOut]: () => {
+        this.applyState({
+          [`${elementKey}${pseudo}`]: false,
+        })
+      },
+    }
+  }
 }

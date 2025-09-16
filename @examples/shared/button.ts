@@ -56,12 +56,12 @@ export const styles = stylesheet({
 
   '[size=m]': {
     $container: {
-      paddingX: 4,
-      paddingY: 2,
+      paddingX: 2,
+      paddingY: 1,
 
       '@media.small': {
-        paddingX: 1,
-        paddingY: 1,
+        paddingX: 4,
+        paddingY: 2,
       },
     },
 

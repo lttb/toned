@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@examples/shared": "workspace:*",
+    "@toned/core": "workspace:*",
     "@toned/react": "workspace:*",
     "@toned/themes": "workspace:*",
     "@toned/systems": "workspace:*",

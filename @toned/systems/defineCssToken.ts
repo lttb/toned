@@ -1,14 +1,24 @@
-import { defineToken } from '@toned/core'
-import type { Tokens } from '@toned/core/types'
+import { defineToken as defineTokenCore } from '@toned/core'
+import type { TokenConfig, Tokens } from '@toned/core/types'
 import type { CSSProperties } from 'react'
+
+export const defineToken = defineTokenCore as <
+  // biome-ignore lint/suspicious/noExplicitAny: ignore
+  const Values extends readonly any[],
+>(
+  config: TokenConfig<Values, CSSProperties>,
+) => typeof config
 
 // TODO: consider moving to the core
 export const defineCssToken = <const Values extends Readonly<any[]>>(
   propName: keyof CSSProperties | Array<keyof CSSProperties>,
   values: Values,
-  getValue?: (value: Values[number], tokens: Tokens) => string | number,
+  getValue?: (
+    value: Values[number],
+    tokens: Tokens,
+  ) => string | number | undefined,
 ) => {
-  return defineToken({
+  return defineTokenCore({
     values,
     resolve: (value, tokens) => {
       const v = getValue ? getValue(value, tokens) : value

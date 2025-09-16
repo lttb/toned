@@ -1,4 +1,4 @@
-import { defineToken } from '@toned/core'
+import { defineToken } from '../defineCssToken'
 
 export const borderRadius = defineToken({
   values: ['none', 'small', 'medium', 'large', 'xlarge', 'full'],

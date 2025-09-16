@@ -49,6 +49,9 @@ export type ModType = Record<string, string | boolean | number>
 export type Config = Readonly<{
   getTokens: () => Tokens
 
+  //TODO
+  getProps(this: any, elementKey: string): {}
+
   initRef: () => void
   initInteraction: () => void
 }>

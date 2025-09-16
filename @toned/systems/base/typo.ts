@@ -1,4 +1,4 @@
-import { defineToken } from '@toned/core'
+import { defineToken } from '../defineCssToken'
 
 export const typo = defineToken({
   values: [

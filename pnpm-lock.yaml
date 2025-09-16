@@ -241,6 +241,9 @@ importers:
       '@examples/shared':
         specifier: workspace:*
         version: link:../shared
+      '@toned/core':
+        specifier: workspace:*
+        version: link:../../@toned/core
       '@toned/react':
         specifier: workspace:*
         version: link:../../@toned/react
