@@ -46,7 +46,8 @@ function getProps(this: Base, elementKey: string) {
 
   return {
     ref,
-    style: this.getCurrentStyle(elementKey),
+
+    ...this.getCurrentStyle(elementKey),
   }
 }
 

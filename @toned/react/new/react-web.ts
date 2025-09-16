@@ -15,7 +15,8 @@ function getProps(this: Base, elementKey: string) {
   if (this.matcher.interactions[elementKey]) {
     return {
       ref,
-      style: this.getCurrentStyle(elementKey),
+
+      ...this.getCurrentStyle(elementKey),
 
       ...this.setOn(elementKey, ':hover', 'onMouseOver', 'onMouseOut'),
       ...this.setOn(elementKey, ':active', 'onMouseDown', 'onMouseUp'),
@@ -25,7 +26,8 @@ function getProps(this: Base, elementKey: string) {
 
   return {
     ref,
-    style: this.getCurrentStyle(elementKey),
+
+    ...this.getCurrentStyle(elementKey),
   }
 }
 

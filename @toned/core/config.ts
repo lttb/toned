@@ -25,7 +25,7 @@ export function getConfig(): Config {
 }
 
 export function setConfig(newConfig: Partial<typeof config>) {
-  Object.assign(config, newConfig)
+  return Object.assign(config, newConfig)
 }
 
 export function defineConfig(newConfig: Partial<typeof config>) {

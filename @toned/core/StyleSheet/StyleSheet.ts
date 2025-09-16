@@ -21,15 +21,21 @@ type AnyValue = any
 type Ref = AnyValue
 type RefStyle = AnyValue
 
-const setStyles = (curr: Ref | undefined, style: RefStyle) => {
+const setStyles = (curr: Ref | undefined, styleObject: RefStyle) => {
   if (!curr) return
 
   // TODO: move to config
   if (curr.setNativeProps) {
-    curr.setNativeProps({ style })
+    curr.setNativeProps({ style: styleObject.style })
   } else {
-    curr.removeAttribute('style')
-    Object.assign(curr.style, style)
+    if (styleObject.style) {
+      curr.removeAttribute('style')
+      Object.assign(curr.style, styleObject.style)
+    }
+
+    if (styleObject.className) {
+      curr.className = styleObject.className
+    }
   }
 }
 
@@ -168,11 +174,16 @@ export class Base {
   }
 
   getCurrentStyle(key: ElementKey) {
-    return this.applyTokens(this.modsStyle[key])
+    const result = this.applyTokens(this.modsStyle[key])
+
+    return result
   }
 
   applyTokens(value: ElementStyle): AppliedStyle {
-    return this.ref.exec({ tokens: this.tokens }, value)
+    return this.ref.exec(
+      { tokens: this.tokens, useClassName: this.config.useClassName },
+      value,
+    )
   }
 
   applyElementStyles() {
