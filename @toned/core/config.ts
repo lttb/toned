@@ -1,11 +1,19 @@
 import type { Config, Tokens } from './types'
 
-const config: Config = {
+const SYMBOL_CONFIG = Symbol.for('@toned/core/CONFIG')
+
+const customGlobal = globalThis as typeof globalThis & {
+  [SYMBOL_CONFIG]: Config
+}
+
+customGlobal[SYMBOL_CONFIG] ??= {
   getTokens: (): Tokens => ({}),
 
   initRef: () => {},
   initInteraction: () => {},
 }
+
+const config = customGlobal[SYMBOL_CONFIG]
 
 export function getConfig(): Config {
   return config
