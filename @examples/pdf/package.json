@@ -3,7 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "dev": "NODE_PATH=node_modules bun --watch render.ts"
+  },
   "dependencies": {
     "@examples/shared": "workspace:*",
     "@toned/core": "workspace:*",

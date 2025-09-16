@@ -1,4 +1,5 @@
-import '@toned/react/config.19'
+import './toned.config.ts'
+
 import { Document, Page } from '@react-pdf/renderer'
 import { setConfig } from '@toned/core'
 import { defineContext } from '@toned/react/ctx.native'

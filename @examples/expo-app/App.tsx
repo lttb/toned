@@ -1,9 +1,9 @@
 import '@expo/match-media'
 
-import '@toned/react/config.19'
 import '@toned/themes/shadcn/config.css'
+import './toned.config.ts'
 
-import { defineContext, TokensContext } from '@toned/react/ctx'
+import { defineContext, TokensContext } from '@toned/react/new/ctx'
 import shadcn from '@toned/themes/shadcn/config'
 import * as ScreenOrientation from 'expo-screen-orientation'
 import { StatusBar } from 'expo-status-bar'
