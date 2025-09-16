@@ -6,7 +6,14 @@ const dist = path.resolve(cwd, 'dist/')
 const monorepoRoot = path.resolve(__dirname, '../..')
 
 const licenseLocation = path.join(monorepoRoot, 'LICENSE')
-const rollupBin = path.join(__dirname, 'node_modules', '.bin', 'rollup')
+const rollupBin = path.join(
+  __dirname,
+  'node_modules',
+  'rollup',
+  'dist',
+  'bin',
+  'rollup',
+)
 
 const transformPkg = async () => {
   const {
@@ -24,7 +31,7 @@ const transformPkg = async () => {
 
 await $`rm -rf ${dist}`
 
-await $`bun --bun ${rollupBin} -c .config.rollup.ts --configPlugin typescript`
+await $`bun '${rollupBin}' -c .config.rollup.ts --configPlugin typescript`
 
 await $`cp README.md ${dist}`
 await transformPkg()
