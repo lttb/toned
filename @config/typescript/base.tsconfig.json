@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Base",
+  "compilerOptions": {
+    "rootDir": "${configDir}",
+
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "target": "ESNext",
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "moduleDetection": "force",
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "forceConsistentCasingInFileNames": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "experimentalDecorators": true,
+
+    "lib": ["ESNext", "DOM.AsyncIterable", "DOM.Iterable", "DOM"],
+    "jsx": "preserve",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+
+    "allowImportingTsExtensions": true,
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "${configDir}/.tsc",
+
+    "incremental": true
+  },
+  "include": ["${configDir}/**/*", "./**/*"],
+  "exclude": [
+    "**/node_modules/**",
+    "${configDir}/.build",
+    "${configDir}/.dist",
+    "${configDir}/.tsc",
+    ".config.*.ts"
+  ]
+}

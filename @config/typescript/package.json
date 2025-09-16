@@ -2,8 +2,13 @@
   "name": "@config/typescript",
   "private": true,
   "type": "module",
-  "main": "tsconfig.json",
+  "main": "base.tsconfig.json",
+  "exports": {
+    ".": "./base.tsconfig.json",
+    "./lib": "./lib.tsconfig.json",
+    "./react": "./react.tsconfig.json"
+  },
   "devDependencies": {
-    "typescript": "^5.9.2"
+    "typescript": "catalog:"
   }
 }

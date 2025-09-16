@@ -1,9 +1,14 @@
-import '@toned/react/config.19'
+import { insert } from '@toned/core/dom'
+
 import '@toned/themes/shadcn/config.css'
 import './index.css'
 
-import { t } from '@toned/systems/base'
+import '../toned.config.ts'
+
+import { system, t } from '@toned/systems/base'
 import { lazy, Suspense } from 'react'
+
+insert(system)
 
 // Works also with SSR as expected
 const Card = lazy(() => import('./Card'))

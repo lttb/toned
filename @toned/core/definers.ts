@@ -1,6 +1,6 @@
 import { getConfig } from './config'
 
-import { createStylesheet } from './StyleSheet'
+import { createStylesheet } from './StyleSheet/StyleSheet'
 import {
   type ModType,
   type StylesheetValue,
@@ -25,7 +25,7 @@ export function defineToken<
 }
 
 export function defineUnit<T>(
-  resolver: (value: T, tokens: Tokens) => number | string,
+  resolver: (value: T, tokens: Tokens) => number | string | undefined,
 ) {
   return resolver
 }
@@ -51,9 +51,18 @@ export function defineSystem<
         [SYMBOL_STYLE]: value,
         [SYMBOL_ACCESS]: { ref, value },
         get style() {
-          const tokens = getConfig().getTokens()
+          const config = getConfig()
+          const tokens = config.getTokens()
 
-          return ref.exec({ tokens }, value)
+          return ref.exec({ tokens, useClassName: config.useClassName }, value)
+            .style
+        },
+        get className() {
+          const config = getConfig()
+          const tokens = config.getTokens()
+
+          return ref.exec({ tokens, useClassName: config.useClassName }, value)
+            .className
         },
       }
 
@@ -66,23 +75,48 @@ export function defineSystem<
       return createStylesheet(ref, rules)
     }) as any,
     exec: (config, tokenStyle) => {
-      return Object.entries(tokenStyle).reduce<object>((acc, [k, v]) => {
-        if (!v) return acc
+      return Object.entries(tokenStyle).reduce<{
+        style: object
+        className?: string
+      }>(
+        (acc, [k, v]) => {
+          if (!v) return acc
 
-        if (k[0] === ':') {
+          if (k[0] === ':') {
+            return acc
+          }
+
+          if (k[0] === '$') {
+            return acc
+          }
+
+          if (k === 'style') {
+            Object.assign(acc.style, v)
+
+            return acc
+          }
+
+          // TODO: should be a classname key?
+          if (k === 'className') {
+            acc.className ??= ''
+            acc.className += ` ${v}`
+
+            return acc
+          }
+
+          if (config.useClassName && system[k]?.values.includes(v)) {
+            acc.className ??= ''
+            acc.className += ` ${k}_${v}`
+
+            return acc
+          }
+
+          Object.assign(acc.style, system[k]?.resolve(v, config.tokens))
+
           return acc
-        }
-
-        if (k === 'style') {
-          Object.assign(acc, v)
-
-          return acc
-        }
-
-        Object.assign(acc, system[k]?.resolve(v, config.tokens))
-
-        return acc
-      }, {})
+        },
+        { style: {} },
+      )
     },
   }
 

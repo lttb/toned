@@ -1,0 +1,15 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+
+  "display": "Lib",
+
+  "extends": ["./base.tsconfig.json"],
+
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "noEmit": false,
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true
+  }
+}

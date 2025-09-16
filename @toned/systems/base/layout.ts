@@ -1,5 +1,5 @@
-import { defineToken, defineUnit } from '@toned/core'
-import { defineCssToken } from '../defineCssToken'
+import { defineUnit } from '@toned/core'
+import { defineCssToken, defineToken } from '../defineCssToken'
 
 // TODO: move to configuration level
 // biome-ignore lint/complexity/noBannedTypes: instance is expected
@@ -13,7 +13,7 @@ const SpaceUnit = defineUnit<Number | String>((value, tokens) => {
 
   return String(base).startsWith('var')
     ? `calc(${base} * ${Number(value)})`
-    : Number(value) * Number.parseInt(base, 10)
+    : Number(value) * Number.parseInt(String(base), 10)
 })
 
 export const overflow = defineCssToken('overflow', [

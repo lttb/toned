@@ -1,6 +1,6 @@
 // required for types portability
 const sym = <N extends string>(name: N) =>
-  Symbol.for(`@toned/${name}`) as unknown as N
+  Symbol.for(`@toned/core/${name}`) as unknown as N
 
 export const SYMBOL_REF = sym('SYMBOL_REF')
 export const SYMBOL_INIT = sym('SYMBOL_INIT')
@@ -48,6 +48,11 @@ export type ModType = Record<string, string | boolean | number>
 
 export type Config = Readonly<{
   getTokens: () => Tokens
+
+  useClassName: boolean
+
+  //TODO
+  getProps(this: any, elementKey: string): {}
 
   initRef: () => void
   initInteraction: () => void
@@ -188,7 +193,8 @@ export type TokenSystem<S extends TokenStyleDeclaration> = {
   exec: (
     config: {
       tokens: Tokens
+      useClassName?: boolean
     },
     tokenStyle: TokenStyle<S>,
-  ) => object
+  ) => { style: object; className?: string }
 }

@@ -3,7 +3,9 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "scripts": {},
+  "scripts": {
+    "dev": "NODE_PATH=node_modules bun --watch render.ts"
+  },
   "dependencies": {
     "@examples/shared": "workspace:*",
     "@toned/core": "workspace:*",
@@ -11,12 +13,12 @@
     "@toned/themes": "workspace:*",
     "@toned/systems": "workspace:*",
     "@react-pdf/renderer": "4.3.0",
-    "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react": "catalog:",
+    "react-dom": "catalog:"
   },
   "devDependencies": {
-    "@types/react": "^19.1.0",
-    "@types/react-dom": "^19.1.0",
-    "typescript": "~5.7.2"
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
+    "typescript": "catalog:"
   }
 }

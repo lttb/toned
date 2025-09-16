@@ -2,5 +2,22 @@
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
     "strict": true
-  }
+  },
+  "references": [
+    {
+      "path": "../../@toned/core"
+    },
+    {
+      "path": "../../@toned/react"
+    },
+    {
+      "path": "../../@toned/systems"
+    },
+    {
+      "path": "../../@toned/themes"
+    },
+    {
+      "path": "../shared"
+    }
+  ]
 }

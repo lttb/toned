@@ -12,23 +12,24 @@
   },
   "dependencies": {
     "@examples/shared": "workspace:*",
+    "@toned/core": "workspace:*",
     "@toned/react": "workspace:*",
     "@toned/themes": "workspace:*",
     "@toned/systems": "workspace:*",
     "compression": "^1.8.1",
     "express": "^5.1.0",
-    "react": "^19.1.1",
-    "react-dom": "^19.1.1",
+    "react": "catalog:",
+    "react-dom": "catalog:",
     "sirv": "^3.0.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
-    "@types/node": "^22.17.2",
-    "@types/react": "^18.3.23",
-    "@types/react-dom": "^18.3.7",
+    "@types/node": "catalog:",
+    "@types/react": "catalog:",
+    "@types/react-dom": "catalog:",
     "@vitejs/plugin-react": "^4.7.0",
     "cross-env": "^10.0.0",
-    "typescript": "~5.9.2",
+    "typescript": "catalog:",
     "vite": "^6.3.5"
   }
 }
