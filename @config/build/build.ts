@@ -2,10 +2,11 @@ import * as path from 'node:path'
 import { $ } from 'bun'
 
 const cwd = process.cwd()
-const dist = path.resolve(cwd, 'dist/')
+const dist = path.resolve(cwd, '.dist')
 const monorepoRoot = path.resolve(__dirname, '../..')
 
 const licenseLocation = path.join(monorepoRoot, 'LICENSE')
+// @ts-expect-error
 const rollupBin = path.join(
   __dirname,
   'node_modules',
@@ -31,8 +32,10 @@ const transformPkg = async () => {
 
 await $`rm -rf ${dist}`
 
-await $`bun '${rollupBin}' -c .config.rollup.ts --configPlugin typescript`
+await $`tsc -b --emitDeclarationOnly false`
 
 await $`cp README.md ${dist}`
 await transformPkg()
 await $`cp ${licenseLocation} ${dist}`
+// NOTE: for some reason, npmignore isn't respected on publish by pnpm
+await $`rm -rf ${path.join(dist, 'tsconfig.tsbuildinfo')}`

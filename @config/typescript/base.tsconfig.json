@@ -27,13 +27,14 @@
     "module": "ESNext",
     "moduleResolution": "bundler",
 
-    "allowImportingTsExtensions": true,
+    "allowImportingTsExtensions": false,
     "emitDeclarationOnly": true,
     "noEmit": false,
+    "noEmitOnError": false,
     "declaration": true,
     "declarationMap": true,
     "sourceMap": true,
-    "outDir": "${configDir}/.tsc",
+    "outDir": "${configDir}/.dist",
 
     "incremental": true
   },

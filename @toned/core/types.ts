@@ -41,9 +41,6 @@ export type TFun<S extends TokenStyleDeclaration> = <D extends TokenStyle<S>[]>(
   [SYMBOL_REF]: TokenSystem<S>
 }
 
-// biome-ignore lint/suspicious/noExplicitAny: ignore
-type Ref = { current?: null | any }
-
 export type ModType = Record<string, string | boolean | number>
 
 export type Config = Readonly<{

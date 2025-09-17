@@ -7,7 +7,6 @@ interface NestedStyleRules {
 }
 
 type ModValue = string
-type Props = Record<string, string | boolean | number>
 
 type PropertyMap = {
   [key: string]: {

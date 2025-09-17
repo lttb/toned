@@ -6,7 +6,7 @@
   "type": "module",
   "publishConfig": {
     "access": "public",
-    "directory": "dist",
+    "directory": ".dist",
     "linkDirectory": false
   },
   "repository": {
@@ -19,12 +19,12 @@
     "build": "bun -e 'import(`@config/build`)'"
   },
   "peerDependencies": {
-    "react": ">=18",
-    "@toned/core": "workspace:~"
+    "@toned/core": "workspace:~",
+    "react": ">=18"
   },
   "devDependencies": {
-    "@config/typescript": "workspace:*",
     "@config/build": "workspace:*",
+    "@config/typescript": "workspace:*",
     "@toned/core": "workspace:*",
     "@types/react": "npm:@types/react@^19.0.0",
     "@types/react18": "npm:@types/react@^18.3.12",
