@@ -20,6 +20,7 @@ const transformPkg = async () => {
   const {
     scripts: _scripts,
     devDependencies: _devDeps,
+    publishConfig: _publishConfig,
     ...pkg
   } = await Bun.file('package.json').json()
 
