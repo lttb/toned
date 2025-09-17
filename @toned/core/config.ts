@@ -9,6 +9,8 @@ const customGlobal = globalThis as typeof globalThis & {
 customGlobal[SYMBOL_CONFIG] ??= {
   getTokens: (): Tokens => ({}),
 
+  useClassName: false,
+
   // TODO
   getProps() {
     return {}

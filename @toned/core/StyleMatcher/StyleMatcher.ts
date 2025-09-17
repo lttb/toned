@@ -217,8 +217,8 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
   }
 
   private parseSelector(selector: string): [string, string] {
-    const [name, value] = selector.slice(1, -1).split('=')
-    return [name, value]
+    const [name, value = '*'] = selector.slice(1, -1).split('=')
+    return [name!, value]
   }
 
   private parseAtSelector(selector: string): [string, string] {
@@ -246,9 +246,19 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 
       const conditions = ruleStr.split('|')
       for (const condition of conditions) {
-        const [property, value] = condition.split('=')
+        const [property, value = '*'] = condition.split('=')
 
         if (value === WILDCARD) continue
+
+        // TODO: improve unknown properties handling
+        if (
+          !(
+            property &&
+            this.propertyBits[property] &&
+            this.propertyBits[property][value] !== undefined
+          )
+        )
+          continue
 
         const propertyBitValue = this.propertyBits[property][value]
 
@@ -280,7 +290,8 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
       const prop = x[0]
       const value = props[prop]
 
-      if (!value) return
+      // TODO: improve unknown properties handling
+      if (!value || x[1][value] === undefined) return
 
       bits |= x[1][value]
     })
