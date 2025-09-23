@@ -19,7 +19,7 @@
     "build": "bun --bun -e 'import(`@config/build`)'"
   },
   "devDependencies": {
-    "@config/typescript": "workspace:*",
-    "@config/build": "workspace:*"
+    "@config/build": "workspace:*",
+    "@config/typescript": "workspace:*"
   }
 }

@@ -21,9 +21,6 @@
       "path": "toned"
     },
     {
-      "path": "@config/build"
-    },
-    {
       "path": "@examples/email"
     },
     {
@@ -37,6 +34,9 @@
     },
     {
       "path": "@examples/vite"
+    },
+    {
+      "path": "@config/build"
     }
   ]
 }

@@ -5,8 +5,8 @@
   "type": "module",
   "files": [],
   "devDependencies": {
-    "@toned/core": "workspace:*",
+    "@config/build": "workspace:*",
     "@config/typescript": "workspace:*",
-    "@config/build": "workspace:*"
+    "@toned/core": "workspace:*"
   }
 }
