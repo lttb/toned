@@ -1,20 +1,20 @@
-import { getConfig } from '@toned/core/config'
-
+import { getConfig } from '@toned/core/config.js'
 import {
   type ModType,
   type Stylesheet,
   SYMBOL_INIT,
   type TokenStyle,
   type TokenStyleDeclaration,
-} from '@toned/core/types'
+} from '@toned/core/types.js'
+
 import { useRef } from 'react'
 
 type UseStylesResult<
   S extends TokenStyleDeclaration,
   T extends Record<string, TokenStyle<S>>,
 > = {
-  [k in keyof T]: Record<never, never>
-}
+    [k in keyof T]: Record<never, never>
+  }
 
 export function useStyles<
   S extends TokenStyleDeclaration,

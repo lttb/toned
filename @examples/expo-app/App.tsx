@@ -9,7 +9,7 @@ import * as ScreenOrientation from 'expo-screen-orientation'
 import { StatusBar } from 'expo-status-bar'
 import { useEffect } from 'react'
 import { StyleSheet, View } from 'react-native'
-import Card from './Card'
+import Card from './Card.js'
 
 const ctx = defineContext(shadcn)
 

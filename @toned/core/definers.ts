@@ -1,6 +1,6 @@
-import { getConfig } from './config'
+import { getConfig } from './config.ts'
 
-import { createStylesheet } from './StyleSheet/StyleSheet'
+import { createStylesheet } from './StyleSheet/StyleSheet.ts'
 import {
   type ModType,
   type StylesheetValue,
@@ -8,7 +8,7 @@ import {
   type TokenConfig,
   type TokenSystem,
   type Tokens,
-} from './types'
+} from './types.ts'
 
 export const SYMBOL_STYLE = Symbol()
 export const SYMBOL_ACCESS = Symbol()

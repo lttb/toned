@@ -304,8 +304,8 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
   match(
     props: Partial<
       Schema &
-        Record<`${string}:${string}`, boolean> &
-        Record<`@${string}.${string}`, boolean>
+      Record<`${string}:${string}`, boolean> &
+      Record<`@${string}.${string}`, boolean>
     >,
   ) {
     const propsBits = this.getPropsBits(props)

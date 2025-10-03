@@ -1,4 +1,4 @@
-import type { Tokens } from '@toned/core/types'
+import type { Tokens } from '@toned/core/types.ts'
 import { createContext } from 'react'
 
 export const defineContext = (tokens: Tokens) =>

@@ -1,3 +1,3 @@
-export { defineConfig, setConfig } from './config'
+export { defineConfig, setConfig } from './config.ts'
 
-export { defineSystem, defineToken, defineUnit } from './definers'
+export { defineSystem, defineToken, defineUnit } from './definers.ts'

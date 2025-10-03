@@ -1,7 +1,7 @@
 import { defineConfig } from '@toned/core'
 import * as ReactAll from 'react'
 
-import { TokensContext } from './ctx'
+import { TokensContext } from './ctx.ts'
 
 const React = ReactAll as unknown as typeof import('react18')
 

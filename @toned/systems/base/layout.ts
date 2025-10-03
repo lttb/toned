@@ -1,5 +1,5 @@
 import { defineUnit } from '@toned/core'
-import { defineCssToken, defineToken } from '../defineCssToken'
+import { defineCssToken, defineToken } from '../defineCssToken.ts'
 
 // TODO: move to configuration level
 // biome-ignore lint/complexity/noBannedTypes: instance is expected

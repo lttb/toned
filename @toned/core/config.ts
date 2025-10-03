@@ -1,4 +1,4 @@
-import type { Config, Tokens } from './types'
+import type { Config, Tokens } from './types.ts'
 
 const SYMBOL_CONFIG = Symbol.for('@toned/core/CONFIG')
 

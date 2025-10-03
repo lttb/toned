@@ -1,5 +1,5 @@
-import { getConfig } from '../config'
-import { StyleMatcher } from '../StyleMatcher/StyleMatcher'
+import { getConfig } from '../config.ts'
+import { StyleMatcher } from '../StyleMatcher/StyleMatcher.ts'
 import {
   type Config,
   type ModType,
@@ -9,9 +9,9 @@ import {
   type TokenStyleDeclaration,
   type TokenSystem,
   type Tokens,
-} from '../types'
+} from '../types.ts'
 
-import { initMedia } from './initMedia'
+import { initMedia } from './initMedia.ts'
 
 type PseudoState = ':hover' | ':focus' | ':active'
 

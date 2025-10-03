@@ -1,4 +1,4 @@
-import { defineToken } from '../defineCssToken'
+import { defineToken } from '../defineCssToken.ts'
 
 export const bgColor = defineToken({
   values: [

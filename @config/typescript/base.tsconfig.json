@@ -26,8 +26,8 @@
     "jsx": "preserve",
     "module": "ESNext",
     "moduleResolution": "bundler",
-
-    "allowImportingTsExtensions": false,
+    "rewriteRelativeImportExtensions": true,
+    "allowImportingTsExtensions": true,
     "emitDeclarationOnly": true,
     "noEmit": false,
     "noEmitOnError": false,

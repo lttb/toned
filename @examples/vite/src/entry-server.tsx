@@ -1,7 +1,10 @@
-import {StrictMode, lazy} from 'react'
-import {type RenderToPipeableStreamOptions, renderToPipeableStream} from 'react-dom/server'
+import { lazy, StrictMode } from 'react'
+import {
+  type RenderToPipeableStreamOptions,
+  renderToPipeableStream,
+} from 'react-dom/server'
 
-const App = lazy(() => import('./App'))
+const App = lazy(() => import('./App.js'))
 
 export function render(_url: string, options?: RenderToPipeableStreamOptions) {
   return renderToPipeableStream(

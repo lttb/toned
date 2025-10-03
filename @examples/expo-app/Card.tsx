@@ -3,7 +3,7 @@ import { useStyles } from '@toned/react/index'
 import { t } from '@toned/systems/base'
 import { Text, View } from 'react-native'
 
-import { Button } from './Button'
+import { Button } from './Button.js'
 
 function Card() {
   const s = useStyles(styles)

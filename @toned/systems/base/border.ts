@@ -1,4 +1,4 @@
-import { defineToken } from '../defineCssToken'
+import { defineToken } from '../defineCssToken.ts'
 
 export const borderRadius = defineToken({
   values: ['none', 'small', 'medium', 'large', 'xlarge', 'full'],

@@ -6,7 +6,7 @@ import { defineContext, TokensContext } from '@toned/react/new/ctx.native'
 import shadcn from '@toned/themes/shadcn/config'
 import { use } from 'react'
 
-import Card from './Card'
+import Card from './Card.js'
 
 const ctx = defineContext(shadcn)
 

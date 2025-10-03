@@ -1,8 +1,5 @@
 {
-  "extends": [
-    "@config/typescript/lib",
-    "@config/typescript/react"
-  ],
+  "extends": ["@config/typescript/lib", "@config/typescript/react"],
   "references": [
     {
       "path": "../../@config/build"

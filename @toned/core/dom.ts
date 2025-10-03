@@ -1,4 +1,4 @@
-import type { TokenConfig } from './types'
+import type { TokenConfig } from './types.ts'
 
 export function getStyleNodeById(id: string): HTMLStyleElement | null {
   if (typeof document === 'undefined') {

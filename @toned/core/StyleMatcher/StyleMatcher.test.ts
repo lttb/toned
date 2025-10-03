@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { StyleMatcher } from './StyleMatcher'
+import { StyleMatcher } from './StyleMatcher.ts'
 
 describe('style matcher', () => {
   const matcher = new StyleMatcher<{

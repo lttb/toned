@@ -5,7 +5,7 @@ import { setConfig } from '@toned/core'
 import { defineContext } from '@toned/react/ctx.native'
 import shadcn from '@toned/themes/shadcn/config'
 
-import Card from './Card'
+import Card from './Card.js'
 
 const ctx = defineContext(shadcn)
 

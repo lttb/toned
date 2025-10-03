@@ -1,4 +1,4 @@
-import { defineCssToken } from '../defineCssToken'
+import { defineCssToken } from '../defineCssToken.ts'
 
 const sizeValues = [new Number(), new String()] as const
 
