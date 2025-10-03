@@ -3,5 +3,8 @@
   "version": "independent",
   "npmClient": "pnpm",
   "independent": true,
+  "conventionalCommits": true,
+  "changelog": true,
+  "createRelease": "github",
   "packages": ["@toned/*", "toned"]
 }
