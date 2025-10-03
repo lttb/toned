@@ -5,7 +5,7 @@ const sym = <N extends string>(name: N) =>
 export const SYMBOL_REF = sym('SYMBOL_REF')
 export const SYMBOL_INIT = sym('SYMBOL_INIT')
 
-export type Tokens = Record<string, string>
+export type Tokens = Record<string, any>
 
 // biome-ignore lint/suspicious/noExplicitAny: ignore
 export type TokenConfig<Values extends readonly any[], Result> = {
@@ -70,8 +70,8 @@ export type Stylesheet<
     config: Config,
     modState?: M,
   ) => {
-    [key in keyof T]: ReturnType<TFun<S>>
-  }
+      [key in keyof T]: ReturnType<TFun<S>>
+    }
   // keep it in the shape so it won't collapse to {} after build
   [_internalBrand]?: never
 }
@@ -106,15 +106,15 @@ export type ElementStyle<
     Mods,
     NoInfer<Exclude<AvailablePseudo, PseudoKey>>
   > &
-    ElementList<S, NoInfer<Elements>, Mods, NoInfer<AvailablePseudo>>
+  ElementList<S, NoInfer<Elements>, Mods, NoInfer<AvailablePseudo>>
 } & {
-  [K in keyof Mods as `[${PickString<K>}=${Exclude<Mods[K], undefined>}]`]?: ElementStyle<
-    S,
-    NoInfer<Elements>,
-    Omit<Mods, NoInfer<K>>,
-    NoInfer<AvailablePseudo>
-  >
-}
+    [K in keyof Mods as `[${PickString<K>}=${Exclude<Mods[K], undefined>}]`]?: ElementStyle<
+      S,
+      NoInfer<Elements>,
+      Omit<Mods, NoInfer<K>>,
+      NoInfer<AvailablePseudo>
+    >
+  }
 
 export type ElementList<
   S extends TokenStyleDeclaration,
@@ -122,13 +122,13 @@ export type ElementList<
   Mods extends ModType,
   AvailablePseudo extends string,
 > = {
-  [ElementKey in `$${Elements}`]?: ElementStyle<
-    S,
-    Elements,
-    Mods,
-    AvailablePseudo
-  >
-}
+    [ElementKey in `$${Elements}`]?: ElementStyle<
+      S,
+      Elements,
+      Mods,
+      AvailablePseudo
+    >
+  }
 
 export type ModList<
   S extends TokenStyleDeclaration,
@@ -136,14 +136,14 @@ export type ModList<
   Mods extends ModType,
   AvailablePseudo extends string,
 > = {
-  [K in keyof Mods as `[${PickString<K>}=${Exclude<Mods[K], undefined>}]`]?: ElementList<
-    S,
-    Elements,
-    Mods,
-    AvailablePseudo
-  > &
+    [K in keyof Mods as `[${PickString<K>}=${Exclude<Mods[K], undefined>}]`]?: ElementList<
+      S,
+      Elements,
+      Mods,
+      AvailablePseudo
+    > &
     ModList<S, Elements, Omit<Mods, K>, AvailablePseudo>
-}
+  }
 
 export type StylesheetValue<
   S extends TokenStyleDeclaration,
