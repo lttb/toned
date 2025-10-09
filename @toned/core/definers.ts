@@ -30,10 +30,13 @@ export function defineUnit<T>(
   return resolver
 }
 
+type Breakpoints<O> = { __breakpoints: O }
+
 export function defineSystem<
   // biome-ignore lint/suspicious/noExplicitAny: ignore
   const S extends Record<string, TokenConfig<any, any>>,
->(system: S): TokenSystem<S> {
+  const R extends { breakpoints?: Breakpoints<any> },
+>(system: S, rules?: R): TokenSystem<S & R> {
   const ref: TokenSystem<S> = {
     system,
     t: (...values) => {

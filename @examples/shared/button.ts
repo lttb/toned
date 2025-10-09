@@ -54,12 +54,25 @@ export const styles = stylesheet({
     },
   },
 
+  // <Box t={{ padding: 'large', '@media.sm': { padding: 'small' } }} />
+
+  // ...t({ padding: 2, ':hover': {}, '@media.sm': { padding: 4 }}),
+  // ...t({ padding: 2, ':hover': {}, '@media.sm.only': { padding: 4 }}),
+  // ...t({ padding: 2, ':hover': {}, sm: { padding: 4 }}),
+  // ...t({ padding: 2, ':hover': {}, _sm: { padding: 4 }}),
+  // ...t({ padding: 2, ':hover': {}, [media.sm]: { padding: 4 }}),
+  // ...t({ padding: 2, ':hover': {}, [media.sm.only]: { padding: 4 }}),
+  // ...t({ padding: 2, ':hover': {}, [media.sm.lte]: { padding: 4 }}),
+  // ...t({ padding: 2, ':hover': {}, [media.sm.lge]: { padding: 4 }}),
+
   '[size=m]': {
     $container: {
       paddingX: 2,
       paddingY: 1,
 
-      '@media.small': {
+      ':hover': {},
+
+      xl: {
         paddingX: 4,
         paddingY: 2,
       },

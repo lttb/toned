@@ -9,6 +9,8 @@ import * as shadow from './shadow.ts'
 import * as sizes from './sizes.ts'
 import * as typo from './typo.ts'
 
+import * as rules from './rules.ts'
+
 export const { system, stylesheet, t } = defineSystem({
   ...typo,
   ...border,
@@ -16,4 +18,6 @@ export const { system, stylesheet, t } = defineSystem({
   ...layout,
   ...shadow,
   ...sizes,
-})
+
+  // ...rules
+}, rules)
