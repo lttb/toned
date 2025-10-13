@@ -10,8 +10,8 @@ import {
   type TokenSystem,
   type Tokens,
 } from '../types.ts'
-
 import { initMedia } from './initMedia.ts'
+import { unitlessNumbers } from './unitlessNumbers.ts'
 
 type PseudoState = ':hover' | ':focus' | ':active'
 
@@ -26,14 +26,26 @@ const setStyles = (curr: Ref | undefined, styleObject: RefStyle) => {
 
   // TODO: move to config
   if (curr.setNativeProps) {
+    // TODO: how to merge with existing styles?
     curr.setNativeProps({ style: styleObject.style })
   } else {
     if (styleObject.style) {
-      curr.removeAttribute('style')
-      Object.assign(curr.style, styleObject.style)
-    }
+      // can't remove style completely as element might styles from other sources
+      // curr.removeAttribute('style');
+      const result: Record<string, unknown> = {}
 
+      for (const key in styleObject.style) {
+        const v = styleObject.style[key]
+        if (typeof v === 'number' && !unitlessNumbers.has(key)) {
+          result[key] = v + 'px'
+        } else {
+          result[key] = v
+        }
+      }
+      Object.assign(curr.style, result)
+    }
     if (styleObject.className) {
+      // TODO: handle existing classnames (not from toned)
       curr.className = styleObject.className
     }
   }
@@ -56,7 +68,7 @@ export function createStylesheet<
   Mods extends ModType,
   T,
 >(ref: TokenSystem<S>, rules: StylesheetValue<S, Mods, T>) {
-  class LocalBase extends Base {}
+  class LocalBase extends Base { }
 
   Object.entries(rules).forEach(([elementKey, _elementRule]) => {
     Object.defineProperty(LocalBase.prototype, elementKey, {
