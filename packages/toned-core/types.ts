@@ -13,8 +13,16 @@ export type TokenConfig<Values extends readonly any[], Result> = {
   resolve: (value: Values[number], tokens: Tokens) => Result
 }
 
+type Breakpoints<O extends Record<string, number>> = { __breakpoints: O }
+
+type InferBreakpoints<R> = R extends { breakpoints?: Breakpoints<infer X> }
+  ? X
+  : never
+
 // biome-ignore lint/suspicious/noExplicitAny: ignore
-export type TokenStyleDeclaration = Record<string, TokenConfig<any, any>>
+export type TokenStyleDeclaration = Record<string, TokenConfig<any, any>> & {
+  breakpoints?: Breakpoints<any>
+}
 
 // biome-ignore lint/suspicious/noExplicitAny: ignore
 type InlineStyle = any
@@ -23,10 +31,10 @@ export type TokenStyle<S extends TokenStyleDeclaration> = Partial<{
   [key in keyof S]: S[key]['values'][number]
 }> & { style?: InlineStyle } & {
   // TODO: make at rules configurable
-  [key in `@media.${'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge'}`]?: Omit<
-    TokenStyle<S>,
-    `@media.${string}`
-  >
+  // [key in `@media.${'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge'}`]?: Omit<
+  //   TokenStyle<S>,
+  //   `@media.${string}`
+  // >
 }
 
 // biome-ignore lint/suspicious/noExplicitAny: ignore
@@ -94,31 +102,44 @@ export type Pseudo = ':hover' | ':active' | ':focus'
 
 export type PickString<K> = K extends string ? K : never
 
+type StringOrNumber = string | number | symbol
+
 export type ElementStyle<
   S extends TokenStyleDeclaration,
   Elements extends string,
   Mods extends ModType,
   AvailablePseudo extends string,
+  AvailableBreakpoints extends StringOrNumber,
 > = TokenStyle<S> & {
-  [PseudoKey in
-    | AvailablePseudo
-    | 'xs'
-    | 's'
-    | 'md'
-    | 'xl'
-    | '2xl']?: ElementStyle<
+  [PseudoKey in AvailablePseudo]?: ElementStyle<
     S,
     NoInfer<Elements>,
     Mods,
-    NoInfer<Exclude<AvailablePseudo, PseudoKey>>
+    NoInfer<Exclude<AvailablePseudo, PseudoKey>>,
+    AvailableBreakpoints
   > &
-    ElementList<S, NoInfer<Elements>, Mods, NoInfer<AvailablePseudo>>
+    ElementList<
+      S,
+      NoInfer<Elements>,
+      Mods,
+      NoInfer<AvailablePseudo>,
+      AvailableBreakpoints
+    >
 } & {
   [K in keyof Mods as `[${PickString<K>}=${Exclude<Mods[K], undefined>}]`]?: ElementStyle<
     S,
     NoInfer<Elements>,
     Omit<Mods, NoInfer<K>>,
-    NoInfer<AvailablePseudo>
+    NoInfer<AvailablePseudo>,
+    AvailableBreakpoints
+  >
+} & {
+  [K in AvailableBreakpoints]?: ElementStyle<
+    S,
+    NoInfer<Elements>,
+    Mods,
+    NoInfer<AvailablePseudo>,
+    NoInfer<Exclude<AvailableBreakpoints, K>>
   >
 }
 
@@ -127,12 +148,14 @@ export type ElementList<
   Elements extends string,
   Mods extends ModType,
   AvailablePseudo extends string,
+  AvailableBreakpoints extends StringOrNumber,
 > = {
   [ElementKey in `$${Elements}`]?: ElementStyle<
     S,
     Elements,
     Mods,
-    AvailablePseudo
+    AvailablePseudo,
+    AvailableBreakpoints
   >
 }
 
@@ -141,14 +164,39 @@ export type ModList<
   Elements extends string,
   Mods extends ModType,
   AvailablePseudo extends string,
+  AvailableBreakpoints extends StringOrNumber,
 > = {
   [K in keyof Mods as `[${PickString<K>}=${Exclude<Mods[K], undefined>}]`]?: ElementList<
     S,
     Elements,
     Mods,
-    AvailablePseudo
+    AvailablePseudo,
+    AvailableBreakpoints
   > &
-    ModList<S, Elements, Omit<Mods, K>, AvailablePseudo>
+    ModList<S, Elements, Omit<Mods, K>, AvailablePseudo, AvailableBreakpoints> &
+    BreakpointsList<
+      S,
+      Elements,
+      Omit<Mods, K>,
+      AvailablePseudo,
+      AvailableBreakpoints
+    >
+}
+
+export type BreakpointsList<
+  S extends TokenStyleDeclaration,
+  Elements extends string,
+  Mods extends ModType,
+  AvailablePseudo extends string,
+  AvailableBreakpoints extends StringOrNumber,
+> = {
+  [K in AvailableBreakpoints]?: ElementList<
+    S,
+    Elements,
+    Mods,
+    AvailablePseudo,
+    NoInfer<Exclude<AvailableBreakpoints, K>>
+  >
 }
 
 export type StylesheetValue<
@@ -169,7 +217,8 @@ export type StylesheetValue<
       >
     >,
     Mods,
-    Pseudo
+    Pseudo,
+    keyof InferBreakpoints<S>
   >
 } & ModList<
   S,
@@ -177,8 +226,18 @@ export type StylesheetValue<
     Exclude<keyof NoInfer<T>, /* NoInfer<K> | */ `[${string}]` | 'prototype'>
   >,
   Mods,
-  Pseudo
->
+  Pseudo,
+  keyof InferBreakpoints<S>
+> &
+  BreakpointsList<
+    S,
+    PickString<
+      Exclude<keyof NoInfer<T>, /* NoInfer<K> | */ `[${string}]` | 'prototype'>
+    >,
+    Mods,
+    Pseudo,
+    keyof InferBreakpoints<S>
+  >
 
 export type StylesheetType<S extends TokenStyleDeclaration> = (<
   Mods extends ModType,
