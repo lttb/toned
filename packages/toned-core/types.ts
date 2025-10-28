@@ -1,6 +1,4 @@
-// required for types portability
-const sym = <N extends string>(name: N) =>
-  Symbol.for(`@toned/core/${name}`) as unknown as N
+import { sym } from './utils.ts'
 
 export const SYMBOL_REF = sym('SYMBOL_REF')
 export const SYMBOL_INIT = sym('SYMBOL_INIT')
