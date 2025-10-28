@@ -123,5 +123,5 @@ export function defineSystem<
     },
   }
 
-  return ref
+  return ref as TokenSystem<S & R>
 }
