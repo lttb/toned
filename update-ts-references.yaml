@@ -1,5 +1,4 @@
 packages:
-  - '@toned/*'
-  - toned
-  - '@examples/*'
-  - '@config/build'
+  - 'packages/*'
+  - 'examples/*'
+  - 'config/build'
