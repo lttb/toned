@@ -298,8 +298,8 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
     return bits
   }
 
-  #elementHash = Symbol.for('@toned/StyleMatcher/elementHash')
-  #propsBits = Symbol.for('@toned/StyleMatcher/propsBits')
+  #elementHash = Symbol.for('@toned/core/StyleMatcher/elementHash')
+  #propsBits = Symbol.for('@toned/core/StyleMatcher/propsBits')
 
   match(
     props: Partial<
