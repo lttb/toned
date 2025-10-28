@@ -10,7 +10,7 @@
     "prepare": "update-ts-references --usecase update-ts-references.yaml"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.2.3",
+    "@biomejs/biome": "2.3.1",
     "@changesets/cli": "^2.29.7",
     "@lerna-lite/changed": "^4.9.1",
     "@lerna-lite/cli": "^4.9.1",
