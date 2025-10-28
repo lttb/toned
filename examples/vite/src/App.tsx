@@ -6,7 +6,7 @@ import { t } from '@toned/systems/base'
 import { lazy, Suspense } from 'react'
 
 // Works also with SSR as expected
-const Card = lazy(() => import('./Card.js'))
+const Card = lazy(() => import('./Card.tsx'))
 
 function App() {
   return (

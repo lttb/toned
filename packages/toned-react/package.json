@@ -26,8 +26,8 @@
     "@config/build": "workspace:*",
     "@config/typescript": "workspace:*",
     "@toned/core": "workspace:~",
-    "@types/react": "npm:@types/react@^19.0.0",
-    "@types/react18": "npm:@types/react@^18.3.12",
-    "@types/react19": "npm:@types/react@^19.0.0"
+    "@types/react": "^19.2.2",
+    "@types/react18": "npm:@types/react@^18.3.26",
+    "@types/react19": "npm:@types/react@^19.2.2"
   }
 }

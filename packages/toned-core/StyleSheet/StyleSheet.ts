@@ -68,7 +68,7 @@ export function createStylesheet<
   Mods extends ModType,
   T,
 >(ref: TokenSystem<S>, rules: StylesheetValue<S, Mods, T>) {
-  class LocalBase extends Base { }
+  class LocalBase extends Base {}
 
   Object.entries(rules).forEach(([elementKey, _elementRule]) => {
     Object.defineProperty(LocalBase.prototype, elementKey, {

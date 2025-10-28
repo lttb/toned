@@ -3,7 +3,7 @@ import { Text, View } from '@react-pdf/renderer'
 import { useStyles } from '@toned/react'
 import { t } from '@toned/systems/base'
 
-import { Button } from './Button.js'
+import { Button } from './Button.tsx'
 
 function Card() {
   const s = useStyles(styles)
