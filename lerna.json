@@ -6,5 +6,5 @@
   "conventionalCommits": true,
   "changelog": true,
   "createRelease": "github",
-  "packages": ["@toned/*", "toned"]
+  "packages": ["packages/*"]
 }

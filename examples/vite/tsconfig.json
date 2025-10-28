@@ -3,7 +3,11 @@
     "target": "ES2020",
     "useDefineForClassFields": true,
     "module": "ESNext",
-    "lib": ["ES2020", "DOM", "DOM.Iterable"],
+    "lib": [
+      "ES2020",
+      "DOM",
+      "DOM.Iterable"
+    ],
     "skipLibCheck": true,
     /* Bundler mode */
     "moduleResolution": "bundler",
@@ -19,19 +23,21 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"],
+  "include": [
+    "src"
+  ],
   "references": [
     {
-      "path": "../../@toned/core"
+      "path": "../../packages/toned-core"
     },
     {
-      "path": "../../@toned/react"
+      "path": "../../packages/toned-react"
     },
     {
-      "path": "../../@toned/systems"
+      "path": "../../packages/toned-systems"
     },
     {
-      "path": "../../@toned/themes"
+      "path": "../../packages/toned-themes"
     },
     {
       "path": "../shared"

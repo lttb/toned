@@ -73,7 +73,7 @@ importers:
         specifier: ^3.2.4
         version: 3.2.4(@types/node@22.18.1)(lightningcss@1.27.0)(terser@5.44.0)(yaml@2.8.1)
 
-  '@config/build':
+  config/build:
     dependencies:
       '@rollup/plugin-multi-entry':
         specifier: ^6.0.1
@@ -98,29 +98,29 @@ importers:
         specifier: workspace:*
         version: link:../typescript
 
-  '@config/typescript':
+  config/typescript:
     devDependencies:
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
 
-  '@examples/email':
+  examples/email:
     dependencies:
       '@react-email/components':
         specifier: ^0.0.35
         version: 0.0.35(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
       '@toned/core':
         specifier: workspace:*
-        version: link:../../@toned/core
+        version: link:../../packages/toned-core
       '@toned/react':
         specifier: workspace:*
-        version: link:../../@toned/react
+        version: link:../../packages/toned-react
       '@toned/systems':
         specifier: workspace:*
-        version: link:../../@toned/systems
+        version: link:../../packages/toned-systems
       '@toned/themes':
         specifier: workspace:*
-        version: link:../../@toned/themes
+        version: link:../../packages/toned-themes
       react:
         specifier: 19.0.0
         version: 19.0.0
@@ -144,7 +144,7 @@ importers:
         specifier: 'catalog:'
         version: 5.9.2
 
-  '@examples/expo-app':
+  examples/expo-app:
     dependencies:
       '@examples/shared':
         specifier: workspace:*
@@ -157,16 +157,16 @@ importers:
         version: 5.0.4(react-native@0.79.6(@babel/core@7.28.4)(@types/react@19.0.12)(react@19.0.0))
       '@toned/core':
         specifier: workspace:*
-        version: link:../../@toned/core
+        version: link:../../packages/toned-core
       '@toned/react':
         specifier: workspace:*
-        version: link:../../@toned/react
+        version: link:../../packages/toned-react
       '@toned/systems':
         specifier: workspace:*
-        version: link:../../@toned/systems
+        version: link:../../packages/toned-systems
       '@toned/themes':
         specifier: workspace:*
-        version: link:../../@toned/themes
+        version: link:../../packages/toned-themes
       expo:
         specifier: ~53.0.22
         version: 53.0.22(@babel/core@7.28.4)(@expo/metro-runtime@5.0.4(react-native@0.79.6(@babel/core@7.28.4)(@types/react@19.0.12)(react@19.0.0)))(react-native@0.79.6(@babel/core@7.28.4)(@types/react@19.0.12)(react@19.0.0))(react@19.0.0)
@@ -199,7 +199,7 @@ importers:
         specifier: 'catalog:'
         version: 5.9.2
 
-  '@examples/pdf':
+  examples/pdf:
     dependencies:
       '@examples/shared':
         specifier: workspace:*
@@ -209,16 +209,16 @@ importers:
         version: 4.3.0(react@19.0.0)
       '@toned/core':
         specifier: workspace:*
-        version: link:../../@toned/core
+        version: link:../../packages/toned-core
       '@toned/react':
         specifier: workspace:*
-        version: link:../../@toned/react
+        version: link:../../packages/toned-react
       '@toned/systems':
         specifier: workspace:*
-        version: link:../../@toned/systems
+        version: link:../../packages/toned-systems
       '@toned/themes':
         specifier: workspace:*
-        version: link:../../@toned/themes
+        version: link:../../packages/toned-themes
       react:
         specifier: 19.0.0
         version: 19.0.0
@@ -236,39 +236,39 @@ importers:
         specifier: 'catalog:'
         version: 5.9.2
 
-  '@examples/shared':
+  examples/shared:
     dependencies:
       '@toned/systems':
         specifier: workspace:*
-        version: link:../../@toned/systems
+        version: link:../../packages/toned-systems
       '@toned/themes':
         specifier: workspace:*
-        version: link:../../@toned/themes
+        version: link:../../packages/toned-themes
     devDependencies:
       '@config/typescript':
         specifier: workspace:*
-        version: link:../../@config/typescript
+        version: link:../../config/typescript
       typescript:
         specifier: 'catalog:'
         version: 5.9.2
 
-  '@examples/vite':
+  examples/vite:
     dependencies:
       '@examples/shared':
         specifier: workspace:*
         version: link:../shared
       '@toned/core':
         specifier: workspace:*
-        version: link:../../@toned/core
+        version: link:../../packages/toned-core
       '@toned/react':
         specifier: workspace:*
-        version: link:../../@toned/react
+        version: link:../../packages/toned-react
       '@toned/systems':
         specifier: workspace:*
-        version: link:../../@toned/systems
+        version: link:../../packages/toned-systems
       '@toned/themes':
         specifier: workspace:*
-        version: link:../../@toned/themes
+        version: link:../../packages/toned-themes
       compression:
         specifier: ^1.8.1
         version: 1.8.1
@@ -310,36 +310,48 @@ importers:
         specifier: ^6.3.5
         version: 6.3.5(@types/node@22.18.1)(lightningcss@1.27.0)(terser@5.44.0)(yaml@2.8.1)
 
-  '@toned/compiler':
+  packages/toned:
     devDependencies:
       '@config/build':
         specifier: workspace:*
-        version: link:../../@config/build
+        version: link:../../config/build
       '@config/typescript':
         specifier: workspace:*
-        version: link:../../@config/typescript
+        version: link:../../config/typescript
+      '@toned/core':
+        specifier: workspace:*
+        version: link:../toned-core
 
-  '@toned/core':
+  packages/toned-compiler:
     devDependencies:
       '@config/build':
         specifier: workspace:*
-        version: link:../../@config/build
+        version: link:../../config/build
       '@config/typescript':
         specifier: workspace:*
-        version: link:../../@config/typescript
+        version: link:../../config/typescript
+
+  packages/toned-core:
+    devDependencies:
+      '@config/build':
+        specifier: workspace:*
+        version: link:../../config/build
+      '@config/typescript':
+        specifier: workspace:*
+        version: link:../../config/typescript
     publishDirectory: .dist
 
-  '@toned/react':
+  packages/toned-react:
     devDependencies:
       '@config/build':
         specifier: workspace:*
-        version: link:../../@config/build
+        version: link:../../config/build
       '@config/typescript':
         specifier: workspace:*
-        version: link:../../@config/typescript
+        version: link:../../config/typescript
       '@toned/core':
         specifier: workspace:~
-        version: link:../core
+        version: link:../toned-core
       '@types/react':
         specifier: npm:@types/react@^19.0.0
         version: 19.0.12
@@ -351,30 +363,30 @@ importers:
         version: '@types/react@19.0.12'
     publishDirectory: .dist
 
-  '@toned/systems':
+  packages/toned-systems:
     devDependencies:
       '@config/build':
         specifier: workspace:*
-        version: link:../../@config/build
+        version: link:../../config/build
       '@config/typescript':
         specifier: workspace:*
-        version: link:../../@config/typescript
+        version: link:../../config/typescript
       '@toned/core':
         specifier: workspace:~
-        version: link:../core
+        version: link:../toned-core
       '@types/react':
         specifier: 'catalog:'
         version: 19.0.12
     publishDirectory: .dist
 
-  '@toned/themes':
+  packages/toned-themes:
     devDependencies:
       '@config/build':
         specifier: workspace:*
-        version: link:../../@config/build
+        version: link:../../config/build
       '@config/typescript':
         specifier: workspace:*
-        version: link:../../@config/typescript
+        version: link:../../config/typescript
       rollup-copy-transform-css:
         specifier: ^2.1.0
         version: 2.1.0(rollup@4.46.3)
@@ -382,18 +394,6 @@ importers:
         specifier: ^3.5.0
         version: 3.5.0
     publishDirectory: .dist
-
-  toned:
-    devDependencies:
-      '@config/build':
-        specifier: workspace:*
-        version: link:../@config/build
-      '@config/typescript':
-        specifier: workspace:*
-        version: link:../@config/typescript
-      '@toned/core':
-        specifier: workspace:*
-        version: link:../@toned/core
 
 packages:
 
@@ -2254,9 +2254,6 @@ packages:
   '@types/deep-eql@4.0.2':
     resolution: {integrity: sha512-c9h9dVVMigMPc4bwTvC5dxqtqJZwQPePsWjPlpSOnojbor6pGqdk541lfA7AqFQr5pB1BRdq0juY9db81BwyFw==}
 
-  '@types/estree@1.0.6':
-    resolution: {integrity: sha512-AYnb1nQyY49te+VRAVgmzfcgjYS91mY5P0TKUDCLEM+gNnA+3T6rWITXRLYCpahpqSQbN5cE+gHpnPyXjHWxcw==}
-
   '@types/estree@1.0.8':
     resolution: {integrity: sha512-dWHzHa2WqEXI/O1E9OjrocMTKJl2mSrEolh1Iomrv6U+JuNwaHXsXx9bLu5gG7BUWFIN0skIQJQ/L1rIex4X6w==}
 
@@ -2295,9 +2292,6 @@ packages:
 
   '@types/node@12.20.55':
     resolution: {integrity: sha512-J8xLz7q2OFulZ2cyGTLE1TbbZcjpno7FaN6zdJNrgAdrJ+DZzh/uFR6YrTb4C+nXakvud8Q4+rbhoIWlYQbUFQ==}
-
-  '@types/node@22.13.10':
-    resolution: {integrity: sha512-I6LPUvlRH+O6VRUqYOcMudhaIdUVWfsjnZavnsraHvpBwaEyMN29ry+0UVJhImYL16xsscu0aske3yA+uPOWfw==}
 
   '@types/node@22.18.1':
     resolution: {integrity: sha512-rzSDyhn4cYznVG+PCzGe1lwuMYJrcBS1fc3JqSa2PvtABwWo+dZ1ij5OVok3tqfpEBCBoaR4d7upFJk73HRJDw==}
@@ -2618,11 +2612,6 @@ packages:
   browserify-zlib@0.2.0:
     resolution: {integrity: sha512-Z942RysHXmJrhqk88FmKBVq/v5tqmSkDz7p54G/MGyjMnCFFnC79XWNbg+Vta8W6Wb2qtSZTSxIGkJrRpCFEiA==}
 
-  browserslist@4.24.4:
-    resolution: {integrity: sha512-KDi1Ny1gSePi1vm0q4oxSF8b4DR44GF4BbmS2YdhPLOEqd8pDviZOGH/GsmRwoWJ2+5Lr085X7naowMwKHDG1A==}
-    engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
-    hasBin: true
-
   browserslist@4.25.4:
     resolution: {integrity: sha512-4jYpcjabC606xJ3kw2QwGEZKX0Aw7sgQdZCvIK9dhVSPh76BKo+C+btT1RRofH7B+8iNpEbgGNVWiLki5q93yg==}
     engines: {node: ^6 || ^7 || ^8 || ^9 || ^10 || ^11 || ^12 || >=13.7}
@@ -2697,9 +2686,6 @@ packages:
 
   caniuse-api@3.0.0:
     resolution: {integrity: sha512-bsTwuIg/BZZK/vreVTYYbSWoe2F+71P7K5QGEX+pT250DZbfU1MQ5prOKpPR+LL6uWKK3KMwMCAS74QB3Um1uw==}
-
-  caniuse-lite@1.0.30001707:
-    resolution: {integrity: sha512-3qtRjw/HQSMlDWf+X79N206fepf4SOOU6SQLMaq/0KkZLmSjPxAkBOQQ+FxbHKfHmYLZFfdWsO3KA90ceHPSnw==}
 
   caniuse-lite@1.0.30001741:
     resolution: {integrity: sha512-QGUGitqsc8ARjLdgAfxETDhRbJ0REsP6O3I96TAth/mVjh2cYzN2u+3AzPP3aVSm2FehEItaJw1xd+IGBXWeSw==}
@@ -3116,9 +3102,6 @@ packages:
 
   ee-first@1.1.1:
     resolution: {integrity: sha512-WMwm9LhRUo+WUaRN+vRuETqG89IgZphVSNkdFgeb6sS/E4OrDIN7t48CAewSHXc6C8lefD8KKfr5vY61brQlow==}
-
-  electron-to-chromium@1.5.129:
-    resolution: {integrity: sha512-JlXUemX4s0+9f8mLqib/bHH8gOHf5elKS6KeWG3sk3xozb/JTq/RLXIv8OKUWiK4Ah00Wm88EFj5PYkFr4RUPA==}
 
   electron-to-chromium@1.5.214:
     resolution: {integrity: sha512-TpvUNdha+X3ybfU78NoQatKvQEm1oq3lf2QbnmCEdw+Bd9RuIAY+hJTvq1avzHM0f7EJfnH3vbCnbzKzisc/9Q==}
@@ -4261,11 +4244,6 @@ packages:
 
   mkdirp@1.0.4:
     resolution: {integrity: sha512-vVqVZQyf3WLx2Shd0qJ9xuvqgAyKPLAiqITEtqW0oIUjzo3PePDd6fW9iFz30ef7Ysp/oiWqbhszeGWW2T6Gzw==}
-    engines: {node: '>=10'}
-    hasBin: true
-
-  mkdirp@3.0.1:
-    resolution: {integrity: sha512-+NsyUUAZDmo6YVHzL/stxSu3t9YS1iljliy3BSDrXJ/dkn1KYdmtZODGGjLcc9XLgVVpH4KshHB8XmZgMhaBXg==}
     engines: {node: '>=10'}
     hasBin: true
 
@@ -5449,10 +5427,6 @@ packages:
     engines: {node: '>=14.0.0'}
     hasBin: true
 
-  tar@7.4.3:
-    resolution: {integrity: sha512-5S7Va8hKfV7W5U6g3aYxXmlPoZVAwUMy9AOKyF2fVuZa2UD3qZjg578OrLRt8PcNN1PleVaL/5/yYATNL0ICUw==}
-    engines: {node: '>=18'}
-
   tar@7.5.1:
     resolution: {integrity: sha512-nlGpxf+hv0v7GkWBK2V9spgactGOp0qvfWRxUMjqHyzrt3SgwE48DIv/FhqPHJYLHpgW1opq3nERbz5Anq7n1g==}
     engines: {node: '>=18'}
@@ -5590,9 +5564,6 @@ packages:
     resolution: {integrity: sha512-v3Xu+yuwBXisp6QYTcH4UbH+xYJXqnq2m/LtQVWKWzYc1iehYnLixoQDN9FH6/j9/oybfd6W9Ghwkl8+UMKTKQ==}
     engines: {node: '>=0.8.0'}
     hasBin: true
-
-  undici-types@6.20.0:
-    resolution: {integrity: sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==}
 
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
@@ -6036,7 +6007,7 @@ snapshots:
     dependencies:
       '@babel/compat-data': 7.28.4
       '@babel/helper-validator-option': 7.27.1
-      browserslist: 4.24.4
+      browserslist: 4.25.4
       lru-cache: 5.1.1
       semver: 6.3.1
 
@@ -6980,13 +6951,13 @@ snapshots:
       resolve: 1.22.10
       resolve-from: 5.0.0
       resolve.exports: 2.0.3
-      semver: 7.7.1
+      semver: 7.7.2
       send: 0.19.1
       slugify: 1.6.6
       source-map-support: 0.5.21
       stacktrace-parser: 0.1.11
       structured-headers: 0.4.1
-      tar: 7.4.3
+      tar: 7.5.1
       terminal-link: 2.1.1
       undici: 6.21.3
       wrap-ansi: 7.0.0
@@ -7013,7 +6984,7 @@ snapshots:
       getenv: 2.0.0
       glob: 10.4.5
       resolve-from: 5.0.0
-      semver: 7.7.1
+      semver: 7.7.2
       slash: 3.0.0
       slugify: 1.6.6
       xcode: 3.0.1
@@ -7035,7 +7006,7 @@ snapshots:
       require-from-string: 2.0.2
       resolve-from: 5.0.0
       resolve-workspace-root: 2.0.0
-      semver: 7.7.1
+      semver: 7.7.2
       slugify: 1.6.6
       sucrase: 3.35.0
     transitivePeerDependencies:
@@ -7072,7 +7043,7 @@ snapshots:
       minimatch: 9.0.5
       p-limit: 3.1.0
       resolve-from: 5.0.0
-      semver: 7.7.1
+      semver: 7.7.2
     transitivePeerDependencies:
       - supports-color
 
@@ -8114,7 +8085,7 @@ snapshots:
       metro: 0.82.5
       metro-config: 0.82.5
       metro-core: 0.82.5
-      semver: 7.7.1
+      semver: 7.7.2
     transitivePeerDependencies:
       - bufferutil
       - supports-color
@@ -8284,9 +8255,9 @@ snapshots:
 
   '@rollup/pluginutils@5.1.4(rollup@4.46.3)':
     dependencies:
-      '@types/estree': 1.0.6
+      '@types/estree': 1.0.8
       estree-walker: 2.0.2
-      picomatch: 4.0.2
+      picomatch: 4.0.3
     optionalDependencies:
       rollup: 4.46.3
 
@@ -8465,8 +8436,6 @@ snapshots:
 
   '@types/deep-eql@4.0.2': {}
 
-  '@types/estree@1.0.6': {}
-
   '@types/estree@1.0.8': {}
 
   '@types/express-serve-static-core@5.0.7':
@@ -8484,12 +8453,12 @@ snapshots:
 
   '@types/fs-extra@8.1.5':
     dependencies:
-      '@types/node': 22.13.10
+      '@types/node': 22.18.1
 
   '@types/glob@7.2.0':
     dependencies:
       '@types/minimatch': 5.1.2
-      '@types/node': 22.13.10
+      '@types/node': 22.18.1
 
   '@types/graceful-fs@4.1.9':
     dependencies:
@@ -8512,10 +8481,6 @@ snapshots:
   '@types/minimatch@5.1.2': {}
 
   '@types/node@12.20.55': {}
-
-  '@types/node@22.13.10':
-    dependencies:
-      undici-types: 6.20.0
 
   '@types/node@22.18.1':
     dependencies:
@@ -8909,13 +8874,6 @@ snapshots:
     dependencies:
       pako: 1.0.11
 
-  browserslist@4.24.4:
-    dependencies:
-      caniuse-lite: 1.0.30001707
-      electron-to-chromium: 1.5.129
-      node-releases: 2.0.19
-      update-browserslist-db: 1.1.3(browserslist@4.24.4)
-
   browserslist@4.25.4:
     dependencies:
       caniuse-lite: 1.0.30001741
@@ -8936,7 +8894,7 @@ snapshots:
 
   bun-types@1.2.20(@types/react@19.0.12):
     dependencies:
-      '@types/node': 22.13.10
+      '@types/node': 22.18.1
       '@types/react': 19.0.12
 
   byte-size@9.0.1: {}
@@ -9000,12 +8958,10 @@ snapshots:
 
   caniuse-api@3.0.0:
     dependencies:
-      browserslist: 4.24.4
-      caniuse-lite: 1.0.30001707
+      browserslist: 4.25.4
+      caniuse-lite: 1.0.30001741
       lodash.memoize: 4.1.2
       lodash.uniq: 4.5.0
-
-  caniuse-lite@1.0.30001707: {}
 
   caniuse-lite@1.0.30001741: {}
 
@@ -9036,7 +8992,7 @@ snapshots:
 
   chrome-launcher@0.15.2:
     dependencies:
-      '@types/node': 22.13.10
+      '@types/node': 22.18.1
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -9045,7 +9001,7 @@ snapshots:
 
   chromium-edge-launcher@0.2.0:
     dependencies:
-      '@types/node': 22.13.10
+      '@types/node': 22.18.1
       escape-string-regexp: 4.0.0
       is-wsl: 2.2.0
       lighthouse-logger: 1.4.2
@@ -9291,7 +9247,7 @@ snapshots:
 
   cssnano-preset-default@7.0.6(postcss@8.5.3):
     dependencies:
-      browserslist: 4.24.4
+      browserslist: 4.25.4
       css-declaration-sorter: 7.2.0(postcss@8.5.3)
       cssnano-utils: 5.0.0(postcss@8.5.3)
       postcss: 8.5.3
@@ -9425,8 +9381,6 @@ snapshots:
 
   ee-first@1.1.1: {}
 
-  electron-to-chromium@1.5.129: {}
-
   electron-to-chromium@1.5.214: {}
 
   emoji-regex@10.5.0: {}
@@ -9547,7 +9501,7 @@ snapshots:
 
   estree-walker@3.0.3:
     dependencies:
-      '@types/estree': 1.0.6
+      '@types/estree': 1.0.8
 
   etag@1.8.1: {}
 
@@ -9751,10 +9705,6 @@ snapshots:
   fd-package-json@2.0.0:
     dependencies:
       walk-up-path: 4.0.0
-
-  fdir@6.5.0(picomatch@4.0.2):
-    optionalDependencies:
-      picomatch: 4.0.2
 
   fdir@6.5.0(picomatch@4.0.3):
     optionalDependencies:
@@ -10781,8 +10731,6 @@ snapshots:
 
   mkdirp@1.0.4: {}
 
-  mkdirp@3.0.1: {}
-
   mri@1.2.0: {}
 
   mrmime@2.0.1: {}
@@ -11154,7 +11102,7 @@ snapshots:
 
   postcss-colormin@7.0.2(postcss@8.5.3):
     dependencies:
-      browserslist: 4.24.4
+      browserslist: 4.25.4
       caniuse-api: 3.0.0
       colord: 2.9.3
       postcss: 8.5.3
@@ -11162,7 +11110,7 @@ snapshots:
 
   postcss-convert-values@7.0.4(postcss@8.5.3):
     dependencies:
-      browserslist: 4.24.4
+      browserslist: 4.25.4
       postcss: 8.5.3
       postcss-value-parser: 4.2.0
 
@@ -11202,7 +11150,7 @@ snapshots:
 
   postcss-merge-rules@7.0.4(postcss@8.5.3):
     dependencies:
-      browserslist: 4.24.4
+      browserslist: 4.25.4
       caniuse-api: 3.0.0
       cssnano-utils: 5.0.0(postcss@8.5.3)
       postcss: 8.5.3
@@ -11222,7 +11170,7 @@ snapshots:
 
   postcss-minify-params@7.0.2(postcss@8.5.3):
     dependencies:
-      browserslist: 4.24.4
+      browserslist: 4.25.4
       cssnano-utils: 5.0.0(postcss@8.5.3)
       postcss: 8.5.3
       postcss-value-parser: 4.2.0
@@ -11264,7 +11212,7 @@ snapshots:
 
   postcss-normalize-unicode@7.0.2(postcss@8.5.3):
     dependencies:
-      browserslist: 4.24.4
+      browserslist: 4.25.4
       postcss: 8.5.3
       postcss-value-parser: 4.2.0
 
@@ -11286,7 +11234,7 @@ snapshots:
 
   postcss-reduce-initial@7.0.2(postcss@8.5.3):
     dependencies:
-      browserslist: 4.24.4
+      browserslist: 4.25.4
       caniuse-api: 3.0.0
       postcss: 8.5.3
 
@@ -11511,7 +11459,7 @@ snapshots:
       react-refresh: 0.14.2
       regenerator-runtime: 0.13.11
       scheduler: 0.25.0
-      semver: 7.7.1
+      semver: 7.7.2
       stacktrace-parser: 0.1.11
       whatwg-fetch: 3.6.20
       ws: 6.2.3
@@ -11634,7 +11582,7 @@ snapshots:
     dependencies:
       cssnano: 7.0.6(postcss@8.5.3)
       esbuild: 0.24.2
-      picomatch: 4.0.2
+      picomatch: 4.0.3
       postcss: 8.5.3
       postcss-fail-on-warn: 0.2.1(postcss@8.5.3)
       postcss-import: 16.1.0(postcss@8.5.3)
@@ -11993,7 +11941,7 @@ snapshots:
 
   stylehacks@7.0.4(postcss@8.5.3):
     dependencies:
-      browserslist: 4.24.4
+      browserslist: 4.25.4
       postcss: 8.5.3
       postcss-selector-parser: 6.1.2
 
@@ -12039,15 +11987,6 @@ snapshots:
       css-what: 6.1.0
       csso: 5.0.5
       picocolors: 1.1.1
-
-  tar@7.4.3:
-    dependencies:
-      '@isaacs/fs-minipass': 4.0.1
-      chownr: 3.0.0
-      minipass: 7.1.2
-      minizlib: 3.0.2
-      mkdirp: 3.0.1
-      yallist: 5.0.0
 
   tar@7.5.1:
     dependencies:
@@ -12097,8 +12036,8 @@ snapshots:
 
   tinyglobby@0.2.14:
     dependencies:
-      fdir: 6.5.0(picomatch@4.0.2)
-      picomatch: 4.0.2
+      fdir: 6.5.0(picomatch@4.0.3)
+      picomatch: 4.0.3
 
   tinyglobby@0.2.15:
     dependencies:
@@ -12162,8 +12101,6 @@ snapshots:
   uglify-js@3.19.3:
     optional: true
 
-  undici-types@6.20.0: {}
-
   undici-types@6.21.0: {}
 
   undici@6.21.3: {}
@@ -12212,12 +12149,6 @@ snapshots:
   universalify@2.0.1: {}
 
   unpipe@1.0.0: {}
-
-  update-browserslist-db@1.1.3(browserslist@4.24.4):
-    dependencies:
-      browserslist: 4.24.4
-      escalade: 3.2.0
-      picocolors: 1.1.1
 
   update-browserslist-db@1.1.3(browserslist@4.25.4):
     dependencies:
@@ -12282,11 +12213,11 @@ snapshots:
   vite@6.3.5(@types/node@22.18.1)(lightningcss@1.27.0)(terser@5.44.0)(yaml@2.8.1):
     dependencies:
       esbuild: 0.25.1
-      fdir: 6.5.0(picomatch@4.0.2)
-      picomatch: 4.0.2
+      fdir: 6.5.0(picomatch@4.0.3)
+      picomatch: 4.0.3
       postcss: 8.5.3
       rollup: 4.46.3
-      tinyglobby: 0.2.14
+      tinyglobby: 0.2.15
     optionalDependencies:
       '@types/node': 22.18.1
       fsevents: 2.3.3

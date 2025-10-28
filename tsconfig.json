@@ -3,40 +3,40 @@
   "files": [],
   "references": [
     {
-      "path": "@toned/compiler"
+      "path": "packages/toned-compiler"
     },
     {
-      "path": "@toned/core"
+      "path": "packages/toned-core"
     },
     {
-      "path": "@toned/react"
+      "path": "packages/toned-react"
     },
     {
-      "path": "@toned/systems"
+      "path": "packages/toned-systems"
     },
     {
-      "path": "@toned/themes"
+      "path": "packages/toned-themes"
     },
     {
-      "path": "toned"
+      "path": "packages/toned"
     },
     {
-      "path": "@examples/email"
+      "path": "examples/email"
     },
     {
-      "path": "@examples/expo-app"
+      "path": "examples/expo-app"
     },
     {
-      "path": "@examples/pdf"
+      "path": "examples/pdf"
     },
     {
-      "path": "@examples/shared"
+      "path": "examples/shared"
     },
     {
-      "path": "@examples/vite"
+      "path": "examples/vite"
     },
     {
-      "path": "@config/build"
+      "path": "config/build"
     }
   ]
 }

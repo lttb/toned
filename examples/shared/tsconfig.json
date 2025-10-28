@@ -2,10 +2,10 @@
   "extends": "@config/typescript/lib",
   "references": [
     {
-      "path": "../../@toned/systems"
+      "path": "../../packages/toned-systems"
     },
     {
-      "path": "../../@toned/themes"
+      "path": "../../packages/toned-themes"
     }
   ]
 }
