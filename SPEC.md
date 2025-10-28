@@ -46,6 +46,94 @@ const styles = stylesheet({
 const styles = stylesheet({
   ...stylesheet.state<{variant: 'normal' | 'accent'; size: 'medium' | 'large'}>,
 
+  container: {
+    padding: 'large',
+  },
+
+  label: {
+    textColor: 'primary',
+
+    ':hover': {
+      textColor: 'secondary',
+    },
+
+    '[variant=normal]': {
+      /* ... */
+    },
+
+    '@media.sm': {
+      /* ... */
+    },
+  },
+
+  '[variant=normal]': {
+    $container: {
+      /* ... */
+    },
+    $label: {
+      /* ... */
+    },
+  },
+
+  '@media.sm': {
+    $container: {
+      /* ... */
+    },
+    $label: {
+      /* ... */
+    },
+  },
+})
+```
+
+```ts
+const styles = stylesheet({
+  ...stylesheet.state<{variant: 'normal' | 'accent'; size: 'medium' | 'large'}>,
+
+  container: {
+    padding: 'large',
+  },
+
+  label: {
+    textColor: 'primary',
+
+    ':hover': {
+      textColor: 'secondary',
+    },
+
+    '[variant=normal]': {
+      /* ... */
+    },
+
+    sm: {
+      /* ... */
+    },
+  },
+
+  '[variant=normal]': {
+    $container: {
+      /* ... */
+    },
+    $label: {
+      /* ... */
+    },
+  },
+
+  sm: {
+    $container: {
+      /* ... */
+    },
+    $label: {
+      /* ... */
+    },
+  },
+})
+```
+
+```ts
+const styles = stylesheet({
+  ...stylesheet.state<{variant: 'normal' | 'accent'; size: 'medium' | 'large'}>,
+
   $container: {
     padding: 'large',
   },
