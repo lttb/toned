@@ -11,7 +11,7 @@ export type TokenConfig<Values extends readonly any[], Result> = {
   resolve: (value: Values[number], tokens: Tokens) => Result
 }
 
-type Breakpoints<O extends Record<string, number>> = { __breakpoints: O }
+export type Breakpoints<O extends Record<string, number>> = { __breakpoints: O }
 
 type InferBreakpoints<R> = R extends { breakpoints?: Breakpoints<infer X> }
   ? X

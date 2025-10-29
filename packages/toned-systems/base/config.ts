@@ -3,7 +3,7 @@ type Breakpoints<O> = { __breakpoints: O }
 const defineBreakpoints = <O extends Record<string, number>>(
   obj: O,
 ): Breakpoints<O> => {
-  return null as any
+  return { __breakpoints: obj }
 }
 
 declare const defineSelectors: any

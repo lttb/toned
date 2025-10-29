@@ -1,4 +1,5 @@
-import type { TokenConfig } from './types.ts'
+import type { Breakpoints, TokenStyleDeclaration } from './types.ts'
+import { camelToKebab } from './utils.ts'
 
 export function getStyleNodeById(id: string): HTMLStyleElement | null {
   if (typeof document === 'undefined') {
@@ -24,22 +25,37 @@ const tokens = new Proxy(
   },
 )
 
-const camelToKebabRe = /([a-z0-9]|(?=[A-Z]))([A-Z])/g
-function camelToKebab(str: string): string {
-  return str.replace(camelToKebabRe, '$1-$2').toLowerCase()
-}
-
-export function insert<const S extends Record<string, TokenConfig<any, any>>>(
-  system: S,
-) {
-  const sheet = getStyleNodeById('toned/main')
-
+export function generate<const s extends TokenStyleDeclaration>({
+  breakpoints,
+  ...system
+}: s) {
   let styles = ''
+
+  if (breakpoints) {
+    const bpValues = breakpoints.__breakpoints
+
+    let htmlStyles = ''
+    let media = ''
+
+    for (const [key, value] of Object.entries(bpValues)) {
+      const varName = `--media-${key}`
+
+      htmlStyles += `${varName}: initial;`
+      media += `@media (min-width: ${value}px) { ${varName}: ; }`
+    }
+
+    styles += `html {${htmlStyles}}`
+    styles += media
+  }
+
+  // handle custom tokens
 
   for (const key in system) {
     const token = system[key]
 
-    token?.values.forEach((value: any) => {
+    if (!token) continue
+
+    token.values.forEach((value: any) => {
       if (value instanceof Number || value instanceof String) {
         // TODO: support dynamic placeholders
         return
@@ -63,9 +79,23 @@ export function insert<const S extends Record<string, TokenConfig<any, any>>>(
     })
   }
 
-  if (sheet) {
-    sheet.innerHTML = styles
+  return styles
+}
+
+export function inject<
+  const S extends
+    | TokenStyleDeclaration
+    | {
+        breakpoints?: Breakpoints<any>
+      },
+>(system: S) {
+  const sheet = getStyleNodeById('toned/main')
+
+  if (!sheet) {
+    return
   }
 
-  // console.log(styles)
+  const styles = generate(system as TokenStyleDeclaration)
+
+  sheet.innerHTML = styles
 }
