@@ -59,6 +59,10 @@ export const styles = stylesheet({
   // ...t({ padding: 2, ':hover': {}, '@media.sm': { padding: 4 }}),
   // ...t({ padding: 2, ':hover': {}, '@media.sm.only': { padding: 4 }}),
   // ...t({ padding: 2, ':hover': {}, sm: { padding: 4 }}),
+  // ...t({ padding: 2, ':hover': {}, '@sm': { padding: 4 }}),
+  // ...t({ padding: 2, ':hover': {}, '@sm.only': { padding: 4 }}),
+  // ...t({ padding: 2, ':hover': {}, '@sm.lte': { padding: 4 }}),
+  // ...t({ padding: 2, ':hover': {}, '@sm.lge': { padding: 4 }}),
   // ...t({ padding: 2, ':hover': {}, _sm: { padding: 4 }}),
   // ...t({ padding: 2, ':hover': {}, [media.sm]: { padding: 4 }}),
   // ...t({ padding: 2, ':hover': {}, [media.sm.only]: { padding: 4 }}),
@@ -72,7 +76,7 @@ export const styles = stylesheet({
 
       ':hover': {},
 
-      xl: {
+      '@sm': {
         paddingX: 4,
         paddingY: 2,
       },

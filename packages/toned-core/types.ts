@@ -246,8 +246,14 @@ export type StylesheetType<S extends TokenStyleDeclaration> = (<
   state: typeof C
 }
 
-export type TokenSystem<S extends TokenStyleDeclaration> = {
+export type TokenSystem<
+  S extends TokenStyleDeclaration,
+  Config extends { breakpoints?: Breakpoints<any> } = {
+    breakpoints?: Breakpoints<any>
+  },
+> = {
   system: S
+  config?: Config
   stylesheet: StylesheetType<S>
   t: TFun<S>
   exec: (

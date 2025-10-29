@@ -35,10 +35,11 @@ type Breakpoints<O> = { __breakpoints: O }
 export function defineSystem<
   // biome-ignore lint/suspicious/noExplicitAny: ignore
   const S extends Record<string, TokenConfig<any, any>>,
-  const R extends { breakpoints?: Breakpoints<any> },
->(system: S, _rules?: R): TokenSystem<S & R> {
-  const ref: TokenSystem<S> = {
+  const C extends { breakpoints?: Breakpoints<any> },
+>(system: S, config?: C): TokenSystem<S & C, C> {
+  const ref: TokenSystem<S, C> = {
     system,
+    config,
     t: (...values) => {
       const value = values.reduce(
         (acc, v) => Object.assign(acc, SYMBOL_STYLE in v ? v[SYMBOL_STYLE] : v),
@@ -123,5 +124,5 @@ export function defineSystem<
     },
   }
 
-  return ref as TokenSystem<S & R>
+  return ref as TokenSystem<S & C>
 }

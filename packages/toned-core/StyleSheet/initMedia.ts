@@ -1,17 +1,16 @@
 // TODO: move to configuration
 
-import type { TokenStyleDeclaration } from '../types.ts'
+import type { TokenStyleDeclaration, TokenSystem } from '../types.ts'
 
 export const initMedia = <S extends TokenStyleDeclaration>({
-  breakpoints,
-}: S) => {
+  config,
+}: TokenSystem<S>) => {
   const w = typeof window === 'undefined' ? null : window
 
   const medias = Object.fromEntries(
-    Object.entries(breakpoints?.__breakpoints ?? {}).map(([key, value]) => [
-      key,
-      w?.matchMedia(`(min-width: ${value}px)`),
-    ]),
+    Object.entries(config?.breakpoints?.__breakpoints ?? {}).map(
+      ([key, value]) => [key, w?.matchMedia(`(min-width: ${value}px)`)],
+    ),
   )
 
   const mediaEmitter = new Emitter<Partial<Record<string, boolean>>>(
