@@ -38,7 +38,8 @@ export function defineSystem<
   const C extends { breakpoints?: Breakpoints<any> },
 >(system: S, config?: C): TokenSystem<S & C, C> {
   const ref: TokenSystem<S, C> = {
-    system,
+    // TODO: separate system from config
+    system: { ...system, ...config },
     config,
     t: (...values) => {
       const value = values.reduce(
@@ -119,10 +120,10 @@ export function defineSystem<
 
           return acc
         },
-        { style: {} },
+        { style: {}, className: '_' },
       )
     },
   }
 
-  return ref as TokenSystem<S & C>
+  return ref as TokenSystem<S & C, C>
 }

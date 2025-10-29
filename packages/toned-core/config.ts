@@ -10,6 +10,7 @@ customGlobal[SYMBOL_CONFIG] ??= {
   getTokens: (): Tokens => ({}),
 
   useClassName: false,
+  useMedia: false,
 
   // TODO
   getProps() {

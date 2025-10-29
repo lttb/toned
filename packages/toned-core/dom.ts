@@ -34,18 +34,27 @@ export function generate<const s extends TokenStyleDeclaration>({
   if (breakpoints) {
     const bpValues = breakpoints.__breakpoints
 
-    let htmlStyles = ''
-    let media = ''
+    const PSEUDO_STATES = ['hover', 'focus', 'active']
+
+    let rootRule = ''
+    let rules = ''
+
+    PSEUDO_STATES.forEach((pseudo) => {
+      const name = `--toned_${pseudo}`
+      rootRule += `${name}: initial;`
+      // make it work as expected with nested elements
+      rules += `._:${pseudo} {${name}: ;} ._:${pseudo} ._ {${name}: initial;} ._:${pseudo} ._:${pseudo} {${name}: ;}`
+    })
 
     for (const [key, value] of Object.entries(bpValues)) {
-      const varName = `--media-${key}`
+      const varName = `--media-${camelToKebab(key).replace('@', '')}`
 
-      htmlStyles += `${varName}: initial;`
-      media += `@media (min-width: ${value}px) { ${varName}: ; }`
+      rootRule += `${varName}: initial;`
+      rules += `@media (min-width: ${value}px) { ${varName}: ; }`
     }
 
-    styles += `html {${htmlStyles}}`
-    styles += media
+    styles += `html {${rootRule}}`
+    styles += rules
   }
 
   // handle custom tokens

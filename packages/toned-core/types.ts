@@ -53,6 +53,7 @@ export type Config = Readonly<{
   getTokens: () => Tokens
 
   useClassName: boolean
+  useMedia: boolean
 
   //TODO
   getProps(this: any, elementKey: string): {}
