@@ -139,7 +139,7 @@ export class Base {
 
     this.matcher = new StyleMatcher(rules)
 
-    const mediaEmitter = initMedia()
+    const mediaEmitter = initMedia(this.ref.system)
 
     // TODO: think about perf improvements
     this.modsState = {
