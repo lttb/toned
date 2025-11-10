@@ -1,9 +1,6 @@
 ```tsx
 const styles = stylesheet({
-  ...stylesheet.state<{
-    variant?: Variant
-    size?: Size
-  }>,
+  ...stylesheet.state<{variant?: Variant; size?: Size; color?: Color}>,
 
   container: {
     flexLayout: 'row',
@@ -13,55 +10,63 @@ const styles = stylesheet({
   },
   text: {},
 
-  variants: [
-    {variant: 'rounded', $container: {borderRadius: 'Medium'}},
+  'text:hover': {
+    container: {textColor: 'primary'},
+  },
 
-    {
-      size: 'medium',
-      $container: {
-        paddingHorizontal: 'Large',
-        paddingVertical: 'Medium',
+  '[variant=rounded]': {
+    container: {borderRadius: 'Medium'},
+  },
+
+  '[size=medium]': {
+    container: {
+      paddingHorizontal: 'Large',
+      paddingVertical: 'Medium',
+    },
+  },
+
+  '[size=small]': {
+    container: {
+      paddingHorizontal: 'Medium',
+      paddingVertical: 'XSmall',
+    },
+  },
+
+  '[color=primary]': {
+    container: {
+      fillColor: 'BrandPrimaryDefault',
+    },
+    text: {textColor: 'OnFillBrandPrimaryDefault'},
+  },
+
+  '[color=primary][variant=accent]': {
+    container: {
+      fillColor: 'BrandPrimaryAccent',
+    },
+    text: {textColor: 'OnFillBrandPrimaryAccent'},
+  },
+
+  '[color=primary][variant=info]': {
+    container: {
+      fillColor: 'BrandPrimaryInfo',
+    },
+    text: {
+      textColor: 'OnFillBrandPrimaryInfo',
+      ':hover': {textColor: 'OnFillBrandPrimaryInfoHovered'},
+      '@sm': {
+        padding: 'small',
       },
     },
+  },
 
-    {
-      size: 'small',
-      $container: {
-        paddingHorizontal: 'Medium',
-        paddingVertical: 'XSmall',
-      },
+  '@sm': {
+    text: {
+      /* ... */
     },
-
-    {
-      color: 'primary',
-      $container: {
-        fillColor: 'BrandPrimaryDefault',
-      },
-      $text: {textColor: 'OnFillBrandPrimaryDefault'},
+    container: {
+      /* ... */
     },
-
-    {
-      color: 'primary',
-      variant: 'accent',
-      $container: {
-        fillColor: 'BrandPrimaryAccent',
-      },
-      $text: {textColor: 'OnFillBrandPrimaryAccent'},
-    },
-
-    {
-      color: 'primary',
-      variant: 'info',
-      $container: {
-        fillColor: 'BrandPrimaryInfo',
-      },
-      $text: {
-        textColor: 'OnFillBrandPrimaryInfo',
-        ':hover': {textColor: 'OnFillBrandPrimaryInfoHovered'},
-        '@sm': {padding: 'small'},
-      },
-    },
-  ],
+  },
 })
 ```
 
@@ -148,15 +153,6 @@ const styles = stylesheet({
       '@sm': {
         padding: 'small',
       },
-    },
-  },
-
-  {
-    color: 'primary',
-    variant: 'info',
-
-    container: {
-      padding: 'small',
     },
   },
 )

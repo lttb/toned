@@ -19,6 +19,43 @@ const styles = stylesheet({
     '@sm': {padding: 'medium'},
   },
 
+  'label:hover': {},
+
+  '[variant=normal]': {
+    label: {},
+
+    base: {},
+  },
+
+  '[variant=normal][size=large]': {
+    label: {},
+
+    base: {},
+  },
+})
+```
+
+```ts
+const styles = stylesheet({
+  ...stylesheet.state<{variant: 'normal' | 'accent'; size: 'medium' | 'large'}>,
+
+  container: {
+    padding: 'large',
+  },
+
+  base: {
+    textColor: 'primary',
+    bgColor: 'surface',
+  },
+
+  label: {
+    composes: ['base'],
+
+    ':hover': {textColor: 'secondary'},
+
+    '@sm': {padding: 'medium'},
+  },
+
   '[variant=normal]': {
     label: {},
 
