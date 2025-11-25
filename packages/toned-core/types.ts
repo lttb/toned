@@ -15,12 +15,14 @@ export type Breakpoints<O extends Record<string, number>> = { __breakpoints: O }
 
 type InferBreakpoints<R> = R extends { breakpoints?: Breakpoints<infer X> }
   ? X
-  : never
+  : StringOrNumber
 
 // biome-ignore lint/suspicious/noExplicitAny: ignore
-export type TokenStyleDeclaration = Record<string, TokenConfig<any, any>> & {
-  breakpoints?: Breakpoints<any>
-}
+export type TokenStyleDeclaration = Record<string, TokenConfig<any, any>>
+// TODO: enable breakpoints when ready
+// & {
+//   breakpoints?: Breakpoints<any>
+// }
 
 // biome-ignore lint/suspicious/noExplicitAny: ignore
 type InlineStyle = any

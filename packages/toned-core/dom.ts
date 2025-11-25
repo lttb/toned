@@ -32,7 +32,7 @@ export function generate<const s extends TokenStyleDeclaration>({
   let styles = ''
 
   if (breakpoints) {
-    const bpValues = breakpoints.__breakpoints
+    const bpValues = (breakpoints as any).__breakpoints
 
     const PSEUDO_STATES = ['hover', 'focus', 'active']
 

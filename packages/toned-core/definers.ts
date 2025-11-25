@@ -36,7 +36,7 @@ export function defineSystem<
   // biome-ignore lint/suspicious/noExplicitAny: ignore
   const S extends Record<string, TokenConfig<any, any>>,
   const C extends { breakpoints?: Breakpoints<any> },
->(system: S, config?: C): TokenSystem<S & C, C> {
+>(system: S, config?: C): TokenSystem<S, C> {
   const ref: TokenSystem<S, C> = {
     // TODO: separate system from config
     system: { ...system, ...config },
@@ -125,5 +125,5 @@ export function defineSystem<
     },
   }
 
-  return ref as TokenSystem<S & C, C>
+  return ref as TokenSystem<S, C>
 }

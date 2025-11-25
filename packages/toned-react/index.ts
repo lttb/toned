@@ -13,7 +13,7 @@ type UseStylesResult<
   S extends TokenStyleDeclaration,
   T extends Record<string, TokenStyle<S>>,
 > = {
-  [k in keyof T]: Record<never, never>
+  [k in keyof T]: Record<never, never> & { style?: any } // TODO: enable .style temporary
 }
 
 export function useStyles<
