@@ -11,15 +11,12 @@
     "@toned/react": "workspace:*",
     "@toned/themes": "workspace:*",
     "@toned/systems": "workspace:*",
-    "@react-email/components": "^0.0.35",
     "react": "catalog:",
     "react-dom": "catalog:"
   },
   "devDependencies": {
     "@types/react": "catalog:",
     "@types/react-dom": "catalog:",
-    "react-native": "catalog:",
-    "react-native-web": "catalog:",
     "typescript": "catalog:"
   }
 }
