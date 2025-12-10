@@ -1,7 +1,8 @@
 packages:
   - packages/*
   - config/*
-  # - examples/*
+  - examples/email
+  - examples/shared
 
 autoInstallPeers: false
 

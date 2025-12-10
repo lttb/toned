@@ -287,7 +287,7 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 
     this.bits.forEach((x) => {
       const prop = x[0]
-      const value = props[prop]
+      const value = String(props[prop])
 
       // TODO: improve unknown properties handling
       if (!value || x[1][value] === undefined) return

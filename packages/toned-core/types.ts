@@ -135,13 +135,13 @@ export type ElementStyle<
     AvailableBreakpoints
   >
 } & {
-  [K in AvailableBreakpoints]?: ElementStyle<
-    S,
-    NoInfer<Elements>,
-    Mods,
-    NoInfer<AvailablePseudo>,
-    NoInfer<Exclude<AvailableBreakpoints, K>>
-  >
+  // [K in AvailableBreakpoints]?: ElementStyle<
+  //   S,
+  //   NoInfer<Elements>,
+  //   Mods,
+  //   NoInfer<AvailablePseudo>,
+  //   NoInfer<Exclude<AvailableBreakpoints, K>>
+  // >
 }
 
 export type ElementList<
@@ -191,13 +191,13 @@ export type BreakpointsList<
   AvailablePseudo extends string,
   AvailableBreakpoints extends StringOrNumber,
 > = {
-  [K in AvailableBreakpoints]?: ElementList<
-    S,
-    Elements,
-    Mods,
-    AvailablePseudo,
-    NoInfer<Exclude<AvailableBreakpoints, K>>
-  >
+  // [K in AvailableBreakpoints]?: ElementList<
+  //   S,
+  //   Elements,
+  //   Mods,
+  //   AvailablePseudo,
+  //   NoInfer<Exclude<AvailableBreakpoints, K>>
+  // >
 }
 
 export type StylesheetValue<
