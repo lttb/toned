@@ -128,6 +128,9 @@ importers:
         specifier: 'catalog:'
         version: 19.0.0(react@19.0.0)
     devDependencies:
+      '@config/typescript':
+        specifier: workspace:*
+        version: link:../../config/typescript
       '@types/react':
         specifier: 'catalog:'
         version: 19.0.12
@@ -226,6 +229,9 @@ importers:
         specifier: 'catalog:'
         version: 19.0.0(react@19.0.0)
     devDependencies:
+      '@config/typescript':
+        specifier: workspace:*
+        version: link:../../config/typescript
       '@types/react':
         specifier: 'catalog:'
         version: 19.0.12
@@ -2082,6 +2088,8 @@ packages:
   '@react-native/codegen@0.79.6':
     resolution: {integrity: sha512-iRBX8Lgbqypwnfba7s6opeUwVyaR23mowh9ILw7EcT2oLz3RqMmjJdrbVpWhGSMGq2qkPfqAH7bhO8C7O+xfjQ==}
     engines: {node: '>=18'}
+    peerDependencies:
+      '@babel/core': '*'
 
   '@react-native/community-cli-plugin@0.79.6':
     resolution: {integrity: sha512-ZHVst9vByGsegeaddkD2YbZ6NvYb4n3pD9H7Pit94u+NlByq2uBJghoOjT6EKqg+UVl8tLRdi88cU2pDPwdHqA==}
@@ -8336,11 +8344,12 @@ snapshots:
 
   '@react-native/assets-registry@0.79.6': {}
 
-  '@react-native/babel-plugin-codegen@0.79.6':
+  '@react-native/babel-plugin-codegen@0.79.6(@babel/core@7.28.4)':
     dependencies:
       '@babel/traverse': 7.28.4
-      '@react-native/codegen': 0.79.6
+      '@react-native/codegen': 0.79.6(@babel/core@7.28.4)
     transitivePeerDependencies:
+      - '@babel/core'
       - supports-color
 
   '@react-native/babel-preset@0.79.6(@babel/core@7.28.4)':
@@ -8386,14 +8395,14 @@ snapshots:
       '@babel/plugin-transform-typescript': 7.28.0(@babel/core@7.28.4)
       '@babel/plugin-transform-unicode-regex': 7.27.1(@babel/core@7.28.4)
       '@babel/template': 7.27.2
-      '@react-native/babel-plugin-codegen': 0.79.6
+      '@react-native/babel-plugin-codegen': 0.79.6(@babel/core@7.28.4)
       babel-plugin-syntax-hermes-parser: 0.25.1
       babel-plugin-transform-flow-enums: 0.0.2(@babel/core@7.28.4)
       react-refresh: 0.14.2
     transitivePeerDependencies:
       - supports-color
 
-  '@react-native/codegen@0.79.6':
+  '@react-native/codegen@0.79.6(@babel/core@7.28.4)':
     dependencies:
       '@babel/core': 7.28.4
       '@babel/parser': 7.28.4
@@ -8402,8 +8411,6 @@ snapshots:
       invariant: 2.2.4
       nullthrows: 1.1.1
       yargs: 17.7.2
-    transitivePeerDependencies:
-      - supports-color
 
   '@react-native/community-cli-plugin@0.79.6':
     dependencies:
@@ -11883,7 +11890,7 @@ snapshots:
     dependencies:
       '@jest/create-cache-key-function': 29.7.0
       '@react-native/assets-registry': 0.79.6
-      '@react-native/codegen': 0.79.6
+      '@react-native/codegen': 0.79.6(@babel/core@7.28.4)
       '@react-native/community-cli-plugin': 0.79.6
       '@react-native/gradle-plugin': 0.79.6
       '@react-native/js-polyfills': 0.79.6
