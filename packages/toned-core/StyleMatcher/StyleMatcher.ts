@@ -190,9 +190,27 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
 
       Object.keys(node).forEach((key) => {
         if (key[0] === '[') {
-          const [mod, modValue] = this.parseSelector(key)
+          // Handle combined selectors like '[size=sm][variant=accent]'
+          const mods = this.parseCombinedSelector(key)
 
-          traverseMod(selector, mod, modValue, node[key])
+          if (mods.length === 1) {
+            // Single selector
+            const [mod, modValue] = mods[0]!
+            traverseMod(selector, mod, modValue, node[key])
+          } else {
+            // Combined selector - apply all mods at once
+            let currentSelector = new Map(selector)
+            for (const [mod, modValue] of mods) {
+              scheme[mod] ??= new Set()
+              scheme[mod].add(modValue)
+              currentSelector.set(mod, modValue)
+
+              if (!modIndex.has(mod)) {
+                modIndex.set(mod, modIndex.size)
+              }
+            }
+            traverse(currentSelector, node[key], propPrefix)
+          }
         } else if (key[0] === '@') {
           const [mod, modValue] = this.parseAtSelector(key)
 
@@ -218,6 +236,24 @@ export class StyleMatcher<Schema extends NestedStyleRules = NestedStyleRules> {
   private parseSelector(selector: string): [string, string] {
     const [name, value = '*'] = selector.slice(1, -1).split('=')
     return [name!, value]
+  }
+
+  /**
+   * Parse combined selectors like '[size=sm][variant=accent]'
+   * Returns array of [mod, value] pairs
+   */
+  private parseCombinedSelector(
+    selector: string,
+  ): Array<[string, string]> {
+    const results: Array<[string, string]> = []
+    const regex = /\[([^\]=]+)=([^\]]+)\]/g
+    let match: RegExpExecArray | null
+
+    while ((match = regex.exec(selector)) !== null) {
+      results.push([match[1]!, match[2]!])
+    }
+
+    return results
   }
 
   private parseAtSelector(selector: string): [string, string] {
