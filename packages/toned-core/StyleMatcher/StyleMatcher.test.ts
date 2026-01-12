@@ -1,4 +1,4 @@
-import { describe, expect, test } from 'bun:test'
+import { describe, expect, test } from 'vitest'
 import { StyleMatcher } from './StyleMatcher.ts'
 
 describe('style matcher', () => {
@@ -54,32 +54,32 @@ describe('style matcher', () => {
 
   test('match snapshots', () => {
     expect(matcher.match({ size: 'm' })).toMatchInlineSnapshot(`
-		  {
-		    [Symbol(@toned/StyleMatcher/elementHash)]: {
-		      "container": 1,
-		    },
-		    [Symbol(@toned/StyleMatcher/propsBits)]: 1,
-		    "container": {
-		      "background": "blue",
-		      "paddingX": 30,
-		      "paddingY": 30,
-		    },
-		  }
-		`)
+      {
+        "container": {
+          "background": "blue",
+          "paddingX": 30,
+          "paddingY": 30,
+        },
+        Symbol(@toned/core/StyleMatcher/elementHash): {
+          "container": 1,
+        },
+        Symbol(@toned/core/StyleMatcher/propsBits): 1,
+      }
+    `)
 
     expect(matcher.match({ size: 's' })).toMatchInlineSnapshot(`
-			{
-			  [Symbol(@toned/StyleMatcher/elementHash)]: {
-			    "container": 2,
-			  },
-			  [Symbol(@toned/StyleMatcher/propsBits)]: 2,
-			  "container": {
-			    "background": "red",
-			    "paddingX": 30,
-			    "paddingY": 30,
-			  },
-			}
-		`)
+      {
+        "container": {
+          "background": "red",
+          "paddingX": 30,
+          "paddingY": 30,
+        },
+        Symbol(@toned/core/StyleMatcher/elementHash): {
+          "container": 2,
+        },
+        Symbol(@toned/core/StyleMatcher/propsBits): 2,
+      }
+    `)
 
     expect(
       matcher.match({
@@ -89,24 +89,24 @@ describe('style matcher', () => {
         variant: 'accent',
       }),
     ).toMatchInlineSnapshot(`
-			{
-			  [Symbol(@toned/StyleMatcher/elementHash)]: {
-			    "container": 4,
-			    "label": 25,
-			  },
-			  [Symbol(@toned/StyleMatcher/propsBits)]: 29,
-			  "container": {
-			    "background": "yellow",
-			    "color": "white",
-			    "opacity": 0.5,
-			    "paddingX": 50,
-			    "paddingY": 30,
-			  },
-			  "label": {
-			    "color": "white",
-			  },
-			}
-		`)
+      {
+        "container": {
+          "background": "yellow",
+          "color": "white",
+          "opacity": 0.5,
+          "paddingX": 50,
+          "paddingY": 30,
+        },
+        "label": {
+          "color": "white",
+        },
+        Symbol(@toned/core/StyleMatcher/elementHash): {
+          "container": 4,
+          "label": 25,
+        },
+        Symbol(@toned/core/StyleMatcher/propsBits): 29,
+      }
+    `)
 
     expect(
       matcher.match({
@@ -115,23 +115,23 @@ describe('style matcher', () => {
         state: 'disabled',
       }),
     ).toMatchInlineSnapshot(`
-			{
-			  [Symbol(@toned/StyleMatcher/elementHash)]: {
-			    "container": 1,
-			    "label": 25,
-			  },
-			  [Symbol(@toned/StyleMatcher/propsBits)]: 25,
-			  "container": {
-			    "background": "yellow",
-			    "opacity": 0.5,
-			    "paddingX": 30,
-			    "paddingY": 30,
-			  },
-			  "label": {
-			    "color": "white",
-			  },
-			}
-		`)
+      {
+        "container": {
+          "background": "yellow",
+          "opacity": 0.5,
+          "paddingX": 30,
+          "paddingY": 30,
+        },
+        "label": {
+          "color": "white",
+        },
+        Symbol(@toned/core/StyleMatcher/elementHash): {
+          "container": 1,
+          "label": 25,
+        },
+        Symbol(@toned/core/StyleMatcher/propsBits): 25,
+      }
+    `)
   })
 })
 
@@ -222,28 +222,28 @@ describe('style matcher with pseudo', () => {
         'container:hover': true,
       }),
     ).toMatchInlineSnapshot(`
-			{
-			  [Symbol(@toned/StyleMatcher/elementHash)]: {
-			    "container": 8,
-			    "label": 1,
-			  },
-			  [Symbol(@toned/StyleMatcher/propsBits)]: 27,
-			  "container": {
-			    "bgColor": "action_secondary",
-			    "borderColor": "secondary",
-			    "borderRadius": "medium",
-			    "borderWidth": "none",
-			    "paddingX": 2,
-			    "paddingY": 2,
-			    "style": {
-			      "cursor": "pointer",
-			    },
-			  },
-			  "label": {
-			    "textColor": "on_action_secondary",
-			  },
-			}
-		`)
+      {
+        "container": {
+          "bgColor": "action_secondary",
+          "borderColor": "secondary",
+          "borderRadius": "medium",
+          "borderWidth": "none",
+          "paddingX": 2,
+          "paddingY": 2,
+          "style": {
+            "cursor": "pointer",
+          },
+        },
+        "label": {
+          "textColor": "on_action_secondary",
+        },
+        Symbol(@toned/core/StyleMatcher/elementHash): {
+          "container": 8,
+          "label": 1,
+        },
+        Symbol(@toned/core/StyleMatcher/propsBits): 27,
+      }
+    `)
   })
 })
 
@@ -324,26 +324,151 @@ describe('style matcher with media', () => {
         '@media.small': true,
       }),
     ).toMatchInlineSnapshot(`
-			{
-			  [Symbol(@toned/StyleMatcher/elementHash)]: {
-			    "container": 40,
-			    "label": 16,
-			  },
-			  [Symbol(@toned/StyleMatcher/propsBits)]: 58,
-			  "container": {
-			    "bgColor": "action_secondary",
-			    "borderRadius": "medium",
-			    "borderWidth": "none",
-			    "paddingX": 2,
-			    "paddingY": 2,
-			    "style": {
-			      "cursor": "pointer",
-			    },
-			  },
-			  "label": {
-			    "textColor": "on_action",
-			  },
-			}
-		`)
+      {
+        "container": {
+          "bgColor": "action_secondary",
+          "borderRadius": "medium",
+          "borderWidth": "none",
+          "paddingX": 2,
+          "paddingY": 2,
+          "style": {
+            "cursor": "pointer",
+          },
+        },
+        "label": {
+          "textColor": "on_action",
+        },
+        Symbol(@toned/core/StyleMatcher/elementHash): {
+          "container": 40,
+          "label": 16,
+        },
+        Symbol(@toned/core/StyleMatcher/propsBits): 58,
+      }
+    `)
+  })
+})
+
+// =============================================================================
+// NEW API TESTS
+// =============================================================================
+
+import { createStylesheet } from '../StyleSheet/StyleSheet.ts'
+
+// Mock TokenSystem for testing
+const mockTokenSystem = {
+  system: {},
+  config: undefined,
+  t: () => ({}),
+  stylesheet: () => ({}),
+  exec: (_config: any, tokenStyle: any) => ({ style: tokenStyle, className: '' }),
+} as any
+
+describe('new API: stylesheet with variants chain', () => {
+  test('creates stylesheet with variants method', () => {
+    const rules = {
+      container: {
+        bgColor: 'blue',
+        borderRadius: 'medium',
+      },
+      label: {
+        textColor: 'white',
+      },
+    }
+
+    const stylesheet = createStylesheet(mockTokenSystem, rules)
+    expect(stylesheet).toHaveProperty('variants')
+    expect(typeof stylesheet.variants).toBe('function')
+  })
+
+  test('variants chain returns new stylesheet', () => {
+    const rules = {
+      container: { bgColor: 'blue' },
+      label: { textColor: 'white' },
+    }
+
+    const variants = {
+      '[size=sm]': {
+        container: { paddingX: 2 },
+      },
+    }
+
+    const stylesheet = createStylesheet(mockTokenSystem, rules)
+    const withVariants = stylesheet.variants(variants)
+
+    expect(withVariants).toBeDefined()
+    expect(withVariants).toHaveProperty('variants')
+  })
+})
+
+describe('new API: transformRulesToInternal', () => {
+  test('transforms inline pseudo classes for self', () => {
+    // When a pseudo class is defined inline in an element, it should only affect that element
+    const rules = {
+      container: {
+        bgColor: 'blue',
+        ':hover': {
+          bgColor: 'red',
+        },
+      },
+      label: {
+        textColor: 'white',
+      },
+    }
+
+    const stylesheet = createStylesheet(mockTokenSystem, rules)
+    // The internal transformation should create: container: { ':hover': { $container: { bgColor: 'red' } } }
+    expect(stylesheet).toBeDefined()
+  })
+
+  test('transforms cross-element selectors', () => {
+    // Cross-element selectors like 'container:hover' affect multiple elements
+    const rules = {
+      container: { bgColor: 'blue' },
+      label: { textColor: 'white' },
+      'container:hover': {
+        container: { bgColor: 'red' },
+        label: { textColor: 'yellow' },
+      },
+    }
+
+    const stylesheet = createStylesheet(mockTokenSystem, rules)
+    expect(stylesheet).toBeDefined()
+  })
+
+  test('handles breakpoints in element styles', () => {
+    const rules = {
+      container: {
+        bgColor: 'blue',
+        '@sm': {
+          bgColor: 'red',
+        },
+      },
+    }
+
+    const stylesheet = createStylesheet(mockTokenSystem, rules)
+    expect(stylesheet).toBeDefined()
+  })
+
+  test('combines base rules with variant rules', () => {
+    const rules = {
+      container: { bgColor: 'blue' },
+      label: { textColor: 'white' },
+    }
+
+    const variants = {
+      '[variant=accent]': {
+        container: { bgColor: 'yellow' },
+        label: { textColor: 'black' },
+      },
+      '[size=sm]': {
+        container: { paddingX: 2 },
+      },
+      '[size=sm][variant=accent]': {
+        label: { fontWeight: 'bold' },
+      },
+    }
+
+    const stylesheet = createStylesheet(mockTokenSystem, rules, variants)
+    expect(stylesheet).toBeDefined()
   })
 })

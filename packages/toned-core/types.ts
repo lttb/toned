@@ -2,6 +2,7 @@ import { sym } from './utils.ts'
 
 export const SYMBOL_REF = sym('SYMBOL_REF')
 export const SYMBOL_INIT = sym('SYMBOL_INIT')
+export const SYMBOL_VARIANTS = sym('SYMBOL_VARIANTS')
 
 export type Tokens = Record<string, any>
 
@@ -27,13 +28,7 @@ type InlineStyle = any
 
 export type TokenStyle<S extends TokenStyleDeclaration> = Partial<{
   [key in keyof S]: S[key]['values'][number]
-}> & { style?: InlineStyle } & {
-  // TODO: make at rules configurable
-  // [key in `@media.${'small' | 'medium' | 'large' | 'xlarge' | 'xxlarge'}`]?: Omit<
-  //   TokenStyle<S>,
-  //   `@media.${string}`
-  // >
-}
+}> & { style?: InlineStyle }
 
 // biome-ignore lint/suspicious/noExplicitAny: ignore
 type Merge<D extends any[]> = D extends [infer First, ...infer Rest]
@@ -63,6 +58,125 @@ export type Config = Readonly<{
 }>
 
 declare const _internalBrand: unique symbol
+
+export type Pseudo = ':hover' | ':active' | ':focus'
+
+export type PickString<K> = K extends string ? K : never
+
+type StringOrNumber = string | number | symbol
+
+// =============================================================================
+// NEW API TYPES
+// =============================================================================
+
+/**
+ * Element style with inline pseudo classes and breakpoints (self only)
+ * Example: { bgColor: 'red', ':hover': { bgColor: 'blue' }, '@sm': { padding: 4 } }
+ */
+export type ElementStyleNew<
+  S extends TokenStyleDeclaration,
+  AvailablePseudo extends string = Pseudo,
+  AvailableBreakpoints extends StringOrNumber = keyof InferBreakpoints<S>,
+> = TokenStyle<S> & {
+  $$type?: 'view' | 'text' | 'image'
+} & {
+  // Pseudo classes (self only)
+  [P in AvailablePseudo]?: TokenStyle<S>
+} & {
+  // Breakpoints (self only)
+  [B in AvailableBreakpoints as `@${B & string}`]?: TokenStyle<S>
+}
+
+/**
+ * Extract element names from stylesheet input (excluding selectors)
+ */
+type ExtractElements<T> = {
+  [K in keyof T]: K extends `${string}:${string}` | `[${string}]` | 'prototype'
+    ? never
+    : K
+}[keyof T]
+
+/**
+ * Element map for cross-element or variant selectors
+ * Example: { container: { bgColor: 'red' }, label: { color: 'white' } }
+ */
+export type ElementMap<
+  S extends TokenStyleDeclaration,
+  Elements extends string,
+> = {
+  [E in Elements]?: TokenStyle<S>
+}
+
+/**
+ * Cross-element selector type (e.g., 'container:hover')
+ * Multiple pseudo classes must be in alphabetical order
+ */
+type CrossElementSelector<Elements extends string> =
+  | `${Elements}:active`
+  | `${Elements}:active:focus`
+  | `${Elements}:active:focus:hover`
+  | `${Elements}:active:hover`
+  | `${Elements}:focus`
+  | `${Elements}:focus:hover`
+  | `${Elements}:hover`
+
+/**
+ * Main stylesheet input type (base styles, no variants)
+ */
+export type StylesheetInput<
+  S extends TokenStyleDeclaration,
+  T,
+  Elements extends string = PickString<ExtractElements<T>>,
+> = {
+  // Element definitions
+  [K in Elements]?: ElementStyleNew<S>
+} & {
+  // Cross-element selectors like 'container:hover'
+  [K in CrossElementSelector<Elements>]?: ElementMap<S, Elements>
+}
+
+/**
+ * Single variant selector (e.g., '[size=sm]')
+ */
+type SingleVariantSelector<Mods extends ModType> = {
+  [K in keyof Mods]: `[${K & string}=${Exclude<Mods[K], undefined> & string}]`
+}[keyof Mods]
+
+/**
+ * Combined variant selector (e.g., '[size=sm][variant=accent]')
+ * Note: The implementation will validate alphabetical order
+ */
+type VariantSelector<Mods extends ModType> = SingleVariantSelector<Mods>
+
+/**
+ * Variants input type
+ */
+export type VariantsInput<
+  S extends TokenStyleDeclaration,
+  Elements extends string,
+  Mods extends ModType,
+> = {
+  [K in VariantSelector<Mods>]?: ElementMap<S, Elements>
+} & {
+  // Allow combined selectors (TypeScript can't easily generate all combinations)
+  [key: `[${string}]`]: ElementMap<S, Elements> | undefined
+}
+
+/**
+ * Stylesheet with variants method
+ */
+export type StylesheetWithVariants<
+  S extends TokenStyleDeclaration,
+  Elements extends string,
+> = {
+  variants<Mods extends ModType>(
+    variants: VariantsInput<S, Elements, Mods>,
+  ): Stylesheet<S, Record<Elements, TokenStyle<S>>, Mods>
+}
+
+/**
+ * Final stylesheet type
+ */
 export type Stylesheet<
   S extends TokenStyleDeclaration,
   T extends Record<string, TokenStyle<S>>,
@@ -83,6 +197,51 @@ export type Stylesheet<
   [_internalBrand]?: never
 }
 
+/**
+ * Pre-variants stylesheet type (returned from stylesheet() before .variants())
+ */
+export type PreVariantsStylesheet<
+  S extends TokenStyleDeclaration,
+  T extends Record<string, TokenStyle<S>>,
+  Elements extends string,
+> = Stylesheet<S, T, never> & StylesheetWithVariants<S, Elements>
+
+/**
+ * Stylesheet function type
+ */
+export type StylesheetType<S extends TokenStyleDeclaration> = <
+  T extends StylesheetInput<S, T>,
+>(
+  style: T,
+) => PreVariantsStylesheet<
+  S,
+  Record<PickString<ExtractElements<T>>, TokenStyle<S>>,
+  PickString<ExtractElements<T>>
+>
+
+export type TokenSystem<
+  S extends TokenStyleDeclaration,
+  Config extends { breakpoints?: Breakpoints<any> } = {
+    breakpoints?: Breakpoints<any>
+  },
+> = {
+  system: S
+  config?: Config
+  stylesheet: StylesheetType<S>
+  t: TFun<S>
+  exec: (
+    config: {
+      tokens: Tokens
+      useClassName?: boolean
+    },
+    tokenStyle: TokenStyle<S>,
+  ) => { style: object; className?: string }
+}
+
+// =============================================================================
+// LEGACY TYPES (kept for backwards compatibility during migration)
+// =============================================================================
+
 export const SYMBOL_STATE = sym('SYMBOL_STATE')
 
 export class C_<_T> {
@@ -96,12 +255,6 @@ export interface Ctor {
 
 // biome-ignore lint/suspicious/noExplicitAny: ignore
 export const C: typeof C_ & Ctor = C_ as any
-
-export type Pseudo = ':hover' | ':active' | ':focus'
-
-export type PickString<K> = K extends string ? K : never
-
-type StringOrNumber = string | number | symbol
 
 export type ElementStyle<
   S extends TokenStyleDeclaration,
@@ -238,30 +391,11 @@ export type StylesheetValue<
     keyof InferBreakpoints<S>
   >
 
-export type StylesheetType<S extends TokenStyleDeclaration> = (<
+export type StylesheetTypeLegacy<S extends TokenStyleDeclaration> = (<
   Mods extends ModType,
   T extends StylesheetValue<S, Mods, T>,
 >(
   style: { [SYMBOL_STATE]?: Mods } & T,
 ) => Stylesheet<S, Omit<T, `[${string}]` | 'prototype'>, Mods>) & {
   state: typeof C
-}
-
-export type TokenSystem<
-  S extends TokenStyleDeclaration,
-  Config extends { breakpoints?: Breakpoints<any> } = {
-    breakpoints?: Breakpoints<any>
-  },
-> = {
-  system: S
-  config?: Config
-  stylesheet: StylesheetType<S>
-  t: TFun<S>
-  exec: (
-    config: {
-      tokens: Tokens
-      useClassName?: boolean
-    },
-    tokenStyle: TokenStyle<S>,
-  ) => { style: object; className?: string }
 }

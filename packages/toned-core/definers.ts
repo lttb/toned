@@ -2,9 +2,9 @@ import { getConfig } from './config.ts'
 
 import { createStylesheet } from './StyleSheet/StyleSheet.ts'
 import {
-  type ModType,
-  type StylesheetValue,
   SYMBOL_REF,
+  type StylesheetInput,
+  type StylesheetType,
   type TokenConfig,
   type TokenSystem,
   type Tokens,
@@ -74,11 +74,9 @@ export function defineSystem<
       // biome-ignore lint/suspicious/noExplicitAny: ignore
       return result as any
     },
-    stylesheet: (<Mods extends ModType, T>(
-      rules: StylesheetValue<S, Mods, T>,
-    ) => {
+    stylesheet: (<T extends StylesheetInput<S & C, T>>(rules: T) => {
       return createStylesheet(ref, rules)
-    }) as any,
+    }) as StylesheetType<S & C>,
     exec: (config, tokenStyle) => {
       return Object.entries(tokenStyle).reduce<{
         style: object
