@@ -1,3 +1,5 @@
+.pnpm-store
+
 .dist
 .build
 .tsc
