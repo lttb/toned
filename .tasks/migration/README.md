@@ -22,3 +22,4 @@ If you need to install `cli` or any tool to achieve what you need - do it, you'r
 - [ ] ./TASK_1.md
 - [ ] ./TASK_2.md
 - [ ] ./TASK_3.md
+- [ ] ./TASK_4.md
