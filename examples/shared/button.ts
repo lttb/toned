@@ -1,4 +1,4 @@
-import { stylesheet } from '@toned/systems/base'
+import {stylesheet} from '@toned/systems/base'
 
 export const styles = stylesheet({
   ...stylesheet.state<{
@@ -53,6 +53,8 @@ export const styles = stylesheet({
       textColor: 'on_action',
     },
   },
+
+  // ideas for media management interface
 
   // <Box t={{ padding: 'large', '@media.sm': { padding: 'small' } }} />
 
